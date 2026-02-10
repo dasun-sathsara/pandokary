@@ -1,0 +1,15 @@
+.DS_Store
+**/.DS_Store
+
+# Local build/test outputs
+bin/
+*.tmp
+*.log
+*.out
+*.html
+!assets/template.html
+
+# Editor and OS metadata
+.idea/
+.vscode/
+Thumbs.db
