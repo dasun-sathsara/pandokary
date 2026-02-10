@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" $if(assetModeCdn)$ data-external="true" $endif$ />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      $if(assetModeCdn)$
+      data-external="true"
+      $endif$
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libertinus+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+      $if(assetModeCdn)$
+      data-external="true"
+      $endif$
+    />
+
+    $if(inline-css)$
+    <style>
+      $inline-css$
+    </style>
+    $else$
+    $for(css)$
+    <link rel="stylesheet" href="$css$" />
+    $endfor$
+    $endif$
+
+    <link
+      id="hljs-theme"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+      $if(assetModeCdn)$data-external="true"
+      $endif$
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"
+      $if(assetModeCdn)$
+      data-external="true"
+      $endif$
+    ></script>
+
+    $if(inline-mathjax-config)$
+    <script>
+      $inline-mathjax-config$
+    </script>
+    $else$
+    <script src="mathjax-config.js"></script>
+    $endif$
+
+    <script
+      id="MathJax-script"
+      defer
+      src="https://cdn.jsdelivr.net/npm/@mathjax/mathjax-stix2-font@4.0.0/tex-mml-svg-mathjax-stix2.js"
+      $if(assetModeCdn)$data-external="true"
+      $endif$
+    ></script>
+
+    $if(inline-js)$
+    <script>
+      $inline-js$
+    </script>
+    $else$
+    <script defer src="script.js"></script>
+    $endif$
+
+    $for(header-includes)$
+    $header-includes$
+    $endfor$
+  </head>
+
+  <body>
+    <header>
+      $if(title)$
+      <h1 class="title">$title$</h1>
+      $endif$ $if(author)$
+      <p class="author">$for(author)$$author$$sep$, $endfor$</p>
+      $endif$ $if(date)$
+      <p class="date">$date$</p>
+      $endif$
+    </header>
+
+    <main>$body$</main>
+
+    <footer>
+      <hr />
+      <p style="text-align: center; opacity: 0.7; font-size: 0.8em">Generated with ❤️ by Dasun Sathsara</p>
+    </footer>
+  </body>
+</html>
