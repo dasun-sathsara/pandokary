@@ -44,7 +44,9 @@ end
 function Pandoc(doc)
     -- Inline our core assets when available.
     -- These keys match the $variable$ names in your HTML template.
-    doc.meta['inline-css'] = as_meta_raw(read_asset('styles.css'))
+    local font_css = read_asset('font-assets.css') or ''
+    local styles_css = read_asset('styles.css') or ''
+    doc.meta['inline-css'] = as_meta_raw(font_css .. '\n' .. styles_css)
     doc.meta['inline-js'] = as_meta_raw(read_asset('script.js'))
     doc.meta['inline-mathjax-config'] = as_meta_raw(read_asset('mathjax-config.js'))
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"flag"
 	"fmt"
@@ -55,7 +56,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "failed to resolve executable directory: %v\n", err)
 		os.Exit(1)
 	}
-	assetsDir, cleanupAssets, err := resolveAssetsDir(exeDir)
+	baseAssetsDir, cleanupAssets, err := resolveAssetsDir(exeDir)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -63,6 +64,12 @@ func main() {
 	if cleanupAssets != nil {
 		defer cleanupAssets()
 	}
+	assetsDir, cleanupRuntimeAssets, err := prepareRuntimeAssets(baseAssetsDir)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to prepare runtime assets: %v\n", err)
+		os.Exit(1)
+	}
+	defer cleanupRuntimeAssets()
 
 	pandocBin, err := findPandoc(cfg.pandocPath)
 	if err != nil {
@@ -227,6 +234,171 @@ func resolveAssetsDir(exeDir string) (string, func(), error) {
 		return "", nil, fmt.Errorf("embedded assets are incomplete: %v", err)
 	}
 	return dir, cleanup, nil
+}
+
+func prepareRuntimeAssets(sourceDir string) (string, func(), error) {
+	dir, err := os.MkdirTemp("", "pdy-runtime-assets-*")
+	if err != nil {
+		return "", nil, err
+	}
+	cleanup := func() {
+		_ = os.RemoveAll(dir)
+	}
+	if err := copyDir(sourceDir, dir); err != nil {
+		cleanup()
+		return "", nil, err
+	}
+	if err := writeBundledFontCSS(filepath.Join(dir, "font-assets.css")); err != nil {
+		cleanup()
+		return "", nil, err
+	}
+	return dir, cleanup, nil
+}
+
+func copyDir(sourceDir, targetDir string) error {
+	return filepath.WalkDir(sourceDir, func(path string, entry os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		rel, err := filepath.Rel(sourceDir, path)
+		if err != nil {
+			return err
+		}
+		target := filepath.Join(targetDir, rel)
+		if entry.IsDir() {
+			return os.MkdirAll(target, 0o755)
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		input, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer input.Close()
+		output, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, info.Mode())
+		if err != nil {
+			return err
+		}
+		defer output.Close()
+		_, err = io.Copy(output, input)
+		return err
+	})
+}
+
+type bundledFont struct {
+	family string
+	spec   string
+	env    string
+	weight string
+	style  string
+}
+
+func writeBundledFontCSS(path string) error {
+	fonts := []bundledFont{
+		{
+			family: "Studio Feixen Sans TRIAL",
+			spec:   "Studio Feixen Sans TRIAL:style=Regular",
+			env:    "PDY_BODY_FONT_REGULAR",
+			weight: "400",
+			style:  "normal",
+		},
+		{
+			family: "Studio Feixen Sans TRIAL",
+			spec:   "Studio Feixen Sans TRIAL:style=Semibold",
+			env:    "PDY_BODY_FONT_SEMIBOLD",
+			weight: "600",
+			style:  "normal",
+		},
+		{
+			family: "Studio Feixen Serif Trial",
+			spec:   "Studio Feixen Serif Trial:style=Regular",
+			env:    "PDY_SERIF_FONT_REGULAR",
+			weight: "400",
+			style:  "normal",
+		},
+		{
+			family: "Studio Feixen Serif Trial",
+			spec:   "Studio Feixen Serif Trial:style=Bold",
+			env:    "PDY_SERIF_FONT_SEMIBOLD",
+			weight: "600",
+			style:  "normal",
+		},
+		{
+			family: "VictorMono Nerd Font Propo",
+			spec:   "VictorMono Nerd Font Propo:style=Medium",
+			env:    "PDY_MONO_FONT_MEDIUM",
+			weight: "500",
+			style:  "normal",
+		},
+	}
+
+	var css strings.Builder
+	for _, font := range fonts {
+		fontPath, err := resolveFontFile(font.env, font.spec)
+		if err != nil {
+			continue
+		}
+		data, err := os.ReadFile(fontPath)
+		if err != nil {
+			continue
+		}
+		css.WriteString("@font-face {\n")
+		css.WriteString(fmt.Sprintf("\tfont-family: %q;\n", font.family))
+		css.WriteString(fmt.Sprintf("\tfont-style: %s;\n", font.style))
+		css.WriteString(fmt.Sprintf("\tfont-weight: %s;\n", font.weight))
+		css.WriteString("\tfont-display: swap;\n")
+		css.WriteString(fmt.Sprintf("\tsrc: url(\"data:%s;base64,%s\") format(\"%s\");\n", fontMimeType(fontPath), base64.StdEncoding.EncodeToString(data), fontFormat(fontPath)))
+		css.WriteString("}\n\n")
+	}
+	return os.WriteFile(path, []byte(css.String()), 0o644)
+}
+
+func resolveFontFile(envName, fontSpec string) (string, error) {
+	if override := strings.TrimSpace(os.Getenv(envName)); override != "" {
+		if info, err := os.Stat(override); err == nil && !info.IsDir() {
+			return override, nil
+		}
+	}
+	path, err := exec.Command("fc-match", "-f", "%{file}", fontSpec).Output()
+	if err != nil {
+		return "", err
+	}
+	resolved := strings.TrimSpace(string(path))
+	if resolved == "" {
+		return "", fmt.Errorf("font not found: %s", fontSpec)
+	}
+	if info, err := os.Stat(resolved); err != nil || info.IsDir() {
+		return "", fmt.Errorf("font path is invalid: %s", resolved)
+	}
+	return resolved, nil
+}
+
+func fontMimeType(path string) string {
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".otf":
+		return "font/otf"
+	case ".woff":
+		return "font/woff"
+	case ".woff2":
+		return "font/woff2"
+	default:
+		return "font/ttf"
+	}
+}
+
+func fontFormat(path string) string {
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".otf":
+		return "opentype"
+	case ".woff":
+		return "woff"
+	case ".woff2":
+		return "woff2"
+	default:
+		return "truetype"
+	}
 }
 
 func findAssetsFromCwd() (string, error) {
