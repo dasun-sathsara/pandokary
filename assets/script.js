@@ -70,25 +70,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fontOptions = [
     {
-      key: "libertinus",
-      name: "Libertinus Serif",
-      label: "Li",
-      body: "'Libertinus Serif', serif",
-      heading: "'Libertinus Serif', serif",
+      key: "studio-feixen",
+      name: "Studio Feixen Sans",
+      label: "Sf",
+      body: "'Studio Feixen Sans TRIAL', 'Studio Feixen Sans', sans-serif",
+      heading: "'Studio Feixen Sans TRIAL', 'Studio Feixen Sans', sans-serif",
     },
     {
-      key: "manrope",
-      name: "Manrope",
-      label: "Mn",
-      body: "'Manrope', 'Segoe UI', sans-serif",
-      heading: "'Manrope', 'Segoe UI', sans-serif",
-    },
-    {
-      key: "noto-serif",
-      name: "Noto Serif",
-      label: "Nt",
-      body: "'Noto Serif', serif",
-      heading: "'Noto Serif', serif",
+      key: "studio-feixen-serif",
+      name: "Studio Feixen Serif",
+      label: "Sr",
+      body: "'Studio Feixen Serif Trial', 'Studio Feixen Serif', serif",
+      heading: "'Studio Feixen Serif Trial', 'Studio Feixen Serif', serif",
     },
   ];
 
