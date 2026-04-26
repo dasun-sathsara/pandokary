@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$RepoUrl = "https://github.com/dasun-sathsara/pdy.git",
+    [string]$RepoUrl = "https://gitlab.com/dasun-sathsara/pandokary.git",
     [string]$RepoDir = "",
     [string]$InstallDir = "",
     [switch]$SkipDependencyInstall,
@@ -148,7 +148,7 @@ if ([string]::IsNullOrWhiteSpace($RepoDir)) {
     if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot "go.mod"))) {
         $RepoDir = $PSScriptRoot
     } else {
-        $RepoDir = Join-Path $HOME "src\pdy"
+        $RepoDir = Join-Path $HOME "src\pandokary"
     }
 }
 
@@ -207,13 +207,6 @@ try {
 } finally {
     Pop-Location
 }
-
-Write-Info "Copying assets..."
-$targetAssets = Join-Path $InstallDir "assets"
-if (Test-Path $targetAssets) {
-    Remove-Item -Path $targetAssets -Recurse -Force
-}
-Copy-Item -Path (Join-Path $RepoDir "assets") -Destination $InstallDir -Recurse -Force
 
 Add-PathForCurrentUser -PathEntry $InstallDir
 
