@@ -3,7 +3,7 @@
 `pandokary` wraps Pandoc with project-aware defaults and a reproducible set of HTML assets so Markdown notes render consistently across environments.
 
 - **CLI entry point**: `cmd/pdy/main.go` parses flags, resolves assets, and shells out to Pandoc.
-- **Assets**: `assets/` contains the HTML template, CSS, and Lua filter that ship alongside the binary.
+- **Assets**: `assets/` contains the HTML template, CSS, and Lua filter embedded into the binary.
 - **Samples**: `test_files/` stores example Markdown inputs for manual and automated checks.
 
 ## Requirements
@@ -16,8 +16,8 @@
 Run these commands in PowerShell:
 
 ```powershell
-git clone https://github.com/dasun-sathsara/pdy.git
-cd pdy
+git clone https://gitlab.com/dasun-sathsara/pandokary.git
+cd pandokary
 .\install-windows.ps1
 ```
 
@@ -25,7 +25,6 @@ The installer will:
 
 - install missing dependencies (`Git`, `Go >= 1.21`, `Pandoc`) via `winget` (or `choco` / `scoop`)
 - build `pdy.exe`
-- copy `assets/` next to the binary
 - install to `%LOCALAPPDATA%\Programs\pdy`
 - add that directory to your user `PATH`
 
@@ -34,20 +33,24 @@ Optional flags:
 ```powershell
 .\install-windows.ps1 -ForcePull
 .\install-windows.ps1 -SkipDependencyInstall
-.\install-windows.ps1 -RepoDir "D:\dev\pdy" -InstallDir "D:\tools\pdy"
+.\install-windows.ps1 -RepoDir "D:\dev\pandokary" -InstallDir "D:\tools\pdy"
 ```
 
 ## Build & Run
 
 ```sh
 go run ./cmd/pdy --help
-go build -o bin/pdy ./cmd/pdy
+make build
 ```
 
-The compiled binary prefers an on-disk `assets/` directory next to it (e.g. `bin/assets/`), but will also fall back to:
+The `bin/` directory is local build output and is intentionally ignored by Git.
 
-- `./assets/` found by walking up from the current working directory (useful for `go run` from the repo)
-- embedded assets shipped inside the binary (useful for `go install` / Homebrew-style installs)
+The compiled binary looks for assets in this order:
+
+- `PDY_ASSETS_DIR`, when set to a valid asset directory
+- an `assets/` directory next to the executable
+- `./assets/` found by walking up from the current working directory
+- embedded assets shipped inside the binary
 
 You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a directory that contains the required asset files.
 
