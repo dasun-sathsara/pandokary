@@ -89,11 +89,11 @@ function Ensure-Dependency {
         [string]$WingetId,
         [string]$ChocoId,
         [string]$ScoopId,
-        [scriptblock]$NeedsInstall
+        [AllowNull()][scriptblock]$NeedsInstall = $null
     )
 
     $needsInstall = $false
-    if ($NeedsInstall) {
+    if ($null -ne $NeedsInstall) {
         $needsInstall = & $NeedsInstall
     } else {
         $needsInstall = -not (Test-CommandAvailable $Command)
@@ -110,7 +110,7 @@ function Ensure-Dependency {
 
     Install-WithManager -Name $Name -WingetId $WingetId -ChocoId $ChocoId -ScoopId $ScoopId
 
-    if ($NeedsInstall) {
+    if ($null -ne $NeedsInstall) {
         $needsInstall = & $NeedsInstall
     } else {
         $needsInstall = -not (Test-CommandAvailable $Command)
