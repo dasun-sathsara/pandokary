@@ -89,11 +89,11 @@ function Ensure-Dependency {
         [string]$WingetId,
         [string]$ChocoId,
         [string]$ScoopId,
-        [AllowNull()][scriptblock]$NeedsInstall = $null
+        [object]$NeedsInstall = $null
     )
 
     $needsInstall = $false
-    if ($null -ne $NeedsInstall) {
+    if ($NeedsInstall -is [scriptblock]) {
         $needsInstall = & $NeedsInstall
     } else {
         $needsInstall = -not (Test-CommandAvailable $Command)
@@ -110,7 +110,7 @@ function Ensure-Dependency {
 
     Install-WithManager -Name $Name -WingetId $WingetId -ChocoId $ChocoId -ScoopId $ScoopId
 
-    if ($null -ne $NeedsInstall) {
+    if ($NeedsInstall -is [scriptblock]) {
         $needsInstall = & $NeedsInstall
     } else {
         $needsInstall = -not (Test-CommandAvailable $Command)
@@ -204,6 +204,10 @@ New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 Push-Location $RepoDir
 try {
     & go build -o (Join-Path $InstallDir "pdy.exe") ./cmd/pdy
+
+    $installAssetsDir = Join-Path $InstallDir "assets"
+    New-Item -ItemType Directory -Path $installAssetsDir -Force | Out-Null
+    Copy-Item -Path (Join-Path $RepoDir "assets\*") -Destination $installAssetsDir -Recurse -Force
 } finally {
     Pop-Location
 }
