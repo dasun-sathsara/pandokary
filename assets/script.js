@@ -83,6 +83,15 @@ document.addEventListener("DOMContentLoaded", () => {
       body: "'Studio Feixen Serif Trial', 'Studio Feixen Serif', serif",
       heading: "'Studio Feixen Serif Trial', 'Studio Feixen Serif', serif",
     },
+    {
+      key: "google-sans-flex",
+      name: "Google Sans Flex",
+      label: "Gf",
+      body: "'Google Sans Flex', sans-serif",
+      heading: "'Google Sans Flex', sans-serif",
+      opticalSizing: "auto",
+      variationSettings: '"slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0',
+    },
   ];
 
   let activeFontKey = localStorage.getItem("fontChoice") || fontOptions[0].key;
@@ -99,6 +108,14 @@ document.addEventListener("DOMContentLoaded", () => {
     activeFontKey = font.key;
     document.documentElement.style.setProperty("--font-body", font.body);
     document.documentElement.style.setProperty("--font-heading", font.heading || font.body);
+    document.documentElement.style.setProperty(
+      "--font-optical-sizing",
+      font.opticalSizing || "auto",
+    );
+    document.documentElement.style.setProperty(
+      "--font-variation-settings",
+      font.variationSettings || "normal",
+    );
 
     fontToggle.textContent = font.label;
     fontToggle.title = `Font: ${font.name}`;

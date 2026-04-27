@@ -7,6 +7,26 @@
     <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
 
     <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+      $if(assetModeCdn)$data-external="true"
+      $endif$
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+      $if(assetModeCdn)$data-external="true"
+      $endif$
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap"
+      rel="stylesheet"
+      $if(assetModeCdn)$data-external="true"
+      $endif$
+    />
+
+    <link
       id="hljs-theme"
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"

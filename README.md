@@ -18,22 +18,23 @@ Run these commands in PowerShell:
 ```powershell
 git clone https://gitlab.com/dasun-sathsara/pandokary.git
 cd pandokary
-.\install-windows.ps1
+.\install_windows.ps1
 ```
 
 The installer will:
 
 - install missing dependencies (`Git`, `Go >= 1.21`, `Pandoc`) via `winget` (or `choco` / `scoop`)
 - build `pdy.exe`
-- install to `%LOCALAPPDATA%\Programs\pdy`
+- install `pdy.exe` to `%LOCALAPPDATA%\Programs\pdy`
+- refresh the repository `assets/` directory at `%LOCALAPPDATA%\Programs\pdy\assets`
 - add that directory to your user `PATH`
 
 Optional flags:
 
 ```powershell
-.\install-windows.ps1 -ForcePull
-.\install-windows.ps1 -SkipDependencyInstall
-.\install-windows.ps1 -RepoDir "D:\dev\pandokary" -InstallDir "D:\tools\pdy"
+.\install_windows.ps1 -ForcePull
+.\install_windows.ps1 -SkipDependencyInstall
+.\install_windows.ps1 -RepoDir "D:\dev\pandokary" -InstallDir "D:\tools\pdy"
 ```
 
 ## Build & Run
