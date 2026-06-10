@@ -13,3 +13,7 @@ bin/
 .idea/
 .vscode/
 Thumbs.db
+*.png
+handoff_notes.md
+test_files/transaction-portal-architecture.md
+test_files/transaction-portal-architecture.html

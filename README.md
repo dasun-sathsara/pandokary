@@ -10,6 +10,7 @@
 
 - Go 1.21 or newer
 - Pandoc available on `PATH`
+- [dprint](https://dprint.dev/) available on `PATH` (used to auto-format Markdown before conversion; pass `--no-fmt` to skip)
 
 ## Windows Installation
 
@@ -23,7 +24,7 @@ cd pandokary
 
 The installer will:
 
-- install missing dependencies (`Git`, `Go >= 1.21`, `Pandoc`) via `winget` (or `choco` / `scoop`)
+- install missing dependencies (`Git`, `Go >= 1.21`, `Pandoc`, `dprint`) via `winget` (or `choco` / `scoop`)
 - build `pdy.exe`
 - install `pdy.exe` to `%LOCALAPPDATA%\Programs\pdy`
 - refresh the repository `assets/` directory at `%LOCALAPPDATA%\Programs\pdy\assets`
@@ -62,6 +63,9 @@ You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a director
 - `cdn` (default) leaves third-party bundles (MathJax, highlight.js, Google Fonts) on their CDNs and does **not** request `--embed-resources`, keeping exports slim. Core CSS/JS remains inline so previews work from the temp directory, but your local images/attachments stay as file references.
 - `offline` inlines everything (including CDN bundles) for fully offline viewing; expect a much larger HTML because fonts and math assets are embedded. Pair with `--no-embed` if you still want Pandoc to leave your local images/attachments as external files.
 
+### Markdown formatting
+
+By default, `pdy` runs `dprint fmt` on the input Markdown file before passing it to Pandoc. This normalises list indentation, whitespace, and other formatting inconsistencies. Use `--no-fmt` to skip this step.
 ## Testing
 
 ```sh
