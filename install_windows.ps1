@@ -172,6 +172,7 @@ Ensure-Dependency -Name "Go (>= 1.21)" -Command "go" -WingetId "GoLang.Go" -Choc
     return $minor -lt 21
 }
 Ensure-Dependency -Name "Pandoc" -Command "pandoc" -WingetId "JohnMacFarlane.Pandoc" -ChocoId "pandoc" -ScoopId "pandoc"
+Ensure-Dependency -Name "dprint" -Command "dprint" -WingetId "dprint.dprint" -ChocoId "dprint" -ScoopId "dprint"
 
 if (-not (Test-Path $RepoDir)) {
     $parent = Split-Path -Parent $RepoDir

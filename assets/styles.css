@@ -90,7 +90,7 @@
 
 	/* Font Sizes & Scale — typical web default */
 	--font-size-body-desktop: 18px;
-	--font-size-body-mobile: 16px;
+	--font-size-body-mobile: 15px;
 	--font-size-body: var(--font-size-body-desktop);
 
 	--scale-h1: 1.85;
@@ -237,6 +237,139 @@
 		0 12px 30px rgba(0, 0, 0, 0.45),
 		0 0 0 1px rgba(255, 255, 255, 0.06);
 }
+
+[data-theme="dark-tokyo"] {
+	/* =========================
+	   TOKYO NIGHT DARK THEME
+	   ========================= */
+	--color-bg: #1a1b26;
+	--color-surface: #24283b;
+	--color-surface-alt: #1f2335;
+	--color-border: #383e5a;
+
+	/* Text */
+	--color-text: #a9b1d6;
+	--color-text-muted: #787c99;
+
+	/* Headings */
+	--color-h1: #c0caf5;
+	--color-h2: #b4bce0;
+	--color-h3: #aeb4d4;
+	--color-h4: #a4a9c6;
+	--color-h5: #9da1b8;
+	--color-heading: #c0caf5;
+
+	/* Accents */
+	--color-accent: #7aa2f7;
+	--color-accent-hover: #89ddff;
+	--color-accent-subtle: rgba(122, 162, 247, 0.15);
+
+	/* HR */
+	--bg-hr-gradient: linear-gradient(
+		90deg,
+		transparent,
+		#383e5a,
+		transparent
+	);
+
+	/* Code */
+	--color-code-bg: #1f2335;
+	--color-code-text: #c0caf5;
+	--color-code-border: #292e42;
+	--color-code-chrome-bg: #24283b;
+	--color-code-chrome-text: #565f89;
+	--color-inline-code-bg: rgba(122, 162, 247, 0.12);
+	--color-inline-code-text: #7aa2f7;
+	--color-table-row-alt: rgba(255, 255, 255, 0.02);
+	--color-table-row-hover: rgba(122, 162, 247, 0.08);
+
+	/* Syntax tokens */
+	--code-keyword: #bb9af7;
+	--code-string: #9ece6a;
+	--code-function: #7aa2f7;
+	--code-number: #ff9e64;
+	--code-comment: #565f89;
+	--code-operator: #89ddff;
+	--code-variable: #e0af68;
+
+	/* Strong */
+	--color-strong: #c0caf5;
+
+	/* Shadows */
+	--shadow-card:
+		0 1px 2px rgba(0, 0, 0, 0.5),
+		0 0 0 1px rgba(122, 162, 247, 0.05);
+	--shadow-elevated:
+		0 12px 30px rgba(0, 0, 0, 0.6),
+		0 0 0 1px rgba(122, 162, 247, 0.08);
+}
+
+[data-theme="dark-dimmed"] {
+	/* =========================
+	   GITHUB DARK DIMMED THEME
+	   ========================= */
+	--color-bg: #22272e;
+	--color-surface: #2d333b;
+	--color-surface-alt: #2d333b;
+	--color-border: #444c56;
+
+	/* Text */
+	--color-text: #adbac7;
+	--color-text-muted: #768390;
+
+	/* Headings */
+	--color-h1: #cdd9e5;
+	--color-h2: #adbac7;
+	--color-h3: #768390;
+	--color-h4: #6b7680;
+	--color-h5: #616b75;
+	--color-heading: #cdd9e5;
+
+	/* Accents */
+	--color-accent: #539bf5;
+	--color-accent-hover: #388bfd;
+	--color-accent-subtle: rgba(83, 155, 245, 0.15);
+
+	/* HR */
+	--bg-hr-gradient: linear-gradient(
+		90deg,
+		transparent,
+		#444c56,
+		transparent
+	);
+
+	/* Code */
+	--color-code-bg: #1c2128;
+	--color-code-text: #adbac7;
+	--color-code-border: #373e47;
+	--color-code-chrome-bg: #22272e;
+	--color-code-chrome-text: #768390;
+	--color-inline-code-bg: rgba(83, 155, 245, 0.12);
+	--color-inline-code-text: #6cb6ff;
+	--color-table-row-alt: rgba(255, 255, 255, 0.02);
+	--color-table-row-hover: rgba(83, 155, 245, 0.08);
+
+	/* Syntax tokens */
+	--code-keyword: #f47067;
+	--code-string: #96d0ff;
+	--code-function: #dcbdfb;
+	--code-number: #f69d50;
+	--code-comment: #768390;
+	--code-operator: #6cb6ff;
+	--code-variable: #adbac7;
+
+	/* Strong */
+	--color-strong: #cdd9e5;
+
+	/* Shadows */
+	--shadow-card:
+		0 1px 2px rgba(0, 0, 0, 0.35),
+		0 0 0 1px rgba(255, 255, 255, 0.04);
+	--shadow-elevated:
+		0 12px 30px rgba(0, 0, 0, 0.45),
+		0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
 
 /* =========================================
    2. Base & Reset
@@ -472,7 +605,7 @@ li::marker {
 
 code {
 	font-family: var(--font-mono);
-	font-size: 0.86em;
+	font-size: 0.82em;
 	padding: 0.07rem 0.2rem;
 	border: 1px solid var(--color-code-border);
 	border-radius: 0;
@@ -494,7 +627,7 @@ pre {
 	overflow-x: auto;
 	position: relative;
 	box-shadow: none;
-	font-size: 15px;
+	font-size: 14px;
 	tab-size: 2;
 }
 
@@ -504,7 +637,7 @@ pre code.hljs {
 	padding: 0;
 	color: var(--color-code-text);
 	border: none;
-	font-size: 16px;
+	font-size: 15px;
 	line-height: 1.4;
 	display: block;
 	font-family: var(--font-mono);
@@ -626,6 +759,127 @@ tbody tr:hover {
 	background-color: var(--color-table-row-hover);
 }
 
+.table-scroll-container {
+	position: relative;
+	width: 100%;
+	margin: 1.75rem 0 2rem;
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	overflow: hidden;
+	box-shadow: var(--shadow-sm);
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-bg);
+}
+
+
+.table-wrapper {
+	width: 100%;
+	overflow-x: auto;
+	margin: 0;
+	background-color: var(--color-bg);
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-border) transparent;
+}
+
+.table-scroll-container.maximized .table-wrapper {
+	height: calc(85vh - 30px);
+	border: none;
+}
+
+/* Custom scrollbar styling for the table wrapper */
+/* Global thin custom scrollbars */
+::-webkit-scrollbar {
+	height: 6px;
+	width: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-border);
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-text-muted);
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-border) transparent;
+}
+
+.scroll-shadow {
+	position: absolute;
+	top: 30px;
+	width: 15px;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+	opacity: 0;
+	z-index: 10;
+}
+
+.scroll-shadow.left {
+	left: 0;
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.08), transparent);
+	border-bottom-left-radius: 6px;
+}
+
+.scroll-shadow.right {
+	right: 0;
+	background: linear-gradient(to left, rgba(0, 0, 0, 0.08), transparent);
+	border-bottom-right-radius: 6px;
+}
+
+[data-theme="dark"] .scroll-shadow.left {
+	background: linear-gradient(to right, rgba(0, 0, 0, 0.25), transparent);
+}
+
+[data-theme="dark"] .scroll-shadow.right {
+	background: linear-gradient(to left, rgba(0, 0, 0, 0.25), transparent);
+}
+.table-wrapper table {
+	display: table;
+	width: max-content;
+	min-width: 100%;
+	max-width: none;
+	border-collapse: collapse;
+	border: none;
+	margin: 0;
+	border-spacing: 0;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+	padding: 0.8rem 1rem;
+	border-bottom: 1px solid var(--color-border);
+	border-right: 1px solid var(--color-border);
+	word-break: normal;
+	overflow-wrap: break-word;
+	min-width: 180px;
+	max-width: 480px;
+}
+
+.table-wrapper th:last-child,
+.table-wrapper td:last-child {
+	border-right: none;
+}
+
+.table-wrapper tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.table-wrapper th {
+	font-family: var(--font-heading);
+	color: var(--color-heading);
+	font-weight: 600;
+	background-color: var(--color-surface-alt);
+}
+
 /* =========================================
    8. Images & Media
    ========================================= */
@@ -664,17 +918,21 @@ mjx-container {
 	cursor: pointer;
 	box-shadow: var(--shadow-elevated);
 	transition:
-		transform 0.2s ease,
-		color 0.2s ease,
-		border-color 0.2s ease,
-		background-color 0.2s ease;
+		transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+		color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+		background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 	z-index: 100;
 }
 
 .floating-toggle:hover {
-	transform: scale(1.08);
+	transform: scale(1.1) rotate(15deg);
 	color: var(--color-accent);
 	border-color: var(--color-accent);
+}
+
+.floating-toggle:active {
+	transform: scale(0.95);
 }
 
 .theme-toggle {
@@ -736,11 +994,11 @@ mjx-container {
 		border-radius: 0;
 		border-left: none;
 		border-right: none;
-		font-size: 14px;
+		font-size: 12.5px;
 	}
 
 	table {
-		font-size: 14px;
+		font-size: 13.5px;
 		margin: 1.25rem 0 1.5rem;
 	}
 
@@ -749,13 +1007,40 @@ mjx-container {
 		padding: 0.55rem 0.65rem;
 	}
 
+	.table-scroll-container {
+		margin: 1.25rem 0 1.5rem;
+	}
+
+	.table-wrapper {
+		margin: 0;
+		border-radius: 4px;
+	}
+
+	.scroll-shadow.left {
+		border-top-left-radius: 4px;
+		border-bottom-left-radius: 4px;
+	}
+
+	.scroll-shadow.right {
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+	}
+
+	.table-wrapper th,
+	.table-wrapper td {
+		padding: 0.6rem 0.75rem;
+		font-size: 13px;
+		min-width: 150px;
+		max-width: 360px;
+	}
+
 	code {
-		font-size: 0.82em;
+		font-size: 0.78em;
 	}
 
 	pre code,
 	pre code.hljs {
-		font-size: 14px;
+		font-size: 12.5px;
 		line-height: 1.35;
 	}
 
@@ -772,4 +1057,611 @@ mjx-container {
 		bottom: calc(1.5rem + var(--toggle-size) + var(--toggle-gap));
 		right: 1.5rem;
 	}
+
+	.mermaid-container.maximized,
+	.table-scroll-container.maximized {
+		top: 5vh !important;
+		left: 2.5vw !important;
+		width: 95vw !important;
+		height: 90vh !important;
+		border-radius: 6px !important;
+	}
+
+	.table-scroll-container.maximized .table-wrapper {
+		height: calc(90vh - 30px) !important;
+		border-radius: 0 0 6px 6px !important;
+	}
+
+	.maximized .mermaid-btn.btn-rotate,
+	.maximized .table-btn.btn-rotate {
+		display: flex !important;
+	}
+
+	/* Rotated Landscape mode on mobile */
+	.mermaid-container.maximized.rotated-landscape,
+	.table-scroll-container.maximized.rotated-landscape {
+		top: 50% !important;
+		left: 50% !important;
+		width: 90vh !important;
+		height: 95vw !important;
+		transform: translate(-50%, -50%) rotate(90deg) !important;
+		border-radius: 6px !important;
+	}
+
+	.mermaid-container.maximized.rotated-landscape .mermaid-viewport,
+	.table-scroll-container.maximized.rotated-landscape .table-wrapper {
+		height: calc(95vw - 30px) !important;
+	}
+}
+
+/* =========================================
+   12. Mermaid Viewer & Sketchy Styles
+   ========================================= */
+
+.mermaid-container {
+	margin: 2rem 0;
+	border: 2px solid var(--color-border);
+	border-radius: 8px;
+	background-color: var(--color-code-bg);
+	overflow: hidden;
+	box-shadow: var(--shadow-card);
+	display: flex;
+	flex-direction: column;
+	transition: border-color 0.3s ease, background-color 0.3s ease;
+	position: relative;
+}
+
+.modal-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0);
+	backdrop-filter: blur(0px);
+	-webkit-backdrop-filter: blur(0px);
+	z-index: 9998;
+	transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.modal-backdrop.visible {
+	background-color: rgba(0, 0, 0, 0.4);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+}
+
+[data-theme^="dark"] .modal-backdrop.visible {
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+.mermaid-container.maximized,
+.table-scroll-container.maximized {
+	position: fixed;
+	top: 7.5vh;
+	left: 5vw;
+	width: 90vw;
+	height: 85vh;
+	z-index: 9999;
+	margin: 0;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	box-shadow: var(--shadow-lg);
+	background-color: var(--color-bg);
+	
+	/* Transition hooks */
+	opacity: 0;
+	transform: scale(0.96);
+	transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.mermaid-container.maximized.visible,
+.table-scroll-container.maximized.visible {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.mermaid-toolbar,
+.table-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.25rem 0.5rem;
+	background-color: var(--color-code-chrome-bg);
+	border-bottom: 1px solid var(--color-border);
+	user-select: none;
+}
+
+.mermaid-title,
+.table-title {
+	font-family: 'Architects Daughter', cursive, var(--font-heading);
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: var(--color-text-muted);
+}
+
+.mermaid-actions,
+.table-actions {
+	display: flex;
+	gap: 0.25rem;
+}
+
+.mermaid-btn,
+.table-btn {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	color: var(--color-text);
+	padding: 0.15rem 0.3rem;
+	font-size: 0.75rem;
+	cursor: pointer;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.25rem;
+	transition: all 0.2s ease;
+	font-family: inherit;
+}
+
+.mermaid-btn:hover,
+.table-btn:hover {
+	background: var(--color-surface-alt);
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+}
+
+.mermaid-viewport {
+	flex: 1;
+	position: relative;
+	overflow: hidden;
+	cursor: grab;
+	min-height: 380px;
+	background-image: 
+		radial-gradient(var(--color-border) 1px, transparent 1px);
+	background-size: 20px 20px;
+	background-position: center;
+	background-color: var(--color-code-bg);
+	transition: background-color 0.3s ease;
+}
+
+.mermaid-viewport:active {
+	cursor: grabbing;
+}
+
+.mermaid-content {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transform-origin: 0 0;
+	will-change: transform;
+}
+
+.mermaid-content svg {
+	width: 100% !important;
+	height: 100% !important;
+	display: block;
+	user-select: none;
+	background: transparent !important;
+}
+
+/* When maximized, let viewport grow */
+.mermaid-container.maximized .mermaid-viewport {
+	height: calc(85vh - 30px);
+}
+
+
+
+/* Apply Kalam font to Mermaid text elements */
+.mermaid-viewport svg text,
+.mermaid-viewport svg .label {
+	font-family: 'Architects Daughter', cursive, sans-serif !important;
+}
+
+/* Mobile responsive adjustments for mermaid */
+@media (max-width: 768px) {
+	.mermaid-viewport {
+		min-height: 280px;
+	}
+	.mermaid-container.maximized .mermaid-viewport {
+		height: calc(90vh - 30px);
+	}
+}
+
+/* =========================================
+   13. Dark Mode Overrides for Mermaid Diagrams
+   ========================================= */
+[data-theme^="dark"] .mermaid-viewport svg text,
+[data-theme^="dark"] .mermaid-viewport svg tspan,
+[data-theme^="dark"] .mermaid-viewport svg .label,
+[data-theme^="dark"] .mermaid-viewport svg .label span,
+[data-theme^="dark"] .mermaid-viewport svg .labelText,
+[data-theme^="dark"] .mermaid-viewport svg .nodeLabel,
+[data-theme^="dark"] .mermaid-viewport svg .edgeLabel {
+	fill: var(--color-text) !important;
+	color: var(--color-text) !important;
+}
+
+/* Fix Sequence Diagram Actors in Dark Mode */
+[data-theme^="dark"] .mermaid-viewport svg .actor {
+	fill: var(--color-surface) !important;
+	stroke: var(--color-border) !important;
+}
+
+/* Fix Sequence Diagram Notes in Dark Mode */
+[data-theme^="dark"] .mermaid-viewport svg rect.note,
+[data-theme^="dark"] .mermaid-viewport svg .note,
+[data-theme^="dark"] .mermaid-viewport svg .noteBox {
+	fill: #2d2a1e !important; /* Dark warm amber/brown */
+	stroke: #8a7330 !important; /* Gold/amber border */
+}
+
+/* Warm yellow/gold text color inside note elements in dark mode */
+[data-theme^="dark"] .mermaid-viewport svg .note text,
+[data-theme^="dark"] .mermaid-viewport svg .note tspan {
+	fill: #ffeb99 !important;
+}
+
+/* Fix Flowchart Edge Label Backgrounds in Dark Mode */
+[data-theme^="dark"] .mermaid-viewport svg .edgeLabel rect {
+	fill: var(--color-code-bg) !important;
+	stroke: var(--color-border) !important;
+}
+
+[data-theme^="dark"] .mermaid-viewport svg .grid line {
+	stroke: var(--color-border) !important;
+	opacity: 0.3;
+}
+
+[data-theme^="dark"] .mermaid-viewport svg .today {
+	stroke: #ef4444 !important;
+}
+
+
+/* =========================================
+   14. Advanced Markdown Reader Features
+   ========================================= */
+
+/* Reading Progress Bar (Option 3) */
+.reading-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 3px;
+	width: 0%;
+	background-color: var(--color-accent);
+	z-index: 10000;
+	transition: width 0.1s ease;
+}
+
+/* Scrollspy Table of Contents (Option 1) */
+@media (min-width: 1400px) {
+	.toc-sidebar {
+		display: block;
+		position: fixed;
+		top: 6rem;
+		left: 2rem;
+		width: 250px;
+		max-height: 80vh;
+		overflow-y: auto;
+		border-right: 1px solid var(--color-border);
+		padding-right: 1.5rem;
+		user-select: none;
+		transition: transform 0.3s ease;
+		z-index: 100;
+	}
+
+	body {
+		padding-left: 310px; /* Shift body to make room for sidebar */
+		max-width: 1350px; /* Increase max-width to offset shifting */
+		transition: padding-left 0.3s ease, max-width 0.3s ease;
+	}
+
+	/* Collapsed sidebar state */
+	.toc-collapsed .toc-sidebar {
+		transform: translateX(-310px);
+	}
+
+	.toc-collapsed body {
+		padding-left: 1.75rem;
+		max-width: 1040px;
+	}
+}
+
+.toc-toggle {
+	bottom: 1.5rem;
+	left: 1.5rem;
+	z-index: 1000;
+	display: none;
+}
+
+@media (min-width: 1400px) {
+	.toc-toggle {
+		display: flex;
+	}
+}
+
+@media (max-width: 1399px) {
+	.toc-sidebar {
+		display: none;
+	}
+}
+
+.toc-sidebar-title {
+	font-family: var(--font-heading);
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--color-text-muted);
+	margin-bottom: 1rem;
+	font-weight: 700;
+}
+
+.toc-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.toc-item-h2 {
+	font-weight: 550;
+	font-size: 0.85rem;
+}
+
+
+.toc-item-h3 {
+	font-size: 0.8rem;
+	padding-left: 1rem;
+}
+
+.toc-link {
+	color: var(--color-text-muted);
+	text-decoration: none;
+	transition: color 0.2s ease, border-left-color 0.2s ease;
+	display: block;
+	padding: 0.1rem 0;
+}
+
+.toc-link:hover {
+	color: var(--color-text);
+}
+
+.toc-link.active {
+	color: var(--color-accent);
+	font-weight: 700;
+}
+
+/* Lightbox Image Zoom (Option 5) */
+.lightbox-backdrop {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.75);
+	backdrop-filter: blur(5px);
+	-webkit-backdrop-filter: blur(5px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10001;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+	cursor: zoom-out;
+}
+
+.lightbox-backdrop.active {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.lightbox-img {
+	max-width: 90vw;
+	max-height: 90vh;
+	object-fit: contain;
+	border-radius: 8px;
+	box-shadow: var(--shadow-lg);
+	transform: scale(0.95);
+	transition: transform 0.3s ease;
+}
+
+.lightbox-backdrop.active .lightbox-img {
+	transform: scale(1);
+}
+
+/* Collapsible Code Blocks (Option 6) */
+.collapsible-code-block {
+	max-height: 320px;
+	overflow-y: hidden;
+	position: relative;
+	transition: max-height 0.4s ease;
+}
+
+.collapsible-code-block.expanded {
+	max-height: none;
+}
+
+.collapsible-code-block::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 60px;
+	background: linear-gradient(to top, var(--color-code-bg), transparent);
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+	opacity: 1;
+}
+
+.collapsible-code-block.expanded::after {
+	opacity: 0;
+}
+
+.code-toggle-container {
+	margin-top: -1.5rem;
+	margin-bottom: 2rem;
+	display: flex;
+	justify-content: center;
+	position: relative;
+	z-index: 5;
+}
+
+.code-toggle-btn {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	color: var(--color-text);
+	padding: 0.35rem 0.75rem;
+	font-size: 0.8rem;
+	cursor: pointer;
+	border-radius: 20px;
+	font-weight: 550;
+	box-shadow: var(--shadow-sm);
+	transition: all 0.2s ease;
+}
+
+.code-toggle-btn:hover {
+	background: var(--color-surface-alt);
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+	transform: translateY(-1px);
+}
+
+/* Code block Line Numbers & Focus Highlight (Option 9) */
+pre code.hljs {
+	counter-reset: line-counter;
+}
+
+.code-line {
+	display: block;
+	padding-left: 3.5em;
+	position: relative;
+	transition: background-color 0.2s ease;
+}
+
+.code-line::before {
+	counter-increment: line-counter;
+	content: counter(line-counter);
+	position: absolute;
+	left: 0;
+	width: 2.5em;
+	text-align: right;
+	color: var(--color-text-muted);
+	border-right: 1px solid var(--color-border);
+	padding-right: 0.5em;
+	user-select: none;
+	cursor: pointer;
+	transition: color 0.2s ease;
+}
+
+.code-line::before:hover {
+	color: var(--color-text);
+}
+
+.code-line:hover {
+	background-color: rgba(128, 128, 128, 0.05);
+}
+
+.code-line.focused-line {
+	background-color: rgba(253, 224, 71, 0.12) !important; /* soft yellow focus highlight */
+	border-left: 2px solid #eab308;
+	padding-left: calc(3.5em - 2px);
+}
+
+[data-theme^="dark"] .code-line.focused-line {
+	background-color: rgba(253, 224, 71, 0.08) !important;
+	border-left: 2px solid #ca8a04;
+}
+
+
+/* Architects Daughter custom typography overrides */
+[data-font="architects-daughter"] body {
+	letter-spacing: -0.015em !important;
+	line-height: 1.35 !important;
+	font-weight: 550 !important;
+}
+
+[data-font="architects-daughter"] h1,
+[data-font="architects-daughter"] h2,
+[data-font="architects-daughter"] h3,
+[data-font="architects-daughter"] h4,
+[data-font="architects-daughter"] h5,
+[data-font="architects-daughter"] h6 {
+	letter-spacing: -0.02em !important;
+	line-height: 1.25 !important;
+	font-weight: 700 !important;
+}
+
+[data-font="architects-daughter"] strong,
+[data-font="architects-daughter"] b,
+[data-font="architects-daughter"] th {
+	font-weight: 800 !important;
+}
+
+[data-font="architects-daughter"] code,
+[data-font="architects-daughter"] pre {
+	font-weight: 550 !important;
+	letter-spacing: -0.01em !important;
+}
+
+[data-font="architects-daughter"] .mermaid-viewport svg text,
+[data-font="architects-daughter"] .mermaid-viewport svg .label {
+	font-weight: 600 !important;
+	letter-spacing: -0.01em !important;
+}
+
+/* Rotate button hidden by default on desktop */
+.mermaid-btn.btn-rotate,
+.table-btn.btn-rotate {
+	display: none !important;
+}
+
+/* =========================================
+   15. Loading Overlay & Spinner
+   ========================================= */
+#loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 99999;
+	background-color: var(--color-bg);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1.25rem;
+	transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#loading-overlay.fade-out {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.loading-spinner {
+	width: 36px;
+	height: 36px;
+	border: 3px solid var(--color-border);
+	border-top-color: var(--color-accent);
+	border-radius: 50%;
+	animation: spin 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+@keyframes spin {
+	to { transform: rotate(360deg); }
+}
+
+.loading-text {
+	font-family: var(--font-body);
+	font-size: 0.85rem;
+	color: var(--color-text-muted);
+	margin: 0;
+	letter-spacing: 0.02em;
 }

@@ -19,6 +19,7 @@ import (
 type config struct {
 	export     bool
 	noEmbed    bool
+	noFmt      bool
 	assetMode  string
 	pandocPath string
 	verbose    bool
@@ -89,6 +90,12 @@ func main() {
 	cssPath := filepath.Join(assetsDir, "styles.css")
 	luaFilterPath := filepath.Join(assetsDir, "inline-assets.lua")
 
+	if !cfg.noFmt {
+		if err := formatMarkdown(inputAbs, cfg.verbose); err != nil {
+			fmt.Fprintf(os.Stderr, "warning: markdown formatting skipped: %v\n", err)
+		}
+	}
+
 	shouldEmbed := cfg.assetMode == "offline" && !cfg.noEmbed
 	args := buildPandocArgs(inputAbs, templatePath, cssPath, resourcePath, luaFilterPath, outputPath, cfg.assetMode, shouldEmbed)
 
@@ -119,6 +126,7 @@ func parseConfig(rawArgs []string) (config, error) {
 	fs.SetOutput(io.Discard)
 	fs.BoolVar(&cfg.export, "export", false, "export to current directory instead of previewing")
 	fs.BoolVar(&cfg.noEmbed, "no-embed", false, "disable resource embedding")
+	fs.BoolVar(&cfg.noFmt, "no-fmt", false, "skip dprint markdown formatting before conversion")
 	fs.StringVar(&cfg.assetMode, "asset-mode", "cdn", "asset loading strategy: offline or cdn")
 	fs.StringVar(&cfg.pandocPath, "pandoc", "", "override pandoc binary path")
 	fs.BoolVar(&cfg.verbose, "verbose", false, "print resolved paths and pandoc argv")
@@ -184,6 +192,7 @@ func printUsage(w io.Writer) {
 	fmt.Fprintln(w, "Flags:")
 	fmt.Fprintln(w, "  -e, --export     export to current directory instead of previewing")
 	fmt.Fprintln(w, "      --no-embed   disable resource embedding")
+	fmt.Fprintln(w, "      --no-fmt     skip dprint markdown formatting before conversion")
 	fmt.Fprintln(w, "      --asset-mode <offline|cdn>  choose asset loading strategy (default: cdn)")
 	fmt.Fprintln(w, "      --pandoc     override pandoc binary path")
 	fmt.Fprintln(w, "      --verbose    print resolved paths and pandoc argv")
@@ -485,7 +494,12 @@ func determineOutput(cfg config, inputAbs string) (string, error) {
 		} else if strings.ToLower(filepath.Ext(name)) != ".html" {
 			name += ".html"
 		}
-		output := filepath.Join(cwd, name)
+		var output string
+		if filepath.IsAbs(name) {
+			output = filepath.Clean(name)
+		} else {
+			output = filepath.Join(cwd, name)
+		}
 		return output, nil
 	}
 
@@ -591,4 +605,49 @@ func shellQuoteArgs(args []string) []string {
 		out[i] = arg
 	}
 	return out
+}
+
+func formatMarkdown(inputAbs string, verbose bool) error {
+	dprintBin, err := exec.LookPath("dprint")
+	if err != nil {
+		return fmt.Errorf("dprint not found in PATH: %w", err)
+	}
+
+	if verbose {
+		fmt.Fprintf(os.Stderr, "formatting %s with dprint\n", inputAbs)
+	}
+
+	src, err := os.ReadFile(inputAbs)
+	if err != nil {
+		return fmt.Errorf("read input: %w", err)
+	}
+
+	cmd := exec.Command(dprintBin, "fmt", "--stdin", inputAbs)
+	cmd.Stdin = bytes.NewReader(src)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("dprint: %s: %w", strings.TrimSpace(stderr.String()), err)
+	}
+
+	formatted := stdout.Bytes()
+	if len(formatted) == 0 {
+		return nil // dprint produced no output; skip write
+	}
+
+	// Only write back if content actually changed
+	if !bytes.Equal(src, formatted) {
+		if err := os.WriteFile(inputAbs, formatted, 0o644); err != nil {
+			return fmt.Errorf("write formatted output: %w", err)
+		}
+		if verbose {
+			fmt.Fprintf(os.Stderr, "  formatted %s\n", inputAbs)
+		}
+	} else if verbose {
+		fmt.Fprintf(os.Stderr, "  %s already formatted\n", inputAbs)
+	}
+
+	return nil
 }
