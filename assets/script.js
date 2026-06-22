@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (lines.length >= 3) {
-        block.innerHTML = lines.map(line => `<span class="code-line">${line || " "}</span>`).join("");
+        block.innerHTML = lines.map(line => `<div class="code-line">${line || " "}</div>`).join("");
 
         block.addEventListener("click", (e) => {
           const line = e.target.closest(".code-line");
@@ -245,11 +245,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
     let newTheme = "light";
     if (currentTheme === "light") {
+      newTheme = "warm-light";
+    } else if (currentTheme === "warm-light") {
       newTheme = "dark";
     } else if (currentTheme === "dark") {
-      newTheme = "dark-tokyo";
-    } else if (currentTheme === "dark-tokyo") {
-      newTheme = "dark-dimmed";
+      newTheme = "ayu-dark";
     } else {
       newTheme = "light";
     }
@@ -276,13 +276,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       heading: "'Studio Feixen Sans TRIAL', 'Studio Feixen Sans', sans-serif",
     },
     {
-      key: "studio-feixen-serif",
-      name: "Studio Feixen Serif",
-      label: "Sr",
-      body: "'Studio Feixen Serif Trial', 'Studio Feixen Serif', serif",
-      heading: "'Studio Feixen Serif Trial', 'Studio Feixen Serif', serif",
-    },
-    {
       key: "google-sans-flex",
       name: "Google Sans Flex",
       label: "Gf",
@@ -290,13 +283,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       heading: "'Google Sans Flex', sans-serif",
       opticalSizing: "auto",
       variationSettings: '"slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0',
-    },
-    {
-      key: "architects-daughter",
-      name: "Architects Daughter",
-      label: "Ad",
-      body: "'Architects Daughter', cursive, sans-serif",
-      heading: "'Architects Daughter', cursive, sans-serif",
     },
   ];
 
@@ -332,18 +318,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function setHighlightTheme(theme) {
     const lightHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
-    const darkHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css";
-    const tokyoHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css";
-    const dimmedHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css";
+    const darkHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css";
 
-    let nextHref = lightHref;
-    if (theme === "dark") {
-      nextHref = darkHref;
-    } else if (theme === "dark-tokyo") {
-      nextHref = tokyoHref;
-    } else if (theme === "dark-dimmed") {
-      nextHref = dimmedHref;
-    }
+    const nextHref = (theme === "dark" || theme === "ayu-dark") ? darkHref : lightHref;
 
     let link = document.getElementById("hljs-theme");
     if (!link) {
@@ -369,14 +346,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function updateThemeIcon(theme) {
     if (theme === "light") {
+      themeToggle.innerText = "📖";
+      themeToggle.title = "Switch to Warm Light (Paper)";
+    } else if (theme === "warm-light") {
       themeToggle.innerText = "🌙";
-      themeToggle.title = "Switch to Dark Mode";
+      themeToggle.title = "Switch to Dark Mode (Obsidian)";
     } else if (theme === "dark") {
-      themeToggle.innerText = "🌌";
-      themeToggle.title = "Switch to Tokyo Night";
-    } else if (theme === "dark-tokyo") {
-      themeToggle.innerText = "🕶️";
-      themeToggle.title = "Switch to Dark Dimmed";
+      themeToggle.innerText = "🌅";
+      themeToggle.title = "Switch to Dark Mode (Ayu)";
     } else {
       themeToggle.innerText = "☀️";
       themeToggle.title = "Switch to Light Mode";
@@ -604,6 +581,143 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 let mermaidIdCounter = 0;
 
+function initializeMermaid(theme) {
+  let config;
+  if (theme === "light") {
+    config = {
+      startOnLoad: false,
+      look: "handDrawn",
+      theme: "default",
+      fontFamily: "'Architects Daughter', cursive, sans-serif",
+      flowchart: { useMaxWidth: false, htmlLabels: true },
+      sequence: { useMaxWidth: false },
+      gantt: { useMaxWidth: false },
+      themeVariables: {
+        fontFamily: "'Architects Daughter', cursive, sans-serif",
+      }
+    };
+  } else if (theme === "warm-light") {
+    config = {
+      startOnLoad: false,
+      look: "handDrawn",
+      theme: "base",
+      fontFamily: "'Architects Daughter', cursive, sans-serif",
+      flowchart: { useMaxWidth: false, htmlLabels: true },
+      sequence: { useMaxWidth: false },
+      gantt: { useMaxWidth: false },
+      themeVariables: {
+        darkMode: false,
+        background: "#faf5ec",
+        mainBkg: "#fffdf8",
+        secondBkg: "#f2eadd",
+        tertiaryColor: "#f3ecdf",
+        primaryColor: "#fffdf8",
+        primaryTextColor: "#3d3730",
+        primaryBorderColor: "rgba(182, 93, 60, 0.45)",
+        secondaryColor: "#f2eadd",
+        secondaryTextColor: "#3d3730",
+        secondaryBorderColor: "rgba(61, 50, 38, 0.22)",
+        lineColor: "rgba(61, 50, 38, 0.42)",
+        textColor: "#3d3730",
+        nodeBorder: "rgba(182, 93, 60, 0.45)",
+        clusterBkg: "rgba(182, 93, 60, 0.045)",
+        clusterBorder: "rgba(61, 50, 38, 0.18)",
+        edgeLabelBackground: "#fffdf8",
+        noteBkgColor: "rgba(182, 93, 60, 0.105)",
+        noteTextColor: "#2a2520",
+        noteBorderColor: "rgba(182, 93, 60, 0.32)",
+        actorBkg: "#fffdf8",
+        actorBorder: "rgba(182, 93, 60, 0.45)",
+        actorTextColor: "#3d3730",
+        actorLineColor: "rgba(61, 50, 38, 0.34)",
+        signalColor: "#b65d3c",
+        signalTextColor: "#3d3730",
+        labelBoxBkgColor: "#fffdf8",
+        labelBoxBorderColor: "rgba(61, 50, 38, 0.18)",
+        labelTextColor: "#3d3730",
+        fontFamily: "'Architects Daughter', cursive, sans-serif",
+      }
+    };
+  } else if (theme === "ayu-dark") {
+    config = {
+      startOnLoad: false,
+      look: "handDrawn",
+      theme: "base",
+      fontFamily: "'Architects Daughter', cursive, sans-serif",
+      flowchart: { useMaxWidth: false, htmlLabels: true },
+      sequence: { useMaxWidth: false },
+      gantt: { useMaxWidth: false },
+      themeVariables: {
+        darkMode: true,
+        background: "#0b0e14",
+        mainBkg: "#11151d",
+        secondBkg: "#171b24",
+        tertiaryColor: "#0d1017",
+        primaryColor: "#11151d",
+        primaryTextColor: "#d9d7ce",
+        primaryBorderColor: "rgba(255, 180, 84, 0.45)",
+        secondaryColor: "#171b24",
+        secondaryTextColor: "#d9d7ce",
+        secondaryBorderColor: "rgba(191, 161, 111, 0.22)",
+        lineColor: "rgba(191, 161, 111, 0.42)",
+        textColor: "#d9d7ce",
+        nodeBorder: "rgba(255, 180, 84, 0.45)",
+        clusterBkg: "rgba(255, 180, 84, 0.045)",
+        clusterBorder: "rgba(191, 161, 111, 0.18)",
+        edgeLabelBackground: "#141821",
+        noteBkgColor: "rgba(255, 180, 84, 0.105)",
+        noteTextColor: "#f3ead3",
+        noteBorderColor: "rgba(255, 180, 84, 0.32)",
+        actorBkg: "#11151d",
+        actorBorder: "rgba(255, 180, 84, 0.45)",
+        actorTextColor: "#d9d7ce",
+        actorLineColor: "rgba(191, 161, 111, 0.34)",
+        signalColor: "#bfa16f",
+        signalTextColor: "#d9d7ce",
+        labelBoxBkgColor: "#11151d",
+        labelBoxBorderColor: "rgba(191, 161, 111, 0.18)",
+        labelTextColor: "#d9d7ce",
+        fontFamily: "'Architects Daughter', cursive, sans-serif",
+      }
+    };
+  } else {
+    config = {
+      startOnLoad: false,
+      look: "handDrawn",
+      theme: "base",
+      fontFamily: "'Architects Daughter', cursive, sans-serif",
+      flowchart: { useMaxWidth: false, htmlLabels: true },
+      sequence: { useMaxWidth: false },
+      gantt: { useMaxWidth: false },
+      themeVariables: {
+        darkMode: true,
+        background: '#0B0D12',
+        primaryColor: '#14171F',
+        primaryBorderColor: '#8B7DFF',
+        primaryTextColor: '#E4E7EC',
+        secondaryColor: '#1A1E27',
+        secondaryBorderColor: 'rgba(255,255,255,0.08)',
+        secondaryTextColor: '#E4E7EC',
+        tertiaryColor: '#12151C',
+        tertiaryBorderColor: 'rgba(255,255,255,0.06)',
+        lineColor: '#8A92A6',
+        edgeLabelBackground: '#14171F',
+        textColor: '#E4E7EC',
+        fontFamily: "'Architects Daughter', cursive, sans-serif",
+        noteBkgColor: 'rgba(139,125,255,0.12)',
+        noteBorderColor: '#8B7DFF',
+        noteTextColor: '#E4E7EC',
+        clusterBkg: '#101319',
+        clusterBorder: 'rgba(255,255,255,0.08)',
+        actorBkg: '#14171F',
+        actorBorder: '#8B7DFF',
+        activationBkgColor: '#1A1E27',
+      }
+    };
+  }
+  mermaid.initialize(config);
+}
+
 async function initMermaid() {
   if (!window.mermaid) {
     console.warn("Mermaid library is not loaded; skipping diagram rendering.");
@@ -611,20 +725,7 @@ async function initMermaid() {
   }
 
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-  const mermaidTheme = currentTheme === "light" ? "default" : "dark";
-
-  mermaid.initialize({
-    startOnLoad: false,
-    look: "handDrawn",
-    theme: mermaidTheme,
-    fontFamily: "'Architects Daughter', cursive, sans-serif",
-    flowchart: { useMaxWidth: false, htmlLabels: true },
-    sequence: { useMaxWidth: false },
-    gantt: { useMaxWidth: false },
-    themeVariables: {
-      fontFamily: "'Architects Daughter', cursive, sans-serif",
-    }
-  });
+  initializeMermaid(currentTheme);
 
   const blocks = document.querySelectorAll("pre.mermaid");
   for (const block of blocks) {
@@ -697,20 +798,7 @@ async function updateMermaidTheme() {
   if (!window.mermaid) return;
 
   const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-  const mermaidTheme = currentTheme === "light" ? "default" : "dark";
-
-  mermaid.initialize({
-    startOnLoad: false,
-    look: "handDrawn",
-    theme: mermaidTheme,
-    fontFamily: "'Architects Daughter', cursive, sans-serif",
-    flowchart: { useMaxWidth: false, htmlLabels: true },
-    sequence: { useMaxWidth: false },
-    gantt: { useMaxWidth: false },
-    themeVariables: {
-      fontFamily: "'Architects Daughter', cursive, sans-serif",
-    }
-  });
+  initializeMermaid(currentTheme);
 
   const containers = document.querySelectorAll(".mermaid-container");
   for (const container of containers) {
@@ -729,7 +817,6 @@ async function updateMermaidTheme() {
 
 async function setupInteractiveDiagram(container, content, viewport, code, zoomInBtn, zoomOutBtn, resetBtn, maximizeBtn, rotateBtn) {
   const id = `mermaid-svg-${++mermaidIdCounter}`;
-  content.innerHTML = "";
 
   try {
     const { svg } = await mermaid.render(id, code);
@@ -1063,7 +1150,7 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
   } catch (err) {
     console.error("Failed to render mermaid diagram: ", err);
     content.innerHTML = `
-      <div style="color: #ef4444; padding: 1.5rem; font-family: 'Architects Daughter', cursive, monospace; border-left: 4px solid #ef4444; background: var(--color-code-bg); text-align: left;">
+      <div style="color: #ef4444; padding: 1.5rem; font-family: var(--font-mono), monospace; border-left: 4px solid #ef4444; background: var(--color-code-bg); text-align: left;">
         <strong>Mermaid Error:</strong>
         <pre style="border: none; margin: 0; padding: 0.5rem 0; color: #ef4444; background: transparent; font-size: 14px; text-align: left;">${err.message || err}</pre>
       </div>
