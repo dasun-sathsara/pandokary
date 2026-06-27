@@ -6,7 +6,24 @@ if (window.mermaid) {
   }
 }
 
+// Central scroll-locking utility for overlays and drawers (globally scoped)
+function updateScrollLock() {
+  const isTableMaximized = document.querySelector(".table-scroll-container.maximized") !== null;
+  const isMermaidMaximized = document.querySelector(".mermaid-container.maximized") !== null;
+  const isLightboxActive = document.querySelector(".lightbox-backdrop") !== null;
+  const isTOCOpenMobile = !document.documentElement.classList.contains("toc-collapsed") && window.innerWidth < 1400;
+
+  if (isTableMaximized || isMermaidMaximized || isLightboxActive || isTOCOpenMobile) {
+    document.body.classList.add("scroll-locked");
+  } else {
+    document.body.classList.remove("scroll-locked");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+  // Update scroll lock on resize in case mobile layout state toggles
+  window.addEventListener("resize", updateScrollLock, { passive: true });
+
   // 1. Load custom fonts
   if (document.fonts) {
     try {
@@ -169,11 +186,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         container.classList.add("maximized");
         maximizeBtn.innerText = "🚪";
         maximizeBtn.title = "Restore Normal View";
-        document.body.style.overflow = "hidden";
+        updateScrollLock();
 
         const backdrop = document.createElement("div");
         backdrop.className = "modal-backdrop";
         document.body.appendChild(backdrop);
+        backdrop.addEventListener("touchmove", (e) => {
+          e.preventDefault();
+        }, { passive: false });
         backdrop.addEventListener("click", () => {
           maximizeBtn.click();
         });
@@ -193,7 +213,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           container.classList.remove("maximized");
           container.classList.remove("rotated-landscape");
           if (backdrop) backdrop.remove();
-          document.body.style.overflow = "";
+          updateScrollLock();
           maximizeBtn.innerText = "🔍";
           maximizeBtn.title = "Toggle Fullscreen";
           updateShadows();
@@ -230,69 +250,282 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(updateShadows, 100);
   });
 
-  // 5. Theme and Font Toggles
-  const themeToggle = document.createElement("button");
-  themeToggle.className = "floating-toggle theme-toggle";
-  themeToggle.setAttribute("aria-label", "Toggle theme");
-  document.body.appendChild(themeToggle);
+  // 5. Settings Pop-over Menu
+  const settingsToggle = document.createElement("button");
+  settingsToggle.className = "floating-toggle settings-toggle";
+  settingsToggle.setAttribute("aria-label", "Open appearance settings");
+  settingsToggle.setAttribute("aria-haspopup", "true");
+  settingsToggle.setAttribute("aria-expanded", "false");
+  settingsToggle.title = "Appearance Settings";
+  settingsToggle.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="settings-icon">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  `;
+  document.body.appendChild(settingsToggle);
 
-  const currentTheme = localStorage.getItem("theme") || "light";
-  document.documentElement.setAttribute("data-theme", currentTheme);
-  setHighlightTheme(currentTheme);
-  updateThemeIcon(currentTheme);
+  const settingsPopover = document.createElement("div");
+  settingsPopover.className = "settings-popover";
+  settingsPopover.setAttribute("role", "dialog");
+  settingsPopover.setAttribute("aria-label", "Appearance settings");
+  settingsPopover.setAttribute("aria-hidden", "true");
+  settingsPopover.innerHTML = `
+    <div class="settings-header">
+      <h3>Appearance</h3>
+      <button class="close-settings" aria-label="Close settings">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="settings-section">
+      <div class="settings-label">Theme</div>
+      <div class="theme-grid">
+        <button class="theme-option" data-theme-key="light" title="Light Theme">
+          <span class="theme-preview-dot light-dot"></span>
+          <span class="theme-option-name">Default</span>
+        </button>
+        <button class="theme-option" data-theme-key="github-light" title="GitHub Light Theme">
+          <span class="theme-preview-dot github-light-dot"></span>
+          <span class="theme-option-name">GitHub</span>
+        </button>
+        <button class="theme-option" data-theme-key="warm-light" title="Warm Light Theme">
+          <span class="theme-preview-dot warm-light-dot"></span>
+          <span class="theme-option-name">Paper</span>
+        </button>
+        <button class="theme-option" data-theme-key="dark" title="Dark Theme">
+          <span class="theme-preview-dot dark-dot"></span>
+          <span class="theme-option-name">Obsidian</span>
+        </button>
+        <button class="theme-option" data-theme-key="vscode-dark" title="VS Code Dark Theme">
+          <span class="theme-preview-dot vscode-dark-dot"></span>
+          <span class="theme-option-name">VS Code</span>
+        </button>
+        <button class="theme-option" data-theme-key="ayu-dark" title="Ayu Dark Theme">
+          <span class="theme-preview-dot ayu-dark-dot"></span>
+          <span class="theme-option-name">Ayu</span>
+        </button>
+      </div>
+    </div>
 
-  themeToggle.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
-    let newTheme = "light";
-    if (currentTheme === "light") {
-      newTheme = "warm-light";
-    } else if (currentTheme === "warm-light") {
-      newTheme = "dark";
-    } else if (currentTheme === "dark") {
-      newTheme = "ayu-dark";
-    } else {
-      newTheme = "light";
-    }
-    document.documentElement.setAttribute("data-theme", newTheme);
-    localStorage.setItem("theme", newTheme);
-    setHighlightTheme(newTheme);
-    updateThemeIcon(newTheme);
-    if (typeof updateMermaidTheme === "function") {
-      updateMermaidTheme();
-    }
-  });
+    <div class="settings-section">
+      <div class="settings-label">Typography</div>
+      <div class="font-selector">
+        <button class="font-option" data-font-key="studio-feixen">
+          Studio Feixen
+        </button>
+        <button class="font-option" data-font-key="google-sans-flex">
+          Google Sans
+        </button>
+      </div>
+      
+      <div class="control-row">
+        <span class="control-name">Text Size</span>
+        <div class="stepper-control">
+          <button class="stepper-btn dec-font-size" aria-label="Decrease font size">—</button>
+          <span class="stepper-val font-size-val">100%</span>
+          <button class="stepper-btn inc-font-size" aria-label="Increase font size">+</button>
+        </div>
+      </div>
+    </div>
 
-  const fontToggle = document.createElement("button");
-  fontToggle.className = "floating-toggle font-toggle";
-  fontToggle.setAttribute("aria-label", "Cycle font");
-  document.body.appendChild(fontToggle);
+    <div class="settings-section">
+      <div class="settings-label">Layout</div>
+      <div class="control-row">
+        <span class="control-name">Max Width</span>
+        <div class="stepper-control">
+          <button class="stepper-btn dec-layout-width" aria-label="Decrease layout width">—</button>
+          <span class="stepper-val layout-width-val">1040px</span>
+          <button class="stepper-btn inc-layout-width" aria-label="Increase layout width">+</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(settingsPopover);
 
   const fontOptions = [
-    {
+   {
       key: "studio-feixen",
       name: "Studio Feixen Sans",
-      label: "Sf",
       body: "'Studio Feixen Sans TRIAL', 'Studio Feixen Sans', sans-serif",
       heading: "'Studio Feixen Sans TRIAL', 'Studio Feixen Sans', sans-serif",
-    },
-    {
+   },
+   {
       key: "google-sans-flex",
       name: "Google Sans Flex",
-      label: "Gf",
       body: "'Google Sans Flex', sans-serif",
       heading: "'Google Sans Flex', sans-serif",
       opticalSizing: "auto",
       variationSettings: '"slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0',
-    },
+   },
   ];
 
   let activeFontKey = localStorage.getItem("fontChoice") || fontOptions[0].key;
   applyFontPreference(activeFontKey);
 
-  fontToggle.addEventListener("click", () => {
-    const currentIndex = fontOptions.findIndex((option) => option.key === activeFontKey);
-    const nextIndex = (currentIndex + 1) % fontOptions.length;
-    applyFontPreference(fontOptions[nextIndex].key);
+  const currentTheme = localStorage.getItem("theme") || "light";
+  document.documentElement.setAttribute("data-theme", currentTheme);
+  setHighlightTheme(currentTheme);
+  updateActiveThemeOption(currentTheme);
+
+  // Text Size control handlers
+  let fontSizeAdjust = parseInt(localStorage.getItem("font-size-adjust") || "0", 10);
+  if (fontSizeAdjust < -4 || fontSizeAdjust > 8) {
+    fontSizeAdjust = 0;
+  }
+
+  const decFontSizeBtn = settingsPopover.querySelector(".dec-font-size");
+  const incFontSizeBtn = settingsPopover.querySelector(".inc-font-size");
+  const fontSizeValLabel = settingsPopover.querySelector(".font-size-val");
+
+  function updateFontSizeUI() {
+    const pct = Math.round(((18 + fontSizeAdjust) / 18) * 100);
+    fontSizeValLabel.textContent = `${pct}%`;
+    document.documentElement.style.setProperty("--font-size-adjust", `${fontSizeAdjust}px`);
+    localStorage.setItem("font-size-adjust", fontSizeAdjust);
+    decFontSizeBtn.disabled = fontSizeAdjust <= -4;
+    incFontSizeBtn.disabled = fontSizeAdjust >= 8;
+  }
+
+  decFontSizeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (fontSizeAdjust > -4) {
+      fontSizeAdjust -= 1;
+      updateFontSizeUI();
+    }
+  });
+
+  incFontSizeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (fontSizeAdjust < 8) {
+      fontSizeAdjust += 1;
+      updateFontSizeUI();
+    }
+  });
+
+  updateFontSizeUI();
+
+  // Layout Width control handlers
+  let layoutWidth = parseInt(localStorage.getItem("layout-max-width") || "1040", 10);
+  const layoutWidthSteps = [800, 920, 1040, 1160, 1280, 1400];
+  if (!layoutWidthSteps.includes(layoutWidth)) {
+    layoutWidth = 1040;
+  }
+
+  const decLayoutWidthBtn = settingsPopover.querySelector(".dec-layout-width");
+  const incLayoutWidthBtn = settingsPopover.querySelector(".inc-layout-width");
+  const layoutWidthValLabel = settingsPopover.querySelector(".layout-width-val");
+
+  function updateLayoutWidthUI() {
+    layoutWidthValLabel.textContent = `${layoutWidth}px`;
+    document.documentElement.style.setProperty("--content-max-width", `${layoutWidth}px`);
+    localStorage.setItem("layout-max-width", layoutWidth);
+    decLayoutWidthBtn.disabled = layoutWidth <= layoutWidthSteps[0];
+    incLayoutWidthBtn.disabled = layoutWidth >= layoutWidthSteps[layoutWidthSteps.length - 1];
+  }
+
+  decLayoutWidthBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const currentIndex = layoutWidthSteps.indexOf(layoutWidth);
+    if (currentIndex > 0) {
+      layoutWidth = layoutWidthSteps[currentIndex - 1];
+      updateLayoutWidthUI();
+    }
+  });
+
+  incLayoutWidthBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const currentIndex = layoutWidthSteps.indexOf(layoutWidth);
+    if (currentIndex < layoutWidthSteps.length - 1) {
+      layoutWidth = layoutWidthSteps[currentIndex + 1];
+      updateLayoutWidthUI();
+    }
+  });
+
+  updateLayoutWidthUI();
+
+  // Toggle settings popover visibility
+  function toggleSettingsPopover(forceState) {
+    const isVisible = settingsPopover.classList.contains("active");
+    const nextState = typeof forceState === "boolean" ? forceState : !isVisible;
+    
+    if (nextState) {
+      settingsPopover.classList.add("active");
+      settingsToggle.classList.add("active");
+      settingsToggle.setAttribute("aria-expanded", "true");
+      settingsPopover.setAttribute("aria-hidden", "false");
+    } else {
+      settingsPopover.classList.remove("active");
+      settingsToggle.classList.remove("active");
+      settingsToggle.setAttribute("aria-expanded", "false");
+      settingsPopover.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  settingsToggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleSettingsPopover();
+  });
+
+  settingsPopover.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+  const closeSettingsBtn = settingsPopover.querySelector(".close-settings");
+  if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleSettingsPopover(false);
+    });
+  }
+
+  // Click outside to close
+  window.addEventListener("click", () => {
+    toggleSettingsPopover(false);
+  });
+
+  // Escape key to close
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      toggleSettingsPopover(false);
+    }
+  });
+
+  // Theme selection click handlers
+  settingsPopover.querySelectorAll(".theme-option").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const themeKey = btn.getAttribute("data-theme-key");
+      document.documentElement.setAttribute("data-theme", themeKey);
+      localStorage.setItem("theme", themeKey);
+      setHighlightTheme(themeKey);
+      updateActiveThemeOption(themeKey);
+      if (typeof updateMermaidTheme === "function") {
+        updateMermaidTheme();
+      }
+    });
+  });
+
+  function updateActiveThemeOption(theme) {
+    settingsPopover.querySelectorAll(".theme-option").forEach((btn) => {
+      if (btn.getAttribute("data-theme-key") === theme) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  }
+
+  // Font selection click handlers
+  settingsPopover.querySelectorAll(".font-option").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const fontKey = btn.getAttribute("data-font-key");
+      applyFontPreference(fontKey);
+    });
   });
 
   function applyFontPreference(key) {
@@ -310,17 +543,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       font.variationSettings || "normal",
     );
 
-    fontToggle.textContent = font.label;
-    fontToggle.title = `Font: ${font.name}`;
-    fontToggle.setAttribute("aria-label", `Cycle font (current: ${font.name})`);
+    // Update active font class in UI
+    settingsPopover.querySelectorAll(".font-option").forEach((btn) => {
+      if (btn.getAttribute("data-font-key") === key) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+
     localStorage.setItem("fontChoice", font.key);
   }
 
   function setHighlightTheme(theme) {
     const lightHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css";
     const darkHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css";
+    const vscodeHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css";
 
-    const nextHref = (theme === "dark" || theme === "ayu-dark") ? darkHref : lightHref;
+    let nextHref = lightHref;
+    if (theme === "vscode-dark") {
+      nextHref = vscodeHref;
+    } else if (theme === "dark" || theme === "ayu-dark") {
+      nextHref = darkHref;
+    }
 
     let link = document.getElementById("hljs-theme");
     if (!link) {
@@ -344,21 +589,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     link.href = nextHref;
   }
 
-  function updateThemeIcon(theme) {
-    if (theme === "light") {
-      themeToggle.innerText = "📖";
-      themeToggle.title = "Switch to Warm Light (Paper)";
-    } else if (theme === "warm-light") {
-      themeToggle.innerText = "🌙";
-      themeToggle.title = "Switch to Dark Mode (Obsidian)";
-    } else if (theme === "dark") {
-      themeToggle.innerText = "🌅";
-      themeToggle.title = "Switch to Dark Mode (Ayu)";
-    } else {
-      themeToggle.innerText = "☀️";
-      themeToggle.title = "Switch to Light Mode";
+  // Auto-hide floating buttons on scroll & save scroll position memory
+  let lastScrollTop = 0;
+  const scrollThreshold = 10; // minimum scroll distance to toggle state
+  let saveScrollTimeout;
+  window.addEventListener("scroll", () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const documentHeight = document.documentElement.scrollHeight;
+    const viewportHeight = document.documentElement.clientHeight;
+
+    // 1. Save scroll position memory (debounced)
+    clearTimeout(saveScrollTimeout);
+    saveScrollTimeout = setTimeout(() => {
+      localStorage.setItem(`pdy_scroll_${document.title}`, scrollTop);
+    }, 150);
+
+    // Prevent bounce/elastic scroll issues at page limits (top and bottom)
+    if (scrollTop < 0 || scrollTop + viewportHeight > documentHeight) {
+      return;
     }
-  }
+
+    // Ignore tiny scroll changes to prevent jitter
+    if (Math.abs(scrollTop - lastScrollTop) < scrollThreshold) {
+      return;
+    }
+
+    const isScrollingDown = scrollTop > lastScrollTop;
+
+    // 2. Settings Toggle auto-hide (mobile only)
+    if (window.innerWidth < 768) {
+      if (!settingsPopover.classList.contains("active")) {
+        if (isScrollingDown && scrollTop > 150) {
+          settingsToggle.classList.add("hidden");
+        } else {
+          settingsToggle.classList.remove("hidden");
+        }
+      }
+    } else {
+      settingsToggle.classList.remove("hidden");
+    }
+
+    // 3. TOC Toggle auto-hide (mobile only)
+    const tocToggle = document.querySelector(".toc-toggle");
+    if (tocToggle) {
+      if (window.innerWidth < 768) {
+        const isTOCOpen = !document.documentElement.classList.contains("toc-collapsed") && window.innerWidth < 1400;
+        if (!isTOCOpen) {
+          if (isScrollingDown && scrollTop > 150) {
+            tocToggle.classList.add("hidden");
+          } else {
+            tocToggle.classList.remove("hidden");
+          }
+        } else {
+          tocToggle.classList.remove("hidden");
+        }
+      } else {
+        tocToggle.classList.remove("hidden");
+      }
+    }
+
+    lastScrollTop = scrollTop;
+  }, { passive: true });
 
   // 6. MathJax & other items
   document.querySelectorAll(".mjx-svg, mjx-container, .MathJax").forEach((el) => {
@@ -459,11 +750,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     headings.forEach((heading) => observer.observe(heading));
 
+    const tocBackdrop = document.createElement("div");
+    tocBackdrop.className = "toc-backdrop";
+    document.body.appendChild(tocBackdrop);
+    tocBackdrop.addEventListener("touchmove", (e) => {
+      e.preventDefault();
+    }, { passive: false });
+
     const tocToggle = document.createElement("button");
     tocToggle.className = "floating-toggle toc-toggle";
     tocToggle.setAttribute("aria-label", "Toggle Table of Contents");
 
     let tocCollapsed = localStorage.getItem("tocCollapsed") === "true";
+    if (window.innerWidth < 1400) {
+      tocCollapsed = true; // Always start collapsed on mobile viewports
+    }
+    
     if (tocCollapsed) {
       document.documentElement.classList.add("toc-collapsed");
       tocToggle.innerText = "📖";
@@ -474,17 +776,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     document.body.appendChild(tocToggle);
 
-    tocToggle.addEventListener("click", () => {
-      document.documentElement.classList.toggle("toc-collapsed");
-      const isCollapsed = document.documentElement.classList.contains("toc-collapsed");
-      localStorage.setItem("tocCollapsed", isCollapsed);
-      if (isCollapsed) {
+    function toggleTOC(forceState) {
+      const isCurrentlyCollapsed = document.documentElement.classList.contains("toc-collapsed");
+      const nextState = typeof forceState === "boolean" ? forceState : !isCurrentlyCollapsed;
+
+      if (nextState) {
+        document.documentElement.classList.add("toc-collapsed");
+        localStorage.setItem("tocCollapsed", "true");
         tocToggle.innerText = "📖";
         tocToggle.title = "Show Table of Contents";
       } else {
+        document.documentElement.classList.remove("toc-collapsed");
+        localStorage.setItem("tocCollapsed", "false");
         tocToggle.innerText = "✖";
         tocToggle.title = "Hide Table of Contents";
       }
+      
+      updateScrollLock();
+    }
+
+    tocToggle.addEventListener("click", () => {
+      toggleTOC();
+    });
+
+    tocBackdrop.addEventListener("click", () => {
+      toggleTOC(true);
+    });
+
+    // Close sidebar drawer when clicking any TOC link on mobile
+    tocList.querySelectorAll(".toc-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth < 1400) {
+          toggleTOC(true);
+        }
+      });
     });
   }
 
@@ -529,14 +854,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       const backdrop = document.createElement("div");
       backdrop.className = "lightbox-backdrop";
 
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "lightbox-close";
+      closeBtn.setAttribute("aria-label", "Close image");
+      closeBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      `;
+
       const zoomedImg = document.createElement("img");
       zoomedImg.className = "lightbox-img";
       zoomedImg.src = img.src;
       zoomedImg.alt = img.alt || "Zoomed image";
 
+      backdrop.appendChild(closeBtn);
       backdrop.appendChild(zoomedImg);
       document.body.appendChild(backdrop);
-      document.body.style.overflow = "hidden";
+      updateScrollLock();
+      
+      backdrop.addEventListener("touchmove", (e) => {
+        e.preventDefault();
+      }, { passive: false });
 
       setTimeout(() => {
         backdrop.classList.add("active");
@@ -546,12 +886,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         backdrop.classList.remove("active");
         setTimeout(() => {
           backdrop.remove();
-          document.body.style.overflow = "";
+          updateScrollLock();
         }, 300);
       };
 
       backdrop.addEventListener("click", closeLightbox);
-      
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeLightbox();
+      });
+
+      zoomedImg.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+
       const escHandler = (e) => {
         if (e.key === "Escape") {
           closeLightbox();
@@ -559,22 +907,197 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       };
       document.addEventListener("keydown", escHandler);
+
+      // Pan & Zoom state
+      let scale = 1;
+      let pointX = 0;
+      let pointY = 0;
+      let startX = 0;
+      let startY = 0;
+      let isDragging = false;
+
+      // Touch variables for pinch
+      let initialDist = 0;
+      let startScale = 1;
+
+      function updateTransform(withTransition) {
+        if (withTransition) {
+          zoomedImg.style.transition = "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)";
+        } else {
+          zoomedImg.style.transition = "none";
+        }
+        zoomedImg.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+      }
+
+      // Double tap/click to zoom
+      zoomedImg.addEventListener("dblclick", (e) => {
+        e.stopPropagation();
+        if (scale > 1.5) {
+          scale = 1;
+          pointX = 0;
+          pointY = 0;
+        } else {
+          scale = 2.5;
+          const rect = zoomedImg.getBoundingClientRect();
+          const offsetX = e.clientX - rect.left - rect.width / 2;
+          const offsetY = e.clientY - rect.top - rect.height / 2;
+          pointX = -offsetX * 1.5;
+          pointY = -offsetY * 1.5;
+        }
+        updateTransform(true);
+      });
+
+      // Mouse drag panning
+      zoomedImg.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isDragging = true;
+        startX = e.clientX - pointX;
+        startY = e.clientY - pointY;
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        pointX = e.clientX - startX;
+        pointY = e.clientY - startY;
+        updateTransform(false);
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      // Touch drag & pinch zoom
+      zoomedImg.addEventListener("touchstart", (e) => {
+        e.stopPropagation();
+        if (e.touches.length === 1) {
+          isDragging = true;
+          startX = e.touches[0].clientX - pointX;
+          startY = e.touches[0].clientY - pointY;
+        } else if (e.touches.length === 2) {
+          isDragging = false;
+          initialDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          startScale = scale;
+        }
+      }, { passive: true });
+
+      zoomedImg.addEventListener("touchmove", (e) => {
+        e.stopPropagation();
+        if (isDragging && e.touches.length === 1) {
+          pointX = e.touches[0].clientX - startX;
+          pointY = e.touches[0].clientY - startY;
+          updateTransform(false);
+        } else if (e.touches.length === 2) {
+          const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          scale = Math.min(Math.max(startScale * (dist / initialDist), 0.8), 5);
+          updateTransform(false);
+        }
+      }, { passive: true });
+
+      zoomedImg.addEventListener("touchend", () => {
+        isDragging = false;
+        if (scale < 1) {
+          scale = 1;
+          pointX = 0;
+          pointY = 0;
+          updateTransform(true);
+        }
+      });
     });
   });
 
-  // 10. Load and Render Mermaid Diagrams
+  // 10. Heading Hover Anchor Links
+  document.querySelectorAll("main h2, main h3, main h4, main h5").forEach((heading) => {
+    if (!heading.id) {
+      heading.id = heading.textContent.trim().toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+    }
+    heading.classList.add("heading-with-anchor");
+
+    const anchor = document.createElement("a");
+    anchor.className = "heading-anchor";
+    anchor.href = `#${heading.id}`;
+    anchor.innerHTML = "🔗";
+    anchor.title = "Copy link to this section";
+    anchor.setAttribute("aria-label", `Link to ${heading.textContent}`);
+
+    anchor.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const url = `${window.location.origin}${window.location.pathname}${window.location.search}#${heading.id}`;
+  try {
+        await navigator.clipboard.writeText(url);
+        history.pushState(null, null, `#${heading.id}`);
+        const originalText = anchor.innerHTML;
+        anchor.innerHTML = "✔️";
+        anchor.classList.add("copied");
+      setTimeout(() => {
+          anchor.innerHTML = originalText;
+          anchor.classList.remove("copied");
+        }, 1500);
+      } catch (err) {
+        console.error("Failed to copy heading link:", err);
+    }
+    });
+    heading.appendChild(anchor);
+  });
+
+  // 11. Global Keyboard Shortcuts (Escape to exit maximized views)
+  document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+      document.querySelectorAll(".table-scroll-container.maximized").forEach((container) => {
+        const btn = container.querySelector(".btn-maximize");
+        if (btn) btn.click();
+});
+      document.querySelectorAll(".mermaid-container.maximized").forEach((container) => {
+        const btn = container.querySelector(".btn-maximize");
+        if (btn) btn.click();
+      });
+    }
+  });
+
+  // 12. Load and Render Mermaid Diagrams
   try {
     await initMermaid();
   } catch (e) {
     console.error("Failed to load and render Mermaid diagrams:", e);
   } finally {
-    // 11. Fade-out and remove the loading spinner/overlay
+    // 13. Fade-out and remove the loading spinner/overlay & restore scroll position
     const overlay = document.getElementById("loading-overlay");
     if (overlay) {
       overlay.classList.add("fade-out");
       setTimeout(() => {
         overlay.remove();
+        if (window.location.hash) {
+          const target = document.querySelector(window.location.hash);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        } else {
+          const savedPosition = localStorage.getItem(`pdy_scroll_${document.title}`);
+          if (savedPosition) {
+            window.scrollTo(0, parseInt(savedPosition, 10));
+          }
+        }
       }, 500);
+    } else {
+      if (window.location.hash) {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        const savedPosition = localStorage.getItem(`pdy_scroll_${document.title}`);
+        if (savedPosition) {
+          window.scrollTo(0, parseInt(savedPosition, 10));
+        }
+      }
     }
   }
 });
@@ -593,6 +1116,90 @@ function initializeMermaid(theme) {
       sequence: { useMaxWidth: false },
       gantt: { useMaxWidth: false },
       themeVariables: {
+        fontFamily: "'Architects Daughter', cursive, sans-serif",
+      }
+    };
+  } else if (theme === "github-light") {
+    config = {
+      startOnLoad: false,
+      look: "handDrawn",
+      theme: "base",
+      fontFamily: "'Architects Daughter', cursive, sans-serif",
+      flowchart: { useMaxWidth: false, htmlLabels: true },
+      sequence: { useMaxWidth: false },
+      gantt: { useMaxWidth: false },
+      themeVariables: {
+        darkMode: false,
+        background: "#ffffff",
+        mainBkg: "#ddf4ff",
+        secondBkg: "#f6f8fa",
+        tertiaryColor: "#eaeef2",
+        primaryColor: "#ddf4ff",
+        primaryTextColor: "#1f2328",
+        primaryBorderColor: "#0969da",
+        secondaryColor: "#f6f8fa",
+        secondaryTextColor: "#1f2328",
+        secondaryBorderColor: "#d0d7de",
+        lineColor: "#57606a",
+        textColor: "#1f2328",
+        nodeBorder: "#0969da",
+        clusterBkg: "#f6f8fa",
+        clusterBorder: "#d0d7de",
+        edgeLabelBackground: "#ffffff",
+        noteBkgColor: "#fff8c5",
+        noteTextColor: "#1f2328",
+        noteBorderColor: "#d4a72c",
+        actorBkg: "#ddf4ff",
+        actorBorder: "#0969da",
+        actorTextColor: "#1f2328",
+        actorLineColor: "#57606a",
+        signalColor: "#1f2328",
+        signalTextColor: "#1f2328",
+        labelBoxBkgColor: "#f6f8fa",
+        labelBoxBorderColor: "#d0d7de",
+        labelTextColor: "#1f2328",
+        fontFamily: "'Architects Daughter', cursive, sans-serif",
+      }
+    };
+  } else if (theme === "vscode-dark") {
+    config = {
+      startOnLoad: false,
+      look: "handDrawn",
+      theme: "base",
+      fontFamily: "'Architects Daughter', cursive, sans-serif",
+      flowchart: { useMaxWidth: false, htmlLabels: true },
+      sequence: { useMaxWidth: false },
+      gantt: { useMaxWidth: false },
+      themeVariables: {
+        darkMode: true,
+        background: "#1f1f1f",
+        mainBkg: "#252526",
+        secondBkg: "#2d2d2d",
+        tertiaryColor: "#333333",
+        primaryColor: "#264f78",
+        primaryTextColor: "#d4d4d4",
+        primaryBorderColor: "#0078d4",
+        secondaryColor: "#252526",
+        secondaryTextColor: "#d4d4d4",
+        secondaryBorderColor: "#3c3c3c",
+        lineColor: "#858585",
+        textColor: "#d4d4d4",
+        nodeBorder: "#0078d4",
+        clusterBkg: "#252526",
+        clusterBorder: "#3c3c3c",
+        edgeLabelBackground: "#1f1f1f",
+        noteBkgColor: "#3a3d41",
+        noteTextColor: "#d4d4d4",
+        noteBorderColor: "#569cd6",
+        actorBkg: "#264f78",
+        actorBorder: "#0078d4",
+        actorTextColor: "#d4d4d4",
+        actorLineColor: "#858585",
+        signalColor: "#d4d4d4",
+        signalTextColor: "#d4d4d4",
+        labelBoxBkgColor: "#252526",
+        labelBoxBorderColor: "#3c3c3c",
+        labelTextColor: "#d4d4d4",
         fontFamily: "'Architects Daughter', cursive, sans-serif",
       }
     };
@@ -863,7 +1470,7 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
     let svgW = 800;
     let svgH = 600;
     if (viewBox) {
-      const parts = viewBox.split(/\s+/).map(Number);
+      const parts = viewBox.split(/[\s,]+/).filter(Boolean).map(Number);
       if (parts.length === 4) {
         svgW = parts[2];
         svgH = parts[3];
@@ -963,11 +1570,14 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
         container.classList.add("maximized");
         maximizeBtn.innerText = "🚪";
         maximizeBtn.title = "Restore Normal View";
-        document.body.style.overflow = "hidden";
+        updateScrollLock();
 
         const backdrop = document.createElement("div");
         backdrop.className = "modal-backdrop";
         document.body.appendChild(backdrop);
+        backdrop.addEventListener("touchmove", (e) => {
+          e.preventDefault();
+        }, { passive: false });
         backdrop.addEventListener("click", () => {
           maximizeBtn.click();
         });
@@ -987,7 +1597,7 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
           container.classList.remove("maximized");
           container.classList.remove("rotated-landscape");
           if (backdrop) backdrop.remove();
-          document.body.style.overflow = "";
+          updateScrollLock();
           maximizeBtn.innerText = "🔍";
           maximizeBtn.title = "Toggle Fullscreen";
         }, 350);

@@ -40,6 +40,22 @@
       $endif$
     />
 
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme');
+        var link = document.getElementById('hljs-theme');
+        if (theme && link) {
+          var vscodeHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css";
+          var darkHref = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css";
+          if (theme === "vscode-dark") {
+            link.href = vscodeHref;
+          } else if (theme === "dark" || theme === "ayu-dark") {
+            link.href = darkHref;
+          }
+        }
+      })();
+    </script>
+
     $if(inline-css)$
     <style>
       $inline-css$
@@ -116,7 +132,7 @@
 
     <footer>
       <hr />
-      <p style="text-align: center; opacity: 0.7; font-size: 0.8em">Generated with ❤️ by Dasun Sathsara</p>
+      <p class="footer-credits">Generated with <span class="heart-beat">❤️</span> by <span class="footer-name">Dasun Sathsara</span></p>
     </footer>
   </body>
 </html>
