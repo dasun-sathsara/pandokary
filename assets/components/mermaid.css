@@ -1,7 +1,52 @@
 /* =========================================
    Mermaid Diagrams & Sketchy Viewer
    ========================================= */
+/* Edge label background transparency & text knockout halo */
+.mermaid-viewport svg .edgeLabel,
+.mermaid-viewport svg .edgeLabel div,
+.mermaid-viewport svg .edgeLabel p,
+.mermaid-viewport svg .edgeLabel span {
+  background: transparent !important;
+  background-color: transparent !important;
+  fill: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 
+.mermaid-viewport svg .edgeLabel p,
+.mermaid-viewport svg .edgeLabel span,
+.mermaid-viewport svg .edgeLabel text {
+  paint-order: stroke fill;
+  stroke: var(--color-code-bg);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+/* Subgraph cluster translucent hatch & label knockout */
+.mermaid-viewport svg g.cluster path,
+.mermaid-viewport svg .cluster rect,
+.mermaid-viewport svg g.cluster rect {
+  opacity: 0.2;
+}
+
+.mermaid-viewport svg g.cluster g.node,
+.mermaid-viewport svg g.cluster .node,
+.mermaid-viewport svg g.cluster g.label,
+.mermaid-viewport svg g.cluster text,
+.mermaid-viewport svg g.node * {
+  opacity: 1 !important;
+}
+
+.mermaid-viewport svg g.cluster > .label,
+.mermaid-viewport svg g.cluster > text,
+.mermaid-viewport svg .cluster-label,
+.mermaid-viewport svg g.cluster div,
+.mermaid-viewport svg g.cluster span {
+  paint-order: stroke fill;
+  stroke: var(--color-code-bg);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
 .mermaid-container {
   margin: 2rem 0;
   border: 2px solid var(--color-border);

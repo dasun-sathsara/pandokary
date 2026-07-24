@@ -23,7 +23,7 @@ if (window.mermaid) {
 
   const MERMAID_DEFAULTS = {
     startOnLoad: false,
-    look: "classic",
+    look: "handDrawn",
     fontFamily: FONT_FAMILY,
     flowchart: { useMaxWidth: false, htmlLabels: true },
     sequence: { useMaxWidth: false },
