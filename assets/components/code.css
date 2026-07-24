@@ -127,3 +127,29 @@ pre:hover .copy-btn {
 .hljs-name {
   color: var(--code-variable);
 }
+
+/* Diff Block Formatting */
+.hljs-addition,
+.code-line.diff-addition {
+  color: #16a34a !important;
+  background-color: rgba(22, 163, 74, 0.12) !important;
+}
+
+.hljs-deletion,
+.code-line.diff-deletion {
+  color: #dc2626 !important;
+  background-color: rgba(220, 38, 38, 0.12) !important;
+}
+
+.code-line.diff-meta,
+.hljs-meta {
+  color: var(--color-text-muted) !important;
+  font-style: italic;
+}
+
+/* Line Highlighting */
+.code-line.highlighted-line {
+  background-color: var(--focused-line-background, rgba(253, 224, 71, 0.12)) !important;
+  border-left: 3px solid var(--color-accent) !important;
+  padding-left: calc(3.5em - 3px) !important;
+}
