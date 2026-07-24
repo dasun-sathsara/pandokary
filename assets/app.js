@@ -833,11 +833,24 @@ function finishLoading() {
     restore();
   }, 500);
 }
+function initTaskLists() {
+  document.querySelectorAll(".task-list li").forEach((li) => {
+    const checkbox = li.querySelector('input[type="checkbox"]');
+    if (!checkbox) return;
+    checkbox.removeAttribute("disabled");
+    const updateState = () => {
+      li.classList.toggle("task-completed", checkbox.checked);
+    };
+    updateState();
+    checkbox.addEventListener("change", updateState);
+  });
+}
 
 async function main() {
   await loadFonts();
   initCodeBlocks();
   initTables();
+  initTaskLists();
   const settings = initSettings();
   initTableOfContents();
   initFloatingButtonAutoHide(settings);
