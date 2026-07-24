@@ -7,18 +7,28 @@
 }
 
 .heading-anchor {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
   margin-left: 0.5rem;
   font-size: 0.8em;
+  color: var(--color-text-muted);
   opacity: 0;
   transition:
     opacity 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    color 0.2s ease;
   text-decoration: none !important;
   border: none !important;
   cursor: pointer;
 }
 
+.heading-anchor svg {
+  width: 0.9em;
+  height: 0.9em;
+  flex-shrink: 0;
+}
 .heading-with-anchor:hover .heading-anchor {
   opacity: 0.6;
 }

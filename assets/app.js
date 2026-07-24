@@ -15,12 +15,44 @@ function storageSet(key, value) {
     return false;
   }
 }
+const ICONS = {
+  copy: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-copy"><path d="M216,32H88A16,16,0,0,0,72,48V72H48A16,16,0,0,0,32,88V216a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V184h24a16,16,0,0,0,16-16V48A16,16,0,0,0,216,32ZM176,216H48V88H176V216Zm40-40H192V88a16,16,0,0,0-16-16H88V48H216V176Z"/></svg>',
+  check:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-check"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></svg>',
+  chevronDown:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-caret-down"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,48,88H208a8,8,0,0,1,5.66,13.66Z"/></svg>',
+  chevronUp:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-caret-up"><path d="M208,168H48a8,8,0,0,1-5.66-13.66l80-80a8,8,0,0,1,11.32,0l80,80A8,8,0,0,1,208,168Z"/></svg>',
+  table:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-table table-title-icon"><path d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM32,64H224V96H32ZM32,112H104v32H32ZM120,112h104v32H120ZM32,192V160H104v32ZM224,192H120V160H224Z"/></svg>',
+  maximize:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrows-out-simple"><path d="M216,48V96a8,8,0,0,1-16,0V67.31l-42.34,42.35a8,8,0,0,1-11.32-11.32L188.69,56H160a8,8,0,0,1,0-16h48A8,8,0,0,1,216,48ZM96,152a8,8,0,0,0-5.66,2.34L48,196.69V168a8,8,0,0,0-16,0v48a8,8,0,0,0,8,8H88a8,8,0,0,0,0-16H59.31l42.35-42.34A8,8,0,0,0,96,152Z"/></svg>',
+  minimize:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrows-in-simple"><path d="M205.66,61.66,163.31,104H192a8,8,0,0,1,0,16H144a8,8,0,0,1-8-8V64a8,8,0,0,1,16,0V92.69l42.34-42.35a8,8,0,0,1,11.32,11.32ZM112,144H64a8,8,0,0,0,0,16H92.69L50.34,202.34a8,8,0,0,0,11.32,11.32L104,171.31V200a8,8,0,0,0,16,0V152A8,8,0,0,0,112,144Z"/></svg>',
+  rotate:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrow-clockwise"><path d="M232,128a8,8,0,0,1-16,0,80,80,0,1,0-23.9,56.5,8,8,0,0,1,11.3,11.3A96,96,0,1,1,232,128ZM224,80V40a8,8,0,0,0-16,0V60.4a95.86,95.86,0,0,0-19.5-24.6,8,8,0,1,0-11.3,11.3A79.88,79.88,0,0,1,192,67.3V48a8,8,0,0,0-16,0V88a8,8,0,0,0,8,8h40a8,8,0,0,0,0-16Z"/></svg>',
+  settings:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" class="ph ph-sliders-horizontal settings-icon"><path d="M120,80a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16h72A8,8,0,0,1,120,80Zm96,0H160a8,8,0,0,0,0,16h56a8,8,0,0,0,0-16Zm-80,96H40a8,8,0,0,0,0,16h96a8,8,0,0,0,0-16Zm80,0H184a8,8,0,0,0,0,16h32a8,8,0,0,0,0-16ZM136,56a24,24,0,1,0,24,24A24,24,0,0,0,136,56Zm0,32a8,8,0,1,1,8-8A8,8,0,0,1,136,88ZM160,152a24,24,0,1,0,24,24A24,24,0,0,0,160,152Zm0,32a8,8,0,1,1,8-8A8,8,0,0,1,160,184Z"/></svg>',
+  close:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-x"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',
+  bookOpen:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256" class="ph ph-book-open"><path d="M224,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h64a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM96,192H32V64H96a24,24,0,0,1,24,24V192A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></svg>',
+  link: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-link anchor-icon"><path d="M136,176a8,8,0,0,1-5.66-2.34l-40-40a8,8,0,0,1,11.32-11.32l40,40A8,8,0,0,1,136,176Zm76.69-124.69a48,48,0,0,0-67.89,0L112,84.69a8,8,0,0,0,11.31,11.31l32.8-32.8a32,32,0,0,1,45.26,45.25L168.57,141.26a8,8,0,1,0,11.31,11.31l32.8-32.8A48,48,0,0,0,212.69,51.31ZM132.12,187.58a8,8,0,0,0-11.31-11.31L88,209.07a32,32,0,0,1-45.25-45.26L75.54,131a8,8,0,0,0-11.31-11.31L31.43,152.51a48,48,0,0,0,67.88,67.88Z"/></svg>',
+  clock:
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-clock reading-time-icon"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>',
+};
 
-function createButton(className, text, title, onClick) {
+function createButton(className, content, title, onClick) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = className;
-  button.textContent = text;
+  if (typeof content === "string" && content.includes("<svg")) {
+    button.innerHTML = content;
+  } else if (typeof content === "string") {
+    button.textContent = content;
+  } else if (content instanceof Node) {
+    button.append(content);
+  }
   if (title) {
     button.title = title;
     button.setAttribute("aria-label", title);
@@ -112,30 +144,37 @@ function initCodeBlocks() {
       const holder = document.createElement("div");
       holder.className = "code-toggle-container";
       holder.append(
-        createButton("code-toggle-btn", "Show More", "Expand code", (event) => {
-          const expanded = pre.classList.toggle("expanded");
-          event.currentTarget.textContent = expanded ? "Show Less" : "Show More";
-          if (!expanded) {
-            pre.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          }
-        }),
+        createButton(
+          "code-toggle-btn",
+          `${ICONS.chevronDown}<span>Show More</span>`,
+          "Expand code",
+          (event) => {
+            const expanded = pre.classList.toggle("expanded");
+            event.currentTarget.innerHTML = expanded
+              ? `${ICONS.chevronUp}<span>Show Less</span>`
+              : `${ICONS.chevronDown}<span>Show More</span>`;
+            if (!expanded) {
+              pre.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }
+          },
+        ),
       );
       pre.after(holder);
     }
 
     pre.append(
-      createButton("copy-btn", "Copy", "Copy code", async (event) => {
+      createButton("copy-btn", `${ICONS.copy}<span>Copy</span>`, "Copy code", async (event) => {
         const button = event.currentTarget;
         try {
           await navigator.clipboard.writeText(code.innerText);
-          button.textContent = "Copied!";
+          button.innerHTML = `${ICONS.check}<span>Copied!</span>`;
           button.classList.add("success");
         } catch (error) {
           console.error("Copy failed", error);
           button.textContent = "Error";
         }
         setTimeout(() => {
-          button.textContent = "Copy";
+          button.innerHTML = `${ICONS.copy}<span>Copy</span>`;
           button.classList.remove("success");
         }, 2000);
       }),
@@ -149,7 +188,7 @@ function initTables() {
     container.className = "table-scroll-container";
     const toolbar = document.createElement("div");
     toolbar.className = "table-toolbar";
-    toolbar.innerHTML = '<span class="table-title">📊 Data Table</span>';
+    toolbar.innerHTML = `<span class="table-title">${ICONS.table} <span>Data Table</span></span>`;
     const actions = document.createElement("div");
     actions.className = "table-actions";
     const wrapper = document.createElement("div");
@@ -164,21 +203,26 @@ function initTables() {
       right.style.opacity =
         wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth - 2 ? "1" : "0";
     };
-    const maximize = createButton("table-btn btn-maximize", "🔍", "Toggle fullscreen", (event) => {
-      const button = event.currentTarget;
-      if (!container.classList.contains("maximized")) {
-        const backdrop = openModal(container);
-        backdrop.addEventListener("click", () => button.click());
-        button.textContent = "🚪";
-        button.title = "Restore Normal View";
-      } else {
-        closeModal(container);
-        button.textContent = "🔍";
-        button.title = "Toggle Fullscreen";
-      }
-      setTimeout(updateShadows, 50);
-    });
-    const rotate = createButton("table-btn btn-rotate", "🔄", "Rotate landscape", () => {
+    const maximize = createButton(
+      "table-btn btn-maximize",
+      ICONS.maximize,
+      "Toggle fullscreen",
+      (event) => {
+        const button = event.currentTarget;
+        if (!container.classList.contains("maximized")) {
+          const backdrop = openModal(container);
+          backdrop.addEventListener("click", () => button.click());
+          button.innerHTML = ICONS.minimize;
+          button.title = "Restore Normal View";
+        } else {
+          closeModal(container);
+          button.innerHTML = ICONS.maximize;
+          button.title = "Toggle Fullscreen";
+        }
+        setTimeout(updateShadows, 50);
+      },
+    );
+    const rotate = createButton("table-btn btn-rotate", ICONS.rotate, "Rotate landscape", () => {
       container.classList.toggle("rotated-landscape");
       setTimeout(updateShadows, 50);
     });
@@ -226,12 +270,7 @@ function initSettings() {
   toggle.setAttribute("aria-label", "Open appearance settings");
   toggle.setAttribute("aria-haspopup", "true");
   toggle.title = "Appearance Settings";
-  toggle.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="settings-icon">
-      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-      <circle cx="12" cy="12" r="3"/>
-    </svg>
-  `;
+  toggle.innerHTML = ICONS.settings;
   toggle.setAttribute("aria-expanded", "false");
   document.body.append(toggle);
 
@@ -243,10 +282,7 @@ function initSettings() {
     <div class="settings-header">
       <h3>Appearance</h3>
       <button class="close-settings" aria-label="Close settings">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
+       ${ICONS.close}
       </button>
     </div>
     <div class="settings-section">
@@ -434,14 +470,18 @@ function initTableOfContents() {
     passive: false,
   });
   document.body.append(backdrop);
-  const toggle = createButton("floating-toggle toc-toggle", "📖", "Show Table of Contents");
+  const toggle = createButton(
+    "floating-toggle toc-toggle",
+    ICONS.bookOpen,
+    "Show Table of Contents",
+  );
   document.body.append(toggle);
 
   let collapsed = window.innerWidth < 1400 || storageGet("tocCollapsed", "false") === "true";
   const setCollapsed = (value) => {
     collapsed = value;
     document.documentElement.classList.toggle("toc-collapsed", value);
-    toggle.textContent = value ? "📖" : "✖";
+    toggle.innerHTML = value ? ICONS.bookOpen : ICONS.close;
     toggle.title = value ? "Show Table of Contents" : "Hide Table of Contents";
     toggle.setAttribute("aria-label", toggle.title);
     storageSet("tocCollapsed", value);
@@ -566,7 +606,7 @@ function initReadingProgress() {
     const words = main.innerText.trim().split(/\s+/).filter(Boolean).length;
     const label = document.createElement("p");
     label.className = "reading-time";
-    label.innerHTML = `⏱️ <strong>${Math.ceil(words / 200)} min</strong> read`;
+    label.innerHTML = `${ICONS.clock} <strong>${Math.ceil(words / 200)} min</strong> read`;
     header.append(label);
   }
 }
@@ -584,7 +624,7 @@ function openLightbox(image) {
   backdrop.className = "lightbox-backdrop";
   const zoomed = image.cloneNode();
   zoomed.className = "lightbox-img";
-  const close = createButton("lightbox-close", "×", "Close image");
+  const close = createButton("lightbox-close", ICONS.close, "Close image");
   backdrop.append(close, zoomed);
   document.body.append(backdrop);
   requestAnimationFrame(() => {
@@ -721,7 +761,7 @@ function initHeadingLinks() {
     const anchor = document.createElement("a");
     anchor.className = "heading-anchor";
     anchor.href = `#${heading.id}`;
-    anchor.textContent = "🔗";
+    anchor.innerHTML = ICONS.link;
     anchor.title = "Copy link to this section";
     anchor.setAttribute("aria-label", `Link to ${heading.textContent}`);
     anchor.addEventListener("click", async (event) => {
@@ -729,10 +769,10 @@ function initHeadingLinks() {
       history.pushState(null, "", anchor.hash);
       try {
         await navigator.clipboard.writeText(window.location.href);
-        anchor.textContent = "✔️";
+        anchor.innerHTML = ICONS.check;
         anchor.classList.add("copied");
         setTimeout(() => {
-          anchor.textContent = "🔗";
+          anchor.innerHTML = ICONS.link;
           anchor.classList.remove("copied");
         }, 1500);
       } catch (error) {

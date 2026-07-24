@@ -124,12 +124,19 @@
 
 .mermaid-title,
 .table-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-family: var(--font-heading);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-text-muted);
 }
 
+.mermaid-title svg,
+.table-title svg {
+  flex-shrink: 0;
+}
 .mermaid-actions,
 .table-actions {
   display: flex;

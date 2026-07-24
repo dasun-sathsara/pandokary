@@ -54,14 +54,20 @@ pre code.hljs {
   background: transparent;
   border: 1px solid transparent;
   color: var(--color-text-muted);
-  border-radius: 0;
-  padding: 0.25rem 0.4rem;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   transition: all 0.2s;
   opacity: 0;
 }
 
+.copy-btn svg {
+  flex-shrink: 0;
+}
 pre:hover .copy-btn {
   opacity: 1;
 }
