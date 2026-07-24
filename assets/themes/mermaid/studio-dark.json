@@ -15,7 +15,7 @@
     "lineColor": "#858585",
     "textColor": "#d4d4d4",
     "nodeBorder": "#0078d4",
-    "clusterBkg": "rgba(37, 37, 38, 0.6)",
+    "clusterBkg": "#252526",
     "clusterBorder": "#3c3c3c",
     "edgeLabelBackground": "transparent",
     "noteBkgColor": "#3a3d41",
