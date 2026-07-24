@@ -116,9 +116,49 @@ async function loadFonts() {
     console.warn("Font loading failed; CSS fallbacks remain active", error);
   }
 }
+function parseLineRange(spec) {
+  const lineSet = new Set();
+  if (!spec) return lineSet;
+  const cleaned = String(spec)
+    .replace(/[{}]/g, "")
+    .replace(/^line-/, "");
+  cleaned.split(",").forEach((part) => {
+    const range = part.trim().split("-");
+    if (range.length === 2) {
+      const start = parseInt(range[0], 10);
+      const end = parseInt(range[1], 10);
+      if (!Number.isNaN(start) && !Number.isNaN(end)) {
+        for (let i = start; i <= end; i++) lineSet.add(i);
+      }
+    } else {
+      const val = parseInt(range[0], 10);
+      if (!Number.isNaN(val)) lineSet.add(val);
+    }
+  });
+  return lineSet;
+}
+
+function formatSingleCodeLine(lineContent, index, highlightedLines, isDiff) {
+  const lineNumber = index + 1;
+  const classes = ["code-line"];
+
+  if (highlightedLines.has(lineNumber)) {
+    classes.push("highlighted-line");
+  }
+
+  if (isDiff) {
+    const stripped = lineContent.replace(/<[^>]+>/g, "").trim();
+    if (stripped.startsWith("+")) classes.push("diff-addition");
+    else if (stripped.startsWith("-")) classes.push("diff-deletion");
+    else if (stripped.startsWith("@@")) classes.push("diff-meta");
+  }
+
+  return `<div class="${classes.join(" ")}">${lineContent || " "}</div>`;
+}
 
 function initCodeBlocks() {
   document.querySelectorAll("pre:not(.mermaid) code").forEach((code) => {
+    const pre = code.parentElement;
     const language = [...code.classList].find(
       (name) => !["sourceCode", "code", "hljs"].includes(name) && !name.startsWith("language-"),
     );
@@ -126,10 +166,24 @@ function initCodeBlocks() {
     code.classList.add("hljs");
     if (window.hljs?.highlightElement) hljs.highlightElement(code);
 
+    const lineSpec =
+      pre.dataset.line ||
+      code.dataset.line ||
+      pre.getAttribute("data-line") ||
+      code.getAttribute("data-line") ||
+      [...pre.classList, ...code.classList].find(
+        (c) => /^\{?[\d,-]+\}?$/.test(c) || /^line-[\d,-]+$/.test(c),
+      );
+    const highlightedLines = parseLineRange(lineSpec);
+    const isDiff =
+      code.classList.contains("language-diff") || pre.classList.contains("language-diff");
+
     const lines = code.innerHTML.split(/\r?\n/);
     if (!lines.at(-1)?.trim()) lines.pop();
-    if (lines.length >= 3) {
-      code.innerHTML = lines.map((line) => `<div class="code-line">${line || " "}</div>`).join("");
+    if (lines.length >= 1) {
+      code.innerHTML = lines
+        .map((line, idx) => formatSingleCodeLine(line, idx, highlightedLines, isDiff))
+        .join("");
       code.addEventListener("click", (event) => {
         const line = event.target.closest(".code-line");
         if (line && event.clientX - line.getBoundingClientRect().left < 55) {
@@ -138,7 +192,6 @@ function initCodeBlocks() {
       });
     }
 
-    const pre = code.parentElement;
     if (lines.length > 15) {
       pre.classList.add("collapsible-code-block");
       const holder = document.createElement("div");
