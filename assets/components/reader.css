@@ -12,8 +12,14 @@
   background-color: var(--color-accent);
   z-index: 10000;
   transition: width 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
+.code-toggle-btn svg {
+  flex-shrink: 0;
+}
 /* Scrollspy Table of Contents */
 @media (min-width: 1400px) {
   .toc-sidebar {
@@ -311,4 +317,17 @@ pre code.hljs {
 .mermaid-btn.btn-rotate,
 .table-btn.btn-rotate {
   display: none !important;
+}
+
+.reading-time {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  margin-top: 0.4rem;
+}
+
+.reading-time svg {
+  flex-shrink: 0;
 }

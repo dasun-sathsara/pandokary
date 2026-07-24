@@ -16,6 +16,22 @@ footer {
   margin: 1.5rem 0 0 0;
 }
 
+.heart-beat {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  vertical-align: -0.125em;
+  margin: 0 0.15rem;
+  animation: heart-pulse 1.8s ease-in-out infinite;
+}
+
+.heart-icon {
+  fill: currentColor;
+  width: 0.9em;
+  height: 0.9em;
+}
+
 .footer-name {
   font-weight: inherit;
   background: linear-gradient(
@@ -38,5 +54,15 @@ footer {
   }
   100% {
     background-position: 200% 50%;
+  }
+}
+
+@keyframes heart-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
   }
 }
