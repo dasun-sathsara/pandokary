@@ -1,478 +1,925 @@
-// Disable Mermaid's built-in auto-init immediately, before DOMContentLoaded fires.
-// Without this, Mermaid's default startOnLoad:true races our own render pipeline
-// in initMermaid() and replaces pre.mermaid blocks before we read their code text.
+// Disable Mermaid's built-in auto-init before DOMContentLoaded can start its render pass.
 if (window.mermaid) {
   try {
     mermaid.initialize({ startOnLoad: false });
-  } catch (error) {
-    console.error("Failed to disable Mermaid auto-init", error);
-  }
+  } catch (_e) {}
 }
 
-const MERMAID_DEFAULTS = {
-  startOnLoad: false,
-  look: "handDrawn",
-  fontFamily: "'Architects Daughter', cursive, sans-serif",
-  flowchart: { useMaxWidth: false, htmlLabels: true },
-  sequence: { useMaxWidth: false },
-  gantt: { useMaxWidth: false },
-};
+(() => {
+  const FONT_FAMILY = "'Architects Daughter', cursive, sans-serif";
+  const MIN_SCALE = 0.05;
+  const MAX_SCALE = 15;
+  const NOTE_PADDING = 50;
+  const MODAL_TRANSITION_MS = 350;
+  const WHEEL_SETTLE_MS = 180;
+  const DARK_THEME_IDS = new Set(["obsidian", "studio-dark", "ayu-mirage"]);
+  const controllers = new Set();
+  const controllerByContainer = new WeakMap();
+  let activeModalController = null;
+  let lifecycleObserver = null;
+  let lifecycleFrame = 0;
+  let mermaidIdCounter = 0;
+  let renderQueue = Promise.resolve();
 
-function getMermaidConfig(theme) {
-  const themesMap = window.PDY_MERMAID_THEMES || {};
-  const selectedTheme = themesMap[theme] ? theme : themesMap.obsidian ? "obsidian" : "lumina";
-  const selectedConfig = themesMap[selectedTheme] || { theme: "default", themeVariables: {} };
-  return {
-    ...MERMAID_DEFAULTS,
-    theme: selectedConfig.theme || "default",
-    themeVariables: {
-      ...(selectedConfig.themeVariables || {}),
-      fontFamily: MERMAID_DEFAULTS.fontFamily,
-    },
+  const MERMAID_DEFAULTS = {
+    startOnLoad: false,
+    look: "handDrawn",
+    fontFamily: FONT_FAMILY,
+    flowchart: { useMaxWidth: false, htmlLabels: true },
+    sequence: { useMaxWidth: false },
+    gantt: { useMaxWidth: false },
   };
-}
 
-function initializeMermaid(theme) {
-  window.mermaid.initialize(getMermaidConfig(theme));
-}
-let mermaidIdCounter = 0;
-
-// biome-ignore lint/correctness/noUnusedVariables: called from app.js as a global entry point.
-async function initMermaid() {
-  if (!window.mermaid) {
-    console.warn("Mermaid library is not loaded; skipping diagram rendering.");
-    return;
+  function clamp(value, minimum, maximum) {
+    return Math.max(minimum, Math.min(maximum, value));
   }
 
-  const currentTheme = document.documentElement.getAttribute("data-theme") || "lumina";
-  initializeMermaid(currentTheme);
+  function getCurrentTheme() {
+    return document.documentElement.getAttribute("data-theme") || "lumina";
+  }
 
-  const blocks = document.querySelectorAll("pre.mermaid");
-  for (const block of blocks) {
-    const code = block.querySelector("code").textContent.trim();
+  function isDarkTheme(theme) {
+    const manifest = window.PDY_THEME_MANIFEST;
+    const manifestEntry = Array.isArray(manifest)
+      ? manifest.find((entry) => entry.id === theme)
+      : null;
+    if (manifestEntry?.mode) {
+      return manifestEntry.mode === "dark";
+    }
+    if (DARK_THEME_IDS.has(theme) || theme.toLowerCase().includes("dark")) {
+      return true;
+    }
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false;
+  }
 
+  function getMermaidConfig(theme) {
+    const themesMap = window.PDY_MERMAID_THEMES || {};
+    const fallbackTheme = isDarkTheme(theme) ? "obsidian" : "lumina";
+    const selectedConfig = themesMap[theme] ||
+      themesMap[fallbackTheme] || {
+        theme: isDarkTheme(theme) ? "dark" : "default",
+        themeVariables: {},
+      };
+
+    return {
+      ...MERMAID_DEFAULTS,
+      ...selectedConfig,
+      startOnLoad: false,
+      look: "handDrawn",
+      fontFamily: FONT_FAMILY,
+      flowchart: {
+        ...MERMAID_DEFAULTS.flowchart,
+        ...(selectedConfig.flowchart || {}),
+      },
+      sequence: {
+        ...MERMAID_DEFAULTS.sequence,
+        ...(selectedConfig.sequence || {}),
+      },
+      gantt: {
+        ...MERMAID_DEFAULTS.gantt,
+        ...(selectedConfig.gantt || {}),
+      },
+      themeVariables: {
+        ...(selectedConfig.themeVariables || {}),
+        fontFamily: FONT_FAMILY,
+      },
+    };
+  }
+
+  function createMermaidButton(className, text, title) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = className;
+    button.textContent = text;
+    button.title = title;
+    button.setAttribute("aria-label", title);
+    return button;
+  }
+
+  function createDiagramContainer(code) {
     const container = document.createElement("div");
     container.className = "mermaid-container";
     container.dataset.mermaidCode = code;
 
     const toolbar = document.createElement("div");
     toolbar.className = "mermaid-toolbar";
+
     const title = document.createElement("span");
     title.className = "mermaid-title";
-    title.innerText = "✏️ Sketch Diagram";
+    title.textContent = "✏️ Sketch Diagram";
 
     const actions = document.createElement("div");
     actions.className = "mermaid-actions";
-
-    const zoomOutBtn = createButton("mermaid-btn btn-zoom-out", "➖", "Zoom Out");
-    const resetBtn = createButton("mermaid-btn btn-zoom-reset", "↺", "Reset View");
-    const zoomInBtn = createButton("mermaid-btn btn-zoom-in", "➕", "Zoom In");
-    const maximizeBtn = createButton("mermaid-btn btn-maximize", "🔍", "Toggle Fullscreen");
-    const rotateBtn = createButton("mermaid-btn btn-rotate", "🔄", "Rotate Landscape");
-
-    actions.append(zoomOutBtn, resetBtn, zoomInBtn, maximizeBtn, rotateBtn);
-
-    toolbar.appendChild(title);
-    toolbar.appendChild(actions);
+    actions.append(
+      createMermaidButton("mermaid-btn btn-zoom-out", "➖", "Zoom Out"),
+      createMermaidButton("mermaid-btn btn-zoom-reset", "↺", "Reset View"),
+      createMermaidButton("mermaid-btn btn-zoom-in", "➕", "Zoom In"),
+      createMermaidButton("mermaid-btn btn-maximize", "🔍", "Toggle Fullscreen"),
+      createMermaidButton("mermaid-btn btn-rotate", "🔄", "Rotate Landscape"),
+    );
+    toolbar.append(title, actions);
 
     const viewport = document.createElement("div");
     viewport.className = "mermaid-viewport";
-
     const content = document.createElement("div");
     content.className = "mermaid-content";
-
-    viewport.appendChild(content);
-    container.appendChild(toolbar);
-    container.appendChild(viewport);
-
-    block.replaceWith(container);
-
-    await setupInteractiveDiagram(
-      container,
-      content,
-      viewport,
-      code,
-      zoomInBtn,
-      zoomOutBtn,
-      resetBtn,
-      maximizeBtn,
-      rotateBtn,
-    );
+    viewport.append(content);
+    container.append(toolbar, viewport);
+    return container;
   }
-}
 
-// biome-ignore lint/correctness/noUnusedVariables: called from app.js as a global entry point.
-async function updateMermaidTheme() {
-  if (!window.mermaid) return;
-
-  const currentTheme = document.documentElement.getAttribute("data-theme") || "lumina";
-  initializeMermaid(currentTheme);
-
-  const containers = document.querySelectorAll(".mermaid-container");
-  for (const container of containers) {
-    const code = container.dataset.mermaidCode;
-    const content = container.querySelector(".mermaid-content");
-    const viewport = container.querySelector(".mermaid-viewport");
-    const zoomInBtn = container.querySelector(".btn-zoom-in");
-    const zoomOutBtn = container.querySelector(".btn-zoom-out");
-    const resetBtn = container.querySelector(".btn-zoom-reset");
-    const maximizeBtn = container.querySelector(".btn-maximize");
-    const rotateBtn = container.querySelector(".btn-rotate");
-
-    await setupInteractiveDiagram(
-      container,
-      content,
-      viewport,
-      code,
-      zoomInBtn,
-      zoomOutBtn,
-      resetBtn,
-      maximizeBtn,
-      rotateBtn,
-    );
+  function getRequiredElements(container) {
+    const elements = {
+      content: container.querySelector(".mermaid-content"),
+      viewport: container.querySelector(".mermaid-viewport"),
+      zoomInButton: container.querySelector(".btn-zoom-in"),
+      zoomOutButton: container.querySelector(".btn-zoom-out"),
+      resetButton: container.querySelector(".btn-zoom-reset"),
+      maximizeButton: container.querySelector(".btn-maximize"),
+      rotateButton: container.querySelector(".btn-rotate"),
+    };
+    return Object.values(elements).every(Boolean) ? elements : null;
   }
-}
 
-async function setupInteractiveDiagram(
-  container,
-  content,
-  viewport,
-  code,
-  zoomInBtn,
-  zoomOutBtn,
-  resetBtn,
-  maximizeBtn,
-  rotateBtn,
-) {
-  const id = `mermaid-svg-${++mermaidIdCounter}`;
+  function parseViewBox(svg) {
+    const values = svg
+      .getAttribute("viewBox")
+      ?.trim()
+      .split(/[\s,]+/)
+      .map(Number);
+    if (values?.length === 4 && values.every(Number.isFinite)) {
+      return { width: values[2], height: values[3] };
+    }
+    return null;
+  }
 
-  try {
-    const { svg } = await mermaid.render(id, code);
-    content.innerHTML = svg;
+  function parseSvgLength(value) {
+    const parsed = Number.parseFloat(value || "");
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }
 
-    const renderedSvg = content.querySelector("svg");
-    if (!renderedSvg) return;
+  function getSvgDimensions(svg) {
+    const viewBox = parseViewBox(svg);
+    return {
+      width: viewBox?.width || parseSvgLength(svg.getAttribute("width")) || 800,
+      height: viewBox?.height || parseSvgLength(svg.getAttribute("height")) || 600,
+    };
+  }
 
-    renderedSvg.setAttribute("width", "100%");
-    renderedSvg.setAttribute("height", "100%");
-    renderedSvg.style.maxWidth = "none";
+  function getTextWidth(text) {
+    try {
+      return text.getBBox().width;
+    } catch (_error) {
+      return 0;
+    }
+  }
 
-    // Adjust note rectangles in sequence diagrams to have comfortable padding and prevent text overflows
-    renderedSvg.querySelectorAll("rect.note").forEach((rect) => {
-      const parent = rect.parentElement;
-      if (!parent) return;
-
-      const texts = parent.querySelectorAll("text.noteText");
-      if (texts.length === 0) return;
-
-      let maxTextW = 0;
-      texts.forEach((text) => {
-        const textW = text.getBBox().width;
-        if (textW > maxTextW) {
-          maxTextW = textW;
-        }
-      });
-
-      const rectW = parseFloat(rect.getAttribute("width"));
-      const rectX = parseFloat(rect.getAttribute("x"));
-
-      const padding = 50; // 25px on each side
-      const neededW = maxTextW + padding;
-
-      if (neededW > rectW) {
-        rect.setAttribute("width", neededW);
-        const diff = neededW - rectW;
-        const newRectX = rectX - diff / 2;
-        rect.setAttribute("x", newRectX);
+  function adjustSequenceNotePadding(svg) {
+    for (const rectangle of svg.querySelectorAll("rect.note")) {
+      const parent = rectangle.parentElement;
+      const texts = parent ? parent.querySelectorAll("text.noteText") : [];
+      let maximumTextWidth = 0;
+      for (const text of texts) {
+        maximumTextWidth = Math.max(maximumTextWidth, getTextWidth(text));
       }
-    });
 
-    const viewBox = renderedSvg.getAttribute("viewBox");
-    let svgW = 800;
-    let svgH = 600;
-    if (viewBox) {
-      const parts = viewBox
-        .split(/[\s,]+/)
-        .filter(Boolean)
-        .map(Number);
-      if (parts.length === 4) {
-        svgW = parts[2];
-        svgH = parts[3];
+      const currentWidth = parseSvgLength(rectangle.getAttribute("width"));
+      const currentX = Number.parseFloat(rectangle.getAttribute("x") || "");
+      const neededWidth = maximumTextWidth + NOTE_PADDING;
+      if (!currentWidth || !Number.isFinite(currentX) || neededWidth <= currentWidth) {
+        continue;
       }
+
+      rectangle.setAttribute("width", String(neededWidth));
+      rectangle.setAttribute("x", String(currentX - (neededWidth - currentWidth) / 2));
+    }
+  }
+
+  function getErrorMessage(error) {
+    if (error instanceof Error) {
+      return error.message;
+    }
+    return String(error);
+  }
+
+  function createRenderError(error) {
+    const box = document.createElement("div");
+    box.style.cssText = [
+      "color: #ef4444",
+      "padding: 1.5rem",
+      "font-family: var(--font-mono), monospace",
+      "border-left: 4px solid #ef4444",
+      "background: var(--color-code-bg)",
+      "text-align: left",
+      "width: 100%",
+      "box-sizing: border-box",
+    ].join(";");
+
+    const heading = document.createElement("strong");
+    heading.textContent = "Mermaid Error:";
+    const details = document.createElement("pre");
+    details.style.cssText = [
+      "border: none",
+      "margin: 0",
+      "padding: 0.5rem 0",
+      "color: #ef4444",
+      "background: transparent",
+      "font-size: 14px",
+      "text-align: left",
+      "white-space: pre-wrap",
+    ].join(";");
+    details.textContent = getErrorMessage(error);
+    box.append(heading, details);
+    return box;
+  }
+
+  function mapClientPoint(clientX, clientY, rectangle, isRotated) {
+    const screenX = clientX - rectangle.left;
+    const screenY = clientY - rectangle.top;
+    if (isRotated) {
+      return { x: screenY, y: rectangle.width - screenX };
+    }
+    return { x: screenX, y: screenY };
+  }
+
+  function getLogicalViewportSize(rectangle, isRotated) {
+    return isRotated
+      ? { width: rectangle.height, height: rectangle.width }
+      : { width: rectangle.width, height: rectangle.height };
+  }
+
+  function getPointerDistance(first, second) {
+    return Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
+  }
+
+  function getPointerMidpoint(first, second) {
+    return {
+      clientX: (first.clientX + second.clientX) / 2,
+      clientY: (first.clientY + second.clientY) / 2,
+    };
+  }
+
+  function getWheelScaleFactor(event, rectangle) {
+    let deltaY = event.deltaY;
+    if (!event.ctrlKey) {
+      if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+        deltaY *= 16;
+      } else if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
+        deltaY *= rectangle.height;
+      }
+      deltaY = clamp(deltaY, -120, 120);
+    }
+    return Math.exp(-deltaY * 0.0015);
+  }
+
+  function updateScrollLockFallback() {
+    if (typeof window.updateScrollLock === "function") {
+      window.updateScrollLock();
+      return;
+    }
+    const hasModal = document.querySelector(
+      ".mermaid-container.maximized,.table-scroll-container.maximized,.lightbox-backdrop.active",
+    );
+    document.body.classList.toggle("scroll-locked", Boolean(hasModal));
+  }
+
+  class MermaidController {
+    constructor(container, elements) {
+      this.container = container;
+      this.content = elements.content;
+      this.viewport = elements.viewport;
+      this.zoomInButton = elements.zoomInButton;
+      this.zoomOutButton = elements.zoomOutButton;
+      this.resetButton = elements.resetButton;
+      this.maximizeButton = elements.maximizeButton;
+      this.rotateButton = elements.rotateButton;
+      this.abortController = new AbortController();
+      this.activePointers = new Map();
+      this.diagramWidth = 800;
+      this.diagramHeight = 600;
+      this.scale = 1;
+      this.x = 0;
+      this.y = 0;
+      this.cachedRectangle = null;
+      this.dragStart = null;
+      this.pinchStart = null;
+      this.isDragging = false;
+      this.hasDiagram = false;
+      this.transformFrame = 0;
+      this.resetTimer = 0;
+      this.wheelTimer = 0;
+      this.modalTimer = 0;
+      this.modalFrame = 0;
+      this.modalBackdrop = null;
+      this.modalAbortController = null;
+      this.renderToken = 0;
+      this.resizeObserver = null;
+      this.viewport.style.touchAction = "none";
+      this.bindControls();
+      this.bindGestures();
+      this.observeViewport();
     }
 
-    viewport.svgW = svgW;
-    viewport.svgH = svgH;
-    viewport.scale = 1;
-    viewport.x = 0;
-    viewport.y = 0;
-
-    content.style.width = `${svgW}px`;
-    content.style.height = `${svgH}px`;
-
-    const updateTransform = () => {
-      content.style.transform = `translate(${viewport.x}px, ${viewport.y}px)`;
-      content.style.width = `${viewport.svgW * viewport.scale}px`;
-      content.style.height = `${viewport.svgH * viewport.scale}px`;
-    };
-
-    const resetView = () => {
-      const rect = viewport.getBoundingClientRect();
-      const viewW = rect.width;
-      const viewH = rect.height;
-      if (viewW === 0 || viewH === 0) return;
-
-      const scaleW = viewW / viewport.svgW;
-      const scaleH = viewH / viewport.svgH;
-      viewport.scale = Math.min(scaleW, scaleH) * 0.9;
-      viewport.scale = Math.max(0.05, Math.min(15, viewport.scale));
-
-      viewport.x = (viewW - viewport.svgW * viewport.scale) / 2;
-      viewport.y = (viewH - viewport.svgH * viewport.scale) / 2;
-      updateTransform();
-    };
-
-    const zoomAtPoint = (px, py, factor) => {
-      const newScale = Math.max(0.05, Math.min(15, viewport.scale * factor));
-      const cx = (px - viewport.x) / viewport.scale;
-      const cy = (py - viewport.y) / viewport.scale;
-      viewport.x = px - cx * newScale;
-      viewport.y = py - cy * newScale;
-      viewport.scale = newScale;
-      updateTransform();
-    };
-
-    viewport.updateTransform = updateTransform;
-    viewport.resetView = resetView;
-    viewport.zoomAtPoint = zoomAtPoint;
-
-    setTimeout(resetView, 50);
-
-    const newZoomInBtn = zoomInBtn.cloneNode(true);
-    zoomInBtn.replaceWith(newZoomInBtn);
-
-    const newZoomOutBtn = zoomOutBtn.cloneNode(true);
-    zoomOutBtn.replaceWith(newZoomOutBtn);
-
-    const newResetBtn = resetBtn.cloneNode(true);
-    resetBtn.replaceWith(newResetBtn);
-
-    const newMaximizeBtn = maximizeBtn.cloneNode(true);
-    maximizeBtn.replaceWith(newMaximizeBtn);
-
-    const newRotateBtn = rotateBtn.cloneNode(true);
-    rotateBtn.replaceWith(newRotateBtn);
-
-    newZoomInBtn.addEventListener("click", () => {
-      const isRotated = container.classList.contains("rotated-landscape");
-      const rect = viewport.getBoundingClientRect();
-      const px = isRotated ? rect.height / 2 : rect.width / 2;
-      const py = isRotated ? rect.width / 2 : rect.height / 2;
-      viewport.zoomAtPoint(px, py, 1.25);
-    });
-
-    newZoomOutBtn.addEventListener("click", () => {
-      const isRotated = container.classList.contains("rotated-landscape");
-      const rect = viewport.getBoundingClientRect();
-      const px = isRotated ? rect.height / 2 : rect.width / 2;
-      const py = isRotated ? rect.width / 2 : rect.height / 2;
-      viewport.zoomAtPoint(px, py, 0.8);
-    });
-
-    newResetBtn.addEventListener("click", () => {
-      viewport.resetView();
-    });
-
-    newMaximizeBtn.addEventListener("click", () => {
-      if (!container.classList.contains("maximized")) {
-        const backdrop = openModal(container);
-        backdrop.addEventListener("click", () => newMaximizeBtn.click());
-        newMaximizeBtn.innerText = "🚪";
-        newMaximizeBtn.title = "Restore Normal View";
-      } else {
-        closeModal(container);
-        newMaximizeBtn.innerText = "🔍";
-        newMaximizeBtn.title = "Toggle Fullscreen";
-      }
-      setTimeout(viewport.resetView, 50);
-    });
-
-    newRotateBtn.addEventListener("click", () => {
-      container.classList.toggle("rotated-landscape");
-      setTimeout(viewport.resetView, 50);
-    });
-
-    if (!viewport.dataset.hasObserver) {
-      const resizeObserver = new ResizeObserver(() => {
-        if (typeof viewport.resetView === "function") {
-          viewport.resetView();
-        }
-      });
-      resizeObserver.observe(viewport);
-      viewport.dataset.hasObserver = "true";
+    isRotated() {
+      return this.container.classList.contains("rotated-landscape");
     }
 
-    if (!viewport.dataset.hasListeners) {
-      const activePointers = new Map();
-      let isDragging = false;
-      let initialPointerDist = 0;
-      let initialPointerScale = 1;
-
-      viewport.style.touchAction = "none";
-
-      viewport.addEventListener("pointerdown", (e) => {
-        if (e.target.closest(".mermaid-btn")) return;
-
-        const rect = viewport.getBoundingClientRect();
-        viewport.cachedRect = {
-          left: rect.left,
-          top: rect.top,
-          width: rect.width,
-          height: rect.height,
+    getRectangle() {
+      if (!this.cachedRectangle) {
+        const rectangle = this.viewport.getBoundingClientRect();
+        this.cachedRectangle = {
+          left: rectangle.left,
+          top: rectangle.top,
+          width: rectangle.width,
+          height: rectangle.height,
         };
-
-        activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
-        viewport.setPointerCapture(e.pointerId);
-
-        if (activePointers.size === 1) {
-          isDragging = true;
-          viewport.startTouchX = e.clientX;
-          viewport.startTouchY = e.clientY;
-          viewport.startXVal = viewport.x;
-          viewport.startYVal = viewport.y;
-          viewport.style.cursor = "grabbing";
-        } else if (activePointers.size === 2) {
-          isDragging = false;
-          const pts = Array.from(activePointers.values());
-          const dx = pts[0].clientX - pts[1].clientX;
-          const dy = pts[0].clientY - pts[1].clientY;
-          initialPointerDist = Math.sqrt(dx * dx + dy * dy);
-          initialPointerScale = viewport.scale;
-        }
-      });
-
-      const handleSinglePointerMove = (e, isRotated) => {
-        const dx = e.clientX - viewport.startTouchX;
-        const dy = e.clientY - viewport.startTouchY;
-        if (isRotated) {
-          viewport.x = viewport.startXVal + dy;
-          viewport.y = viewport.startYVal - dx;
-        } else {
-          viewport.x = viewport.startXVal + dx;
-          viewport.y = viewport.startYVal + dy;
-        }
-        viewport.updateTransform();
-      };
-
-      const handleDualPointerMove = (isRotated) => {
-        const pts = Array.from(activePointers.values());
-        const dx = pts[0].clientX - pts[1].clientX;
-        const dy = pts[0].clientY - pts[1].clientY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (initialPointerDist <= 0) return;
-
-        const factor = dist / initialPointerDist;
-        const rect = viewport.cachedRect || viewport.getBoundingClientRect();
-
-        let px = (pts[0].clientX + pts[1].clientX) / 2 - rect.left;
-        let py = (pts[0].clientY + pts[1].clientY) / 2 - rect.top;
-        if (isRotated) {
-          const cx = px - rect.width / 2;
-          const cy = py - rect.height / 2;
-          px = cy + rect.height / 2;
-          py = -cx + rect.width / 2;
-        }
-
-        viewport.zoomAtPoint(px, py, factor / (viewport.scale / initialPointerScale));
-      };
-
-      viewport.addEventListener("pointermove", (e) => {
-        if (!activePointers.has(e.pointerId)) return;
-
-        const pt = activePointers.get(e.pointerId);
-        pt.clientX = e.clientX;
-        pt.clientY = e.clientY;
-
-        const isRotated = container.classList.contains("rotated-landscape");
-
-        if (activePointers.size === 1 && isDragging) {
-          handleSinglePointerMove(e, isRotated);
-        } else if (activePointers.size === 2) {
-          handleDualPointerMove(isRotated);
-        }
-      });
-      const handlePointerUp = (e) => {
-        if (activePointers.has(e.pointerId)) {
-          activePointers.delete(e.pointerId);
-          viewport.releasePointerCapture(e.pointerId);
-        }
-        if (activePointers.size < 1) {
-          isDragging = false;
-          viewport.style.cursor = "grab";
-          viewport.cachedRect = null;
-        } else if (activePointers.size === 1) {
-          isDragging = true;
-          const remaining = Array.from(activePointers.values())[0];
-          viewport.startTouchX = remaining.clientX;
-          viewport.startTouchY = remaining.clientY;
-          viewport.startXVal = viewport.x;
-          viewport.startYVal = viewport.y;
-        }
-      };
-
-      viewport.addEventListener("pointerup", handlePointerUp);
-      viewport.addEventListener("pointercancel", handlePointerUp);
-
-      viewport.addEventListener(
-        "wheel",
-        (e) => {
-          e.preventDefault();
-
-          if (!viewport.cachedRect) {
-            const rect = viewport.getBoundingClientRect();
-            viewport.cachedRect = {
-              left: rect.left,
-              top: rect.top,
-              width: rect.width,
-              height: rect.height,
-            };
-          }
-          const rect = viewport.cachedRect;
-
-          const isRotated = container.classList.contains("rotated-landscape");
-          let px, py;
-          if (isRotated) {
-            const sx = e.clientX - rect.left;
-            const sy = e.clientY - rect.top;
-            const cx = sx - rect.width / 2;
-            const cy = sy - rect.height / 2;
-            px = cy + rect.height / 2;
-            py = -cx + rect.width / 2;
-          } else {
-            px = e.clientX - rect.left;
-            py = e.clientY - rect.top;
-          }
-
-          const factor = Math.exp(-e.deltaY * 0.0015);
-          viewport.zoomAtPoint(px, py, factor);
-
-          clearTimeout(viewport.wheelTimeout);
-          viewport.wheelTimeout = setTimeout(() => {
-            viewport.cachedRect = null;
-          }, 300);
-        },
-        { passive: false },
-      );
-
-      viewport.dataset.hasListeners = "true";
+      }
+      return this.cachedRectangle;
     }
-  } catch (err) {
-    console.error("Failed to render mermaid diagram: ", err);
-    content.innerHTML = `
-      <div style="color: #ef4444; padding: 1.5rem; font-family: var(--font-mono), monospace; border-left: 4px solid #ef4444; background: var(--color-code-bg); text-align: left;">
-        <strong>Mermaid Error:</strong>
-        <pre style="border: none; margin: 0; padding: 0.5rem 0; color: #ef4444; background: transparent; font-size: 14px; text-align: left;">${err.message || err}</pre>
-      </div>
-    `;
+
+    invalidateRectangle() {
+      this.cachedRectangle = null;
+    }
+
+    scheduleTransform() {
+      if (this.transformFrame) {
+        return;
+      }
+      this.transformFrame = requestAnimationFrame(() => {
+        this.transformFrame = 0;
+        this.applyTransform();
+      });
+    }
+
+    applyTransform() {
+      this.content.style.width = `${this.diagramWidth}px`;
+      this.content.style.height = `${this.diagramHeight}px`;
+      this.content.style.transform = `translate3d(${this.x}px, ${this.y}px, 0) scale(${this.scale})`;
+    }
+
+    zoomAtPoint(pointX, pointY, factor) {
+      if (!Number.isFinite(factor) || factor <= 0) {
+        return;
+      }
+      const nextScale = clamp(this.scale * factor, MIN_SCALE, MAX_SCALE);
+      const diagramX = (pointX - this.x) / this.scale;
+      const diagramY = (pointY - this.y) / this.scale;
+      this.x = pointX - diagramX * nextScale;
+      this.y = pointY - diagramY * nextScale;
+      this.scale = nextScale;
+      this.scheduleTransform();
+    }
+
+    zoomAtCenter(factor) {
+      this.invalidateRectangle();
+      const rectangle = this.getRectangle();
+      const size = getLogicalViewportSize(rectangle, this.isRotated());
+      this.zoomAtPoint(size.width / 2, size.height / 2, factor);
+    }
+
+    resetView() {
+      this.invalidateRectangle();
+      const rectangle = this.getRectangle();
+      const size = getLogicalViewportSize(rectangle, this.isRotated());
+      if (!this.hasDiagram || size.width <= 0 || size.height <= 0) {
+        return;
+      }
+
+      const widthScale = size.width / this.diagramWidth;
+      const heightScale = size.height / this.diagramHeight;
+      this.scale = clamp(Math.min(widthScale, heightScale) * 0.9, MIN_SCALE, MAX_SCALE);
+      this.x = (size.width - this.diagramWidth * this.scale) / 2;
+      this.y = (size.height - this.diagramHeight * this.scale) / 2;
+      this.scheduleTransform();
+    }
+
+    queueReset(delay = 0) {
+      window.clearTimeout(this.resetTimer);
+      this.resetTimer = window.setTimeout(() => this.resetView(), delay);
+    }
+
+    bindControls() {
+      const signal = this.abortController.signal;
+      this.zoomInButton.addEventListener("click", () => this.zoomAtCenter(1.25), { signal });
+      this.zoomOutButton.addEventListener("click", () => this.zoomAtCenter(0.8), { signal });
+      this.resetButton.addEventListener("click", () => this.resetView(), { signal });
+      this.maximizeButton.addEventListener("click", () => this.toggleModal(), { signal });
+      this.rotateButton.addEventListener("click", () => this.toggleRotation(), { signal });
+    }
+
+    bindGestures() {
+      const signal = this.abortController.signal;
+      this.viewport.addEventListener("pointerdown", (event) => this.handlePointerDown(event), {
+        signal,
+      });
+      this.viewport.addEventListener("pointermove", (event) => this.handlePointerMove(event), {
+        signal,
+      });
+      this.viewport.addEventListener("pointerup", (event) => this.finishPointer(event.pointerId), {
+        signal,
+      });
+      this.viewport.addEventListener(
+        "pointercancel",
+        (event) => this.finishPointer(event.pointerId),
+        { signal },
+      );
+      this.viewport.addEventListener(
+        "lostpointercapture",
+        (event) => this.finishPointer(event.pointerId, false),
+        { signal },
+      );
+      this.viewport.addEventListener("wheel", (event) => this.handleWheel(event), {
+        passive: false,
+        signal,
+      });
+      window.addEventListener("blur", () => this.clearPointers(), { signal });
+      window.addEventListener("resize", () => this.invalidateRectangle(), {
+        passive: true,
+        signal,
+      });
+    }
+
+    observeViewport() {
+      if (!("ResizeObserver" in window)) {
+        return;
+      }
+      this.resizeObserver = new ResizeObserver(() => {
+        this.invalidateRectangle();
+        if (this.hasDiagram) {
+          const resetDelay = this.container.classList.contains("maximized")
+            ? MODAL_TRANSITION_MS
+            : 50;
+          this.queueReset(resetDelay);
+        }
+      });
+      this.resizeObserver.observe(this.viewport);
+    }
+
+    handlePointerDown(event) {
+      if (event.pointerType === "mouse" && event.button !== 0) {
+        return;
+      }
+      event.preventDefault();
+      if (this.activePointers.size === 0) {
+        this.invalidateRectangle();
+      }
+      this.getRectangle();
+      this.activePointers.set(event.pointerId, {
+        clientX: event.clientX,
+        clientY: event.clientY,
+      });
+      try {
+        this.viewport.setPointerCapture(event.pointerId);
+      } catch (error) {
+        console.debug("Pointer capture was unavailable", error);
+      }
+
+      if (this.activePointers.size === 1) {
+        this.startDrag();
+      } else if (this.activePointers.size === 2) {
+        this.startPinch();
+      } else {
+        this.stopDragging();
+      }
+    }
+
+    handlePointerMove(event) {
+      const pointer = this.activePointers.get(event.pointerId);
+      if (!pointer) {
+        return;
+      }
+      event.preventDefault();
+      pointer.clientX = event.clientX;
+      pointer.clientY = event.clientY;
+      if (this.activePointers.size === 1 && this.isDragging) {
+        this.updateDrag(pointer);
+      } else if (this.activePointers.size === 2) {
+        this.updatePinch();
+      }
+    }
+
+    startDrag() {
+      const pointer = this.activePointers.values().next().value;
+      if (!pointer) {
+        return;
+      }
+      this.dragStart = {
+        clientX: pointer.clientX,
+        clientY: pointer.clientY,
+        x: this.x,
+        y: this.y,
+      };
+      this.pinchStart = null;
+      this.isDragging = true;
+      this.viewport.style.cursor = "grabbing";
+    }
+
+    updateDrag(pointer) {
+      const start = this.dragStart;
+      if (!start) {
+        return;
+      }
+      const deltaX = pointer.clientX - start.clientX;
+      const deltaY = pointer.clientY - start.clientY;
+      if (this.isRotated()) {
+        this.x = start.x + deltaY;
+        this.y = start.y - deltaX;
+      } else {
+        this.x = start.x + deltaX;
+        this.y = start.y + deltaY;
+      }
+      this.scheduleTransform();
+    }
+
+    startPinch() {
+      const [first, second] = [...this.activePointers.values()];
+      if (!first || !second) {
+        return;
+      }
+      const rectangle = this.getRectangle();
+      const midpoint = getPointerMidpoint(first, second);
+      const localPoint = mapClientPoint(
+        midpoint.clientX,
+        midpoint.clientY,
+        rectangle,
+        this.isRotated(),
+      );
+      this.pinchStart = {
+        distance: getPointerDistance(first, second),
+        scale: this.scale,
+        diagramX: (localPoint.x - this.x) / this.scale,
+        diagramY: (localPoint.y - this.y) / this.scale,
+      };
+      this.stopDragging();
+    }
+
+    updatePinch() {
+      const [first, second] = [...this.activePointers.values()];
+      const start = this.pinchStart;
+      if (!first || !second || !start || start.distance <= 0) {
+        return;
+      }
+      const distance = getPointerDistance(first, second);
+      const midpoint = getPointerMidpoint(first, second);
+      const localPoint = mapClientPoint(
+        midpoint.clientX,
+        midpoint.clientY,
+        this.getRectangle(),
+        this.isRotated(),
+      );
+      this.scale = clamp(start.scale * (distance / start.distance), MIN_SCALE, MAX_SCALE);
+      this.x = localPoint.x - start.diagramX * this.scale;
+      this.y = localPoint.y - start.diagramY * this.scale;
+      this.scheduleTransform();
+    }
+
+    stopDragging() {
+      this.dragStart = null;
+      this.isDragging = false;
+      this.viewport.style.cursor = "grab";
+    }
+
+    releasePointer(pointerId) {
+      try {
+        if (this.viewport.hasPointerCapture(pointerId)) {
+          this.viewport.releasePointerCapture(pointerId);
+        }
+      } catch (error) {
+        console.debug("Pointer capture was already released", error);
+      }
+    }
+
+    finishPointer(pointerId, shouldRelease = true) {
+      if (!this.activePointers.has(pointerId)) {
+        return;
+      }
+      this.activePointers.delete(pointerId);
+      if (shouldRelease) {
+        this.releasePointer(pointerId);
+      }
+
+      if (this.activePointers.size === 0) {
+        this.stopDragging();
+        this.pinchStart = null;
+        this.invalidateRectangle();
+      } else if (this.activePointers.size === 1) {
+        this.startDrag();
+      } else if (this.activePointers.size === 2) {
+        this.startPinch();
+      }
+    }
+
+    clearPointers() {
+      const pointerIds = [...this.activePointers.keys()];
+      this.activePointers.clear();
+      for (const pointerId of pointerIds) {
+        this.releasePointer(pointerId);
+      }
+      this.stopDragging();
+      this.pinchStart = null;
+      this.invalidateRectangle();
+    }
+
+    handleWheel(event) {
+      if (!this.container.classList.contains("maximized")) {
+        return;
+      }
+      event.preventDefault();
+      if (!this.wheelTimer) {
+        this.invalidateRectangle();
+      }
+      const rectangle = this.getRectangle();
+      const point = mapClientPoint(event.clientX, event.clientY, rectangle, this.isRotated());
+      this.zoomAtPoint(point.x, point.y, getWheelScaleFactor(event, rectangle));
+      window.clearTimeout(this.wheelTimer);
+      this.wheelTimer = window.setTimeout(() => {
+        this.wheelTimer = 0;
+        this.invalidateRectangle();
+      }, WHEEL_SETTLE_MS);
+    }
+
+    toggleRotation() {
+      this.container.classList.toggle("rotated-landscape");
+      this.clearPointers();
+      this.invalidateRectangle();
+      this.queueReset(this.container.classList.contains("maximized") ? MODAL_TRANSITION_MS : 50);
+    }
+
+    toggleModal() {
+      if (this.modalBackdrop || this.modalTimer) {
+        this.closeModal();
+      } else {
+        this.openModal();
+      }
+    }
+
+    openModal() {
+      if (activeModalController && activeModalController !== this) {
+        activeModalController.closeModal(true);
+      }
+      window.clearTimeout(this.modalTimer);
+      cancelAnimationFrame(this.modalFrame);
+      this.modalTimer = 0;
+      this.modalAbortController?.abort();
+      this.modalAbortController = new AbortController();
+
+      const backdrop = document.createElement("div");
+      backdrop.className = "modal-backdrop";
+      const signal = this.modalAbortController.signal;
+      backdrop.addEventListener(
+        "click",
+        (event) => {
+          if (event.target === backdrop) {
+            this.closeModal();
+          }
+        },
+        { signal },
+      );
+      backdrop.addEventListener("touchmove", (event) => event.preventDefault(), {
+        passive: false,
+        signal,
+      });
+
+      this.modalBackdrop = backdrop;
+      activeModalController = this;
+      this.container.classList.add("maximized");
+      document.body.append(backdrop);
+      this.setMaximizeButtonState(true);
+      updateScrollLockFallback();
+      this.modalFrame = requestAnimationFrame(() => {
+        this.modalFrame = 0;
+        this.container.classList.add("visible");
+        backdrop.classList.add("visible");
+      });
+      this.invalidateRectangle();
+      this.queueReset(MODAL_TRANSITION_MS);
+    }
+
+    closeModal(immediate = false) {
+      const backdrop = this.modalBackdrop;
+      if (!backdrop && !this.modalTimer) {
+        return;
+      }
+      if (activeModalController === this) {
+        activeModalController = null;
+      }
+      cancelAnimationFrame(this.modalFrame);
+      this.modalFrame = 0;
+      this.container.classList.remove("visible");
+      backdrop?.classList.remove("visible");
+      this.setMaximizeButtonState(false);
+
+      const finishClose = () => {
+        this.modalTimer = 0;
+        this.modalAbortController?.abort();
+        this.modalAbortController = null;
+        backdrop?.remove();
+        if (this.modalBackdrop === backdrop) {
+          this.modalBackdrop = null;
+        }
+        this.container.classList.remove("maximized", "rotated-landscape");
+        this.clearPointers();
+        updateScrollLockFallback();
+        this.queueReset();
+      };
+
+      window.clearTimeout(this.modalTimer);
+      if (immediate) {
+        finishClose();
+      } else {
+        this.modalTimer = window.setTimeout(finishClose, MODAL_TRANSITION_MS);
+      }
+    }
+
+    setMaximizeButtonState(isMaximized) {
+      const title = isMaximized ? "Restore Normal View" : "Toggle Fullscreen";
+      this.maximizeButton.textContent = isMaximized ? "🚪" : "🔍";
+      this.maximizeButton.title = title;
+      this.maximizeButton.setAttribute("aria-label", title);
+      this.maximizeButton.setAttribute("aria-expanded", String(isMaximized));
+    }
+
+    async render(code) {
+      const token = ++this.renderToken;
+      const id = `mermaid-svg-${++mermaidIdCounter}`;
+      try {
+        const { svg } = await window.mermaid.render(id, code);
+        if (token !== this.renderToken) {
+          return;
+        }
+        this.content.innerHTML = svg;
+        const renderedSvg = this.content.querySelector("svg");
+        if (!renderedSvg) {
+          throw new Error("Mermaid did not return an SVG diagram.");
+        }
+
+        adjustSequenceNotePadding(renderedSvg);
+        const dimensions = getSvgDimensions(renderedSvg);
+        this.diagramWidth = dimensions.width;
+        this.diagramHeight = dimensions.height;
+        this.hasDiagram = true;
+        renderedSvg.setAttribute("width", "100%");
+        renderedSvg.setAttribute("height", "100%");
+        renderedSvg.style.maxWidth = "none";
+        this.content.style.transformOrigin = "0 0";
+        this.queueReset();
+      } catch (error) {
+        if (token === this.renderToken) {
+          this.showRenderError(error);
+        }
+        console.error("Failed to render Mermaid diagram", error);
+      }
+    }
+
+    showRenderError(error) {
+      this.hasDiagram = false;
+      this.x = 0;
+      this.y = 0;
+      this.scale = 1;
+      if (this.transformFrame) {
+        cancelAnimationFrame(this.transformFrame);
+        this.transformFrame = 0;
+      }
+      this.content.style.width = "100%";
+      this.content.style.height = "100%";
+      this.content.style.transform = "none";
+      this.content.replaceChildren(createRenderError(error));
+    }
+
+    destroy() {
+      ++this.renderToken;
+      this.abortController.abort();
+      this.resizeObserver?.disconnect();
+      this.clearPointers();
+      this.closeModal(true);
+      cancelAnimationFrame(this.transformFrame);
+      cancelAnimationFrame(this.modalFrame);
+      window.clearTimeout(this.resetTimer);
+      window.clearTimeout(this.wheelTimer);
+      window.clearTimeout(this.modalTimer);
+      controllerByContainer.delete(this.container);
+      controllers.delete(this);
+    }
   }
-}
+
+  function cleanDetachedControllers() {
+    for (const controller of controllers) {
+      if (!controller.container.isConnected) {
+        controller.destroy();
+      }
+    }
+  }
+
+  function scheduleControllerCleanup() {
+    if (lifecycleFrame) {
+      return;
+    }
+    lifecycleFrame = requestAnimationFrame(() => {
+      lifecycleFrame = 0;
+      cleanDetachedControllers();
+    });
+  }
+
+  function ensureLifecycleObserver() {
+    if (lifecycleObserver || !document.body || !("MutationObserver" in window)) {
+      return;
+    }
+    lifecycleObserver = new MutationObserver(scheduleControllerCleanup);
+    lifecycleObserver.observe(document.body, { childList: true, subtree: true });
+  }
+
+  function registerController(container) {
+    const existing = controllerByContainer.get(container);
+    if (existing) {
+      return existing;
+    }
+    const elements = getRequiredElements(container);
+    if (!elements) {
+      return null;
+    }
+    const controller = new MermaidController(container, elements);
+    controllerByContainer.set(container, controller);
+    controllers.add(controller);
+    ensureLifecycleObserver();
+    return controller;
+  }
+
+  async function renderControllers(theme, diagramControllers) {
+    try {
+      window.mermaid.initialize(getMermaidConfig(theme));
+    } catch (error) {
+      console.error("Failed to initialize Mermaid", error);
+      for (const controller of diagramControllers) {
+        controller.showRenderError(error);
+      }
+      return;
+    }
+
+    for (const controller of diagramControllers) {
+      if (controller.container.isConnected) {
+        await controller.render(controller.container.dataset.mermaidCode || "");
+      }
+    }
+  }
+
+  function enqueueRender(theme, diagramControllers) {
+    const operation = () => renderControllers(theme, diagramControllers);
+    const result = renderQueue.then(operation, operation);
+    renderQueue = result.catch(() => {});
+    return result;
+  }
+
+  function extractMermaidCode(block) {
+    return (block.querySelector("code")?.textContent || block.textContent || "").trim();
+  }
+
+  async function initMermaid() {
+    if (!window.mermaid) {
+      console.warn("Mermaid library is not loaded; skipping diagram rendering.");
+      return;
+    }
+
+    cleanDetachedControllers();
+    const newControllers = [];
+    for (const block of document.querySelectorAll("pre.mermaid")) {
+      const code = extractMermaidCode(block);
+      const container = createDiagramContainer(code);
+      block.replaceWith(container);
+      const controller = registerController(container);
+      if (controller) {
+        newControllers.push(controller);
+      }
+    }
+    await enqueueRender(getCurrentTheme(), newControllers);
+  }
+
+  async function updateMermaidTheme() {
+    if (!window.mermaid) {
+      return;
+    }
+
+    cleanDetachedControllers();
+    const diagramControllers = [];
+    for (const container of document.querySelectorAll(".mermaid-container")) {
+      const controller = registerController(container);
+      if (controller) {
+        diagramControllers.push(controller);
+      }
+    }
+    await enqueueRender(getCurrentTheme(), diagramControllers);
+  }
+
+  document.addEventListener("keydown", (event) => {
+    const isEscape =
+      event.key === "Escape" || event.code === "Escape" || event.code === "KeyEscape";
+    if (!isEscape || !activeModalController) {
+      return;
+    }
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    activeModalController.closeModal();
+  });
+
+  window.initMermaid = initMermaid;
+  window.updateMermaidTheme = updateMermaidTheme;
+})();
