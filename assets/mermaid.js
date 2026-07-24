@@ -34,6 +34,21 @@ if (window.mermaid) {
     return Math.max(minimum, Math.min(maximum, value));
   }
 
+  function requestFrame(callback) {
+    if (typeof window.requestAnimationFrame === "function") {
+      return window.requestAnimationFrame(callback);
+    }
+    return window.setTimeout(callback, 0);
+  }
+
+  function cancelFrame(frame) {
+    if (typeof window.cancelAnimationFrame === "function") {
+      window.cancelAnimationFrame(frame);
+      return;
+    }
+    window.clearTimeout(frame);
+  }
+
   function getCurrentTheme() {
     return document.documentElement.getAttribute("data-theme") || "lumina";
   }
@@ -361,7 +376,7 @@ if (window.mermaid) {
       if (this.transformFrame) {
         return;
       }
-      this.transformFrame = requestAnimationFrame(() => {
+      this.transformFrame = requestFrame(() => {
         this.transformFrame = 0;
         this.applyTransform();
       });
@@ -674,7 +689,7 @@ if (window.mermaid) {
         activeModalController.closeModal(true);
       }
       window.clearTimeout(this.modalTimer);
-      cancelAnimationFrame(this.modalFrame);
+      cancelFrame(this.modalFrame);
       this.modalTimer = 0;
       this.modalAbortController?.abort();
       this.modalAbortController = new AbortController();
@@ -702,7 +717,7 @@ if (window.mermaid) {
       document.body.append(backdrop);
       this.setMaximizeButtonState(true);
       updateScrollLockFallback();
-      this.modalFrame = requestAnimationFrame(() => {
+      this.modalFrame = requestFrame(() => {
         this.modalFrame = 0;
         this.container.classList.add("visible");
         backdrop.classList.add("visible");
@@ -719,7 +734,7 @@ if (window.mermaid) {
       if (activeModalController === this) {
         activeModalController = null;
       }
-      cancelAnimationFrame(this.modalFrame);
+      cancelFrame(this.modalFrame);
       this.modalFrame = 0;
       this.container.classList.remove("visible");
       backdrop?.classList.remove("visible");
@@ -796,7 +811,7 @@ if (window.mermaid) {
       this.y = 0;
       this.scale = 1;
       if (this.transformFrame) {
-        cancelAnimationFrame(this.transformFrame);
+        cancelFrame(this.transformFrame);
         this.transformFrame = 0;
       }
       this.content.style.width = "100%";
@@ -811,8 +826,8 @@ if (window.mermaid) {
       this.resizeObserver?.disconnect();
       this.clearPointers();
       this.closeModal(true);
-      cancelAnimationFrame(this.transformFrame);
-      cancelAnimationFrame(this.modalFrame);
+      cancelFrame(this.transformFrame);
+      cancelFrame(this.modalFrame);
       window.clearTimeout(this.resetTimer);
       window.clearTimeout(this.wheelTimer);
       window.clearTimeout(this.modalTimer);
@@ -833,7 +848,7 @@ if (window.mermaid) {
     if (lifecycleFrame) {
       return;
     }
-    lifecycleFrame = requestAnimationFrame(() => {
+    lifecycleFrame = requestFrame(() => {
       lifecycleFrame = 0;
       cleanDetachedControllers();
     });
