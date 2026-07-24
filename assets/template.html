@@ -45,6 +45,16 @@
   $endif$
   <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/@mathjax/mathjax-stix2-font@4.0.0/tex-mml-svg-mathjax-stix2.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
+  <script type="module">
+   try {
+     const elk = await import("https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.2.2/dist/mermaid-layout-elk.esm.min.mjs");
+     if (window.mermaid?.registerLayoutLoaders) {
+       window.mermaid.registerLayoutLoaders(elk.default || elk);
+     }
+   } catch (e) {
+     console.warn("ELK layout loader could not be registered:", e);
+   }
+  </script>
   $if(inline-js)$
   <script>$inline-js$</script>
   $else$

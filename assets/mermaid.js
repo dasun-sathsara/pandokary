@@ -24,8 +24,9 @@ if (window.mermaid) {
   const MERMAID_DEFAULTS = {
     startOnLoad: false,
     look: "handDrawn",
+    layout: "elk",
     fontFamily: FONT_FAMILY,
-    flowchart: { useMaxWidth: false, htmlLabels: true },
+    flowchart: { useMaxWidth: false, htmlLabels: true, defaultRenderer: "elk" },
     sequence: { useMaxWidth: false },
     gantt: { useMaxWidth: false },
   };
