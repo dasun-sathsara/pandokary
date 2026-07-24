@@ -85,12 +85,28 @@ if (window.mermaid) {
       },
     };
   }
+  const ICONS = {
+    zoomIn:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-magnifying-glass-plus"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Zm72-32a8,8,0,0,0-8,8v16H88a8,8,0,0,0,0,16h16v16a8,8,0,0,0,16,0V124h16a8,8,0,0,0,0-16H120V88A8,8,0,0,0,112,80Z"/></svg>',
+    zoomOut:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-magnifying-glass-minus"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112ZM88,104h48a8,8,0,0,1,0,16H88a8,8,0,0,1,0-16Z"/></svg>',
+    zoomReset:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrow-counter-clockwise"><path d="M224,128A96,96,0,0,1,66.5,195.82a8,8,0,1,1,11-11.64A80,80,0,1,0,56.1,120H72a8,8,0,0,1,0,16H32a8,8,0,0,1-8-8V88a8,8,0,0,1,16,0v20.4A95.86,95.86,0,0,1,224,128Z"/></svg>',
+    maximize:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrows-out-simple"><path d="M216,48V96a8,8,0,0,1-16,0V67.31l-42.34,42.35a8,8,0,0,1-11.32-11.32L188.69,56H160a8,8,0,0,1,0-16h48A8,8,0,0,1,216,48ZM96,152a8,8,0,0,0-5.66,2.34L48,196.69V168a8,8,0,0,0-16,0v48a8,8,0,0,0,8,8H88a8,8,0,0,0,0-16H59.31l42.35-42.34A8,8,0,0,0,96,152Z"/></svg>',
+    minimize:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrows-in-simple"><path d="M205.66,61.66,163.31,104H192a8,8,0,0,1,0,16H144a8,8,0,0,1-8-8V64a8,8,0,0,1,16,0V92.69l42.34-42.35a8,8,0,0,1,11.32,11.32ZM112,144H64a8,8,0,0,0,0,16H92.69L50.34,202.34a8,8,0,0,0,11.32,11.32L104,171.31V200a8,8,0,0,0,16,0V152A8,8,0,0,0,112,144Z"/></svg>',
+    rotate:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrow-clockwise"><path d="M232,128a8,8,0,0,1-16,0,80,80,0,1,0-23.9,56.5,8,8,0,0,1,11.3,11.3A96,96,0,1,1,232,128ZM224,80V40a8,8,0,0,0-16,0V60.4a95.86,95.86,0,0,0-19.5-24.6,8,8,0,1,0-11.3,11.3A79.88,79.88,0,0,1,192,67.3V48a8,8,0,0,0-16,0V88a8,8,0,0,0,8,8h40a8,8,0,0,0,0-16Z"/></svg>',
+    diagram:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-diagram mermaid-title-icon"><path d="M208,32H168a16,16,0,0,0-16,16V64a16,16,0,0,0,16,16h8v32H136V80a16,16,0,0,0-16-16H80A16,16,0,0,0,64,80v32H56A16,16,0,0,0,40,128v32a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V128a16,16,0,0,0-16-16H80V80h40v32a16,16,0,0,0,16,16h40v32h-8a16,16,0,0,0-16,16v32a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V176a16,16,0,0,0-16-16h-8V128h8a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm-40,16h40V64H168ZM96,160H56V128H96Zm112,48H168V176h40Z"/></svg>',
+  };
 
-  function createMermaidButton(className, text, title) {
+  function createMermaidButton(className, iconHtml, title) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = className;
-    button.textContent = text;
+    button.innerHTML = iconHtml;
     button.title = title;
     button.setAttribute("aria-label", title);
     return button;
@@ -106,16 +122,16 @@ if (window.mermaid) {
 
     const title = document.createElement("span");
     title.className = "mermaid-title";
-    title.textContent = "✏️ Sketch Diagram";
+    title.innerHTML = `${ICONS.diagram} <span>Sketch Diagram</span>`;
 
     const actions = document.createElement("div");
     actions.className = "mermaid-actions";
     actions.append(
-      createMermaidButton("mermaid-btn btn-zoom-out", "➖", "Zoom Out"),
-      createMermaidButton("mermaid-btn btn-zoom-reset", "↺", "Reset View"),
-      createMermaidButton("mermaid-btn btn-zoom-in", "➕", "Zoom In"),
-      createMermaidButton("mermaid-btn btn-maximize", "🔍", "Toggle Fullscreen"),
-      createMermaidButton("mermaid-btn btn-rotate", "🔄", "Rotate Landscape"),
+      createMermaidButton("mermaid-btn btn-zoom-out", ICONS.zoomOut, "Zoom Out"),
+      createMermaidButton("mermaid-btn btn-zoom-reset", ICONS.zoomReset, "Reset View"),
+      createMermaidButton("mermaid-btn btn-zoom-in", ICONS.zoomIn, "Zoom In"),
+      createMermaidButton("mermaid-btn btn-maximize", ICONS.maximize, "Toggle Fullscreen"),
+      createMermaidButton("mermaid-btn btn-rotate", ICONS.rotate, "Rotate Landscape"),
     );
     toolbar.append(title, actions);
 
@@ -733,7 +749,7 @@ if (window.mermaid) {
 
     setMaximizeButtonState(isMaximized) {
       const title = isMaximized ? "Restore Normal View" : "Toggle Fullscreen";
-      this.maximizeButton.textContent = isMaximized ? "🚪" : "🔍";
+      this.maximizeButton.innerHTML = isMaximized ? ICONS.minimize : ICONS.maximize;
       this.maximizeButton.title = title;
       this.maximizeButton.setAttribute("aria-label", title);
       this.maximizeButton.setAttribute("aria-expanded", String(isMaximized));
