@@ -1,0 +1,40 @@
+/* =========================================
+   Lightbox Enhancements (Zoom & Pan)
+   ========================================= */
+
+.lightbox-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: rgba(20, 20, 20, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10002;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.lightbox-close:hover {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.lightbox-img {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lightbox-img:active {
+  cursor: grabbing;
+}

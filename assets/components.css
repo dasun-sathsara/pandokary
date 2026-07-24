@@ -1,5 +1,7 @@
+/* Generated from assets/components/ — do not edit directly */
+
 /* =========================================
-   6. Code Blocks
+   Code Blocks & Syntax Highlighting
    ========================================= */
 
 code {
@@ -46,7 +48,7 @@ pre code.hljs {
   word-break: normal;
 }
 
-/* Copy button — top-right icon-style as in screenshot */
+/* Copy button */
 .copy-btn {
   position: absolute;
   top: 0.6rem;
@@ -72,7 +74,7 @@ pre:hover .copy-btn {
   background: var(--color-bg);
 }
 
-/* Optional syntax token classes — wire into your highlighter */
+/* Syntax token classes */
 .token.keyword,
 .hljs-keyword,
 .hljs-selector-tag,
@@ -122,8 +124,9 @@ pre:hover .copy-btn {
 }
 
 /* =========================================
-   7. Tables
+   Tables & Scroll Containers
    ========================================= */
+
 table {
   display: block;
   width: var(--table-width);
@@ -203,8 +206,7 @@ tbody tr:hover {
   border: none;
 }
 
-/* Custom scrollbar styling for the table wrapper */
-/* Global thin custom scrollbars */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   height: 6px;
   width: 6px;
@@ -289,8 +291,9 @@ tbody tr:hover {
 }
 
 /* =========================================
-   10. Settings pop-over menu
+   Settings Pop-over & Floating Controls
    ========================================= */
+
 .floating-toggle {
   position: fixed;
   width: var(--toggle-size);
@@ -572,7 +575,7 @@ tbody tr:hover {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #cb4b16; /* warm gold / terracotta */
+  background: #cb4b16;
 }
 
 /* Font Segment Selector */
@@ -676,8 +679,9 @@ tbody tr:hover {
 }
 
 /* =========================================
-   11. Mobile Responsiveness
+   Mobile Responsiveness & Media Queries
    ========================================= */
+
 @media (max-width: 768px) {
   :root {
     --font-size-body: var(--font-size-body-mobile);
@@ -946,7 +950,7 @@ tbody tr:hover {
 }
 
 /* =========================================
-   12. Mermaid Viewer & Sketchy Styles
+   Mermaid Diagrams & Sketchy Viewer
    ========================================= */
 
 .mermaid-container {
@@ -1098,18 +1102,15 @@ tbody tr:hover {
   background: transparent !important;
 }
 
-/* When maximized, let viewport grow */
 .mermaid-container.maximized .mermaid-viewport {
   height: calc(85vh - 30px);
 }
 
-/* Apply handwriting font fallback to Mermaid text elements */
 .mermaid-viewport svg text,
 .mermaid-viewport svg .label {
   font-family: "Architects Daughter", cursive, sans-serif !important;
 }
 
-/* Mobile responsive adjustments for mermaid */
 @media (max-width: 768px) {
   .mermaid-viewport {
     min-height: 280px;
@@ -1119,9 +1120,7 @@ tbody tr:hover {
   }
 }
 
-/* =========================================
-   13. Dark Mode Overrides for Mermaid Diagrams
-   ========================================= */
+/* Dark Mode Overrides for Mermaid Diagrams */
 .mermaid-viewport svg text,
 .mermaid-viewport svg tspan,
 .mermaid-viewport svg .label,
@@ -1133,27 +1132,23 @@ tbody tr:hover {
   color: var(--mermaid-text-color) !important;
 }
 
-/* Fix Sequence Diagram Actors in Dark Mode */
 .mermaid-viewport svg .actor {
   fill: var(--mermaid-actor-fill) !important;
   stroke: var(--mermaid-border-color) !important;
 }
 
-/* Fix Sequence Diagram Notes in Dark Mode */
 .mermaid-viewport svg rect.note,
 .mermaid-viewport svg .note,
 .mermaid-viewport svg .noteBox {
-  fill: var(--mermaid-note-fill) !important; /* Dark warm amber/brown */
-  stroke: var(--mermaid-note-stroke) !important; /* Gold/amber border */
+  fill: var(--mermaid-note-fill) !important;
+  stroke: var(--mermaid-note-stroke) !important;
 }
 
-/* Warm yellow/gold text color inside note elements in dark mode */
 .mermaid-viewport svg .note text,
 .mermaid-viewport svg .note tspan {
   fill: var(--mermaid-note-text) !important;
 }
 
-/* Fix Flowchart Edge Label Backgrounds in Dark Mode */
 .mermaid-viewport svg .edgeLabel rect {
   fill: var(--mermaid-edge-label-fill) !important;
   stroke: var(--mermaid-border-color) !important;
@@ -1169,10 +1164,10 @@ tbody tr:hover {
 }
 
 /* =========================================
-   14. Advanced Markdown Reader Features
+   Advanced Markdown Reader Features
    ========================================= */
 
-/* Reading Progress Bar (Option 3) */
+/* Reading Progress Bar */
 .reading-progress {
   position: fixed;
   top: 0;
@@ -1184,7 +1179,7 @@ tbody tr:hover {
   transition: width 0.1s ease;
 }
 
-/* Scrollspy Table of Contents (Option 1) */
+/* Scrollspy Table of Contents */
 @media (min-width: 1400px) {
   .toc-sidebar {
     display: block;
@@ -1206,17 +1201,13 @@ tbody tr:hover {
   }
 
   body {
-    padding-left: 310px; /* Shift body to make room for sidebar */
-    max-width: calc(
-      var(--content-max-width, 1040px) +
-      310px
-    ); /* Increase max-width to offset shifting */
+    padding-left: 310px;
+    max-width: calc(var(--content-max-width, 1040px) + 310px);
     transition:
       padding-left 0.3s ease,
       max-width 0.3s ease;
   }
 
-  /* Collapsed sidebar state */
   .toc-collapsed .toc-sidebar {
     transform: translateX(-310px);
   }
@@ -1344,7 +1335,7 @@ tbody tr:hover {
   font-weight: 700;
 }
 
-/* Lightbox Image Zoom (Option 5) */
+/* Lightbox Image Zoom */
 .lightbox-backdrop {
   position: fixed;
   top: 0;
@@ -1383,7 +1374,7 @@ tbody tr:hover {
   transform: scale(1);
 }
 
-/* Collapsible Code Blocks (Option 6) */
+/* Collapsible Code Blocks */
 .collapsible-code-block {
   max-height: 320px;
   overflow-y: hidden;
@@ -1441,7 +1432,7 @@ tbody tr:hover {
   transform: translateY(-1px);
 }
 
-/* Code block Line Numbers & Focus Highlight (Option 9) */
+/* Code block Line Numbers & Focus Highlight */
 pre code.hljs {
   counter-reset: line-counter;
 }
@@ -1477,20 +1468,20 @@ pre code.hljs {
 }
 
 .code-line.focused-line {
-  background-color: var(--focused-line-background) !important; /* soft yellow focus highlight */
+  background-color: var(--focused-line-background) !important;
   border-left: 2px solid var(--focused-line-border) !important;
   padding-left: calc(3.5em - 2px) !important;
 }
 
-/* Rotate button hidden by default on desktop */
 .mermaid-btn.btn-rotate,
 .table-btn.btn-rotate {
   display: none !important;
 }
 
 /* =========================================
-   15. Loading Overlay & Spinner
+   Loading Overlay & Spinner
    ========================================= */
+
 #loading-overlay {
   position: fixed;
   top: 0;
@@ -1536,10 +1527,9 @@ pre code.hljs {
 }
 
 /* =========================================
-   16. Heading Anchors
+   Heading Anchors
    ========================================= */
 
-/* Heading Anchors */
 .heading-with-anchor {
   position: relative;
 }
@@ -1572,8 +1562,9 @@ pre code.hljs {
 }
 
 /* =========================================
-   17. Lightbox Enhancements (Zoom & Pan)
+   Lightbox Enhancements (Zoom & Pan)
    ========================================= */
+
 .lightbox-close {
   position: fixed;
   top: 16px;
@@ -1612,8 +1603,9 @@ pre code.hljs {
 }
 
 /* =========================================
-   18. Animated Footer
+   Animated Footer
    ========================================= */
+
 footer {
   margin-top: 5rem;
   margin-bottom: 3rem;

@@ -1,0 +1,34 @@
+/* =========================================
+   Heading Anchors
+   ========================================= */
+
+.heading-with-anchor {
+  position: relative;
+}
+
+.heading-anchor {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.8em;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  text-decoration: none !important;
+  border: none !important;
+  cursor: pointer;
+}
+
+.heading-with-anchor:hover .heading-anchor {
+  opacity: 0.6;
+}
+
+.heading-anchor:hover {
+  opacity: 1 !important;
+  transform: scale(1.15);
+}
+
+.heading-anchor.copied {
+  opacity: 1 !important;
+  color: var(--color-accent) !important;
+}
