@@ -1,8 +1,14 @@
+function getMermaidAPI() {
+  const api = window.mermaid;
+  return typeof api?.initialize === "function" && typeof api?.render === "function" ? api : null;
+}
+
 // Disable Mermaid's built-in auto-init before DOMContentLoaded can start its render pass.
-if (window.mermaid) {
+const initialMermaid = getMermaidAPI();
+if (initialMermaid) {
   try {
-    mermaid.initialize({ startOnLoad: false });
-  } catch (_e) {}
+    initialMermaid.initialize({ startOnLoad: false });
+  } catch (_error) {}
 }
 
 (() => {
@@ -770,11 +776,11 @@ if (window.mermaid) {
       this.maximizeButton.setAttribute("aria-expanded", String(isMaximized));
     }
 
-    async render(code) {
+    async render(mermaid, code) {
       const token = ++this.renderToken;
       const id = `mermaid-svg-${++mermaidIdCounter}`;
       try {
-        const { svg } = await window.mermaid.render(id, code);
+        const { svg } = await mermaid.render(id, code);
         if (token !== this.renderToken) {
           return;
         }
@@ -879,8 +885,11 @@ if (window.mermaid) {
   }
 
   async function renderControllers(theme, diagramControllers) {
+    const mermaid = getMermaidAPI();
+    if (!mermaid) return;
+
     try {
-      window.mermaid.initialize(getMermaidConfig(theme));
+      mermaid.initialize(getMermaidConfig(theme));
     } catch (error) {
       console.error("Failed to initialize Mermaid", error);
       for (const controller of diagramControllers) {
@@ -891,7 +900,7 @@ if (window.mermaid) {
 
     for (const controller of diagramControllers) {
       if (controller.container.isConnected) {
-        await controller.render(controller.container.dataset.mermaidCode || "");
+        await controller.render(mermaid, controller.container.dataset.mermaidCode || "");
       }
     }
   }
@@ -904,11 +913,12 @@ if (window.mermaid) {
   }
 
   function extractMermaidCode(block) {
-    return (block.querySelector("code")?.textContent || block.textContent || "").trim();
+    const source = block.dataset.mermaidCode;
+    return (source ?? block.querySelector("code")?.textContent ?? block.textContent ?? "").trim();
   }
 
   async function initMermaid() {
-    if (!window.mermaid) {
+    if (!getMermaidAPI()) {
       console.warn("Mermaid library is not loaded; skipping diagram rendering.");
       return;
     }
@@ -928,7 +938,7 @@ if (window.mermaid) {
   }
 
   async function updateMermaidTheme() {
-    if (!window.mermaid) {
+    if (!getMermaidAPI()) {
       return;
     }
 

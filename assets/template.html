@@ -23,7 +23,6 @@
   <link rel="stylesheet" href="components/code.css">
   <link rel="stylesheet" href="components/tables.css">
   <link rel="stylesheet" href="components/settings.css">
-  <link rel="stylesheet" href="components/responsive.css">
   <link rel="stylesheet" href="components/mermaid.css">
   <link rel="stylesheet" href="components/reader.css">
   <link rel="stylesheet" href="components/loading.css">
@@ -40,6 +39,7 @@
   <link rel="stylesheet" href="themes/css/ayu-mirage.css">
   <link rel="stylesheet" href="themes/css/midnight-fjord.css">
   <link rel="stylesheet" href="themes/css/boreal.css">
+  <link rel="stylesheet" href="components/responsive.css">
   $endif$
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   $if(inline-mathjax-config)$
@@ -48,6 +48,9 @@
   <script src="mathjax-config.js"></script>
   $endif$
   <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/@mathjax/mathjax-stix2-font@4.0.0/tex-mml-svg-mathjax-stix2.js" $if(assetModeCdn)$data-external="true"$endif$></script>
+  <script>
+    window.mermaid = { startOnLoad: false };
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   $if(inline-js)$
   <script>$inline-js$</script>

@@ -353,15 +353,22 @@ li::marker {
 }
 
 .task-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
+  display: block;
+  padding-left: 0;
   line-height: 1.55;
   color: var(--color-text);
   transition:
     color 0.2s ease,
     opacity 0.2s ease;
 }
+
+.task-list li > label,
+.task-list li:not(:has(> label)) {
+  display: block;
+  padding-left: 1.85rem;
+  text-indent: -1.85rem;
+}
+
 .task-list li > p {
   margin: 0 !important;
 }
@@ -396,13 +403,22 @@ li::marker {
   border-radius: 5px;
   border: 1.5px solid var(--color-border);
   flex-shrink: 0;
-  margin-top: 0.18em;
-  display: grid;
   place-content: center;
   cursor: pointer;
   opacity: 1 !important;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.task-list input[type="checkbox"] {
+  display: inline-grid;
+  vertical-align: -0.15em;
+  margin-right: 0.65rem;
+}
+
+.inline-task-checkbox {
+  display: grid;
+  margin-top: 0.18em;
 }
 
 .task-list input[type="checkbox"]:hover,

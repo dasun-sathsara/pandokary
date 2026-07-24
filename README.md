@@ -60,8 +60,8 @@ You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a director
 
 `pandokary` now supports two asset strategies via `--asset-mode`:
 
-- `cdn` (default) leaves third-party bundles (MathJax, highlight.js, Google Fonts) on their CDNs and does **not** request `--embed-resources`, keeping exports slim. Core CSS/JS remains inline so previews work from the temp directory, but your local images/attachments stay as file references.
-- `offline` inlines everything (including CDN bundles) for fully offline viewing; expect a much larger HTML because fonts and math assets are embedded. Pair with `--no-embed` if you still want Pandoc to leave your local images/attachments as external files.
+- `cdn` (default) leaves third-party bundles (MathJax, highlight.js, Google Fonts) on their CDNs and does **not** request `--embed-resources`, keeping exports slim. Core CSS/JS remains inline so previews work from the temp directory, but your local images/attachments stay as file references. Pass `--embed` to explicitly produce a self-contained CDN-mode export.
+- `offline` inlines everything (including CDN bundles) for fully offline viewing; expect a much larger HTML because fonts and math assets are embedded. Use `--no-embed` to leave resources external instead.
 
 ### Markdown formatting
 

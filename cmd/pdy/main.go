@@ -14,9 +14,9 @@ import (
 )
 
 type config struct {
-	export, noEmbed, noFmt, verbose bool
-	assetMode, pandocPath           string
-	inputPath, exportName           string
+	export, embed, noEmbed, noFmt, verbose bool
+	assetMode, pandocPath                  string
+	inputPath, exportName                  string
 }
 
 func main() {
@@ -43,7 +43,8 @@ func main() {
 
 	result, err := pdy.Run(pdy.Options{
 		InputPath: input, Export: cfg.export, ExportName: cfg.exportName,
-		AssetMode: cfg.assetMode, EmbedResources: !cfg.noEmbed,
+		AssetMode:      cfg.assetMode,
+		EmbedResources: cfg.embedResources(),
 		FormatMarkdown: !cfg.noFmt, PandocPath: cfg.pandocPath, Verbose: cfg.verbose,
 	})
 	if err != nil {
@@ -54,6 +55,10 @@ func main() {
 	}
 }
 
+func (cfg config) embedResources() bool {
+	return !cfg.noEmbed && (cfg.embed || cfg.assetMode == "offline")
+}
+
 func exit(err error) { fmt.Fprintln(os.Stderr, err); os.Exit(1) }
 
 func parseConfig(args []string) (config, error) {
@@ -61,7 +66,8 @@ func parseConfig(args []string) (config, error) {
 	fs := flag.NewFlagSet("pdy", flag.ContinueOnError)
 	fs.SetOutput(io.Discard)
 	fs.BoolVar(&cfg.export, "export", false, "export instead of preview")
-	fs.BoolVar(&cfg.noEmbed, "no-embed", false, "leave resources external")
+	fs.BoolVar(&cfg.embed, "embed", false, "embed all resources")
+	fs.BoolVar(&cfg.noEmbed, "no-embed", false, "do not embed resources")
 	fs.BoolVar(&cfg.noFmt, "no-fmt", false, "do not format the source Markdown")
 	fs.BoolVar(&cfg.verbose, "verbose", false, "print resolved paths and commands")
 	fs.StringVar(&cfg.assetMode, "asset-mode", "cdn", "asset loading strategy: cdn or offline")
@@ -105,7 +111,8 @@ func usageSynopsis() string { var b strings.Builder; printUsage(&b); return b.St
 func printUsage(w io.Writer) {
 	_, _ = fmt.Fprintln(w, "Usage:\n  pdy [flags] <input.md>\n  pdy -e|--export <input.md> [optional-name]\n\nFlags:")
 	_, _ = fmt.Fprintln(w, "  -e, --export              export instead of preview")
-	_, _ = fmt.Fprintln(w, "      --no-embed            leave local resources external")
+	_, _ = fmt.Fprintln(w, "      --embed               embed all resources")
+	_, _ = fmt.Fprintln(w, "      --no-embed            do not embed resources (overrides --embed and offline mode)")
 	_, _ = fmt.Fprintln(w, "      --no-fmt              skip source Markdown formatting")
 	_, _ = fmt.Fprintln(w, "      --asset-mode <mode>   cdn (default) or offline")
 	_, _ = fmt.Fprintln(w, "      --pandoc <path>       override the Pandoc binary")

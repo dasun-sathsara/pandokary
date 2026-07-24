@@ -95,6 +95,12 @@ const StorageManager = (() => {
   };
 })();
 
+const COMPACT_LAYOUT_BREAKPOINT = 1200;
+
+function isCompactLayout() {
+  return window.innerWidth < COMPACT_LAYOUT_BREAKPOINT;
+}
+
 const UIComponentFactory = (() => {
   const ICONS = Object.freeze({
     copy: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-copy"><path d="M216,32H88A16,16,0,0,0,72,48V72H48A16,16,0,0,0,32,88V216a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V184h24a16,16,0,0,0,16-16V48A16,16,0,0,0,216,32ZM176,216H48V88H176V216Zm40-40H192V88a16,16,0,0,0-16-16H88V48H216V176Z"/></svg>',
@@ -182,9 +188,7 @@ const UIComponentFactory = (() => {
     ].join(",");
     const hasTOC = Boolean(document.querySelector(".toc-sidebar"));
     const mobileTOC =
-      hasTOC &&
-      window.innerWidth < 1400 &&
-      !document.documentElement.classList.contains("toc-collapsed");
+      hasTOC && isCompactLayout() && document.documentElement.classList.contains("toc-open");
     document.body.classList.toggle(
       "scroll-locked",
       Boolean(document.querySelector(modalSelector)) || mobileTOC,
@@ -557,12 +561,7 @@ const SettingsModule = (() => {
     const file =
       theme === "studio-dark"
         ? "vs2015.min.css"
-        : [
-              "obsidian",
-              "ayu-mirage",
-              "midnight-fjord",
-              "boreal",
-            ].includes(theme)
+        : ["obsidian", "ayu-mirage", "midnight-fjord", "boreal"].includes(theme)
           ? "tokyo-night-dark.min.css"
           : "github.min.css";
     if (existing?.tagName.toLowerCase() === "link") {
@@ -890,29 +889,29 @@ const TOCModule = (() => {
     );
     document.body.append(toggle);
 
-    let collapsed =
-      window.innerWidth < 1400 || StorageManager.getPreference("tocCollapsed", "false") === "true";
-    const setCollapsed = (value) => {
-      collapsed = value;
-      document.documentElement.classList.toggle("toc-collapsed", value);
-      toggle.innerHTML = value ? ICONS.bookOpen : ICONS.x;
+    let isOpen =
+      !isCompactLayout() && StorageManager.getPreference("tocCollapsed", "false") !== "true";
+    const setOpen = (value) => {
+      isOpen = value;
+      document.documentElement.classList.toggle("toc-open", isOpen);
+      toggle.innerHTML = isOpen ? ICONS.x : ICONS.bookOpen;
       UIComponentFactory.setButtonTitle(
         toggle,
-        value ? "Show Table of Contents" : "Hide Table of Contents",
+        isOpen ? "Hide Table of Contents" : "Show Table of Contents",
       );
-      StorageManager.setPreference("tocCollapsed", value);
+      StorageManager.setPreference("tocCollapsed", !isOpen);
       updateScrollLock();
     };
-    toggle.addEventListener("click", () => setCollapsed(!collapsed));
-    backdrop.addEventListener("click", () => setCollapsed(true));
+    toggle.addEventListener("click", () => setOpen(!isOpen));
+    backdrop.addEventListener("click", () => setOpen(false));
     list.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
-        if (window.innerWidth < 1400) setCollapsed(true);
+        if (isCompactLayout()) setOpen(false);
       });
     });
-    setCollapsed(collapsed);
+    setOpen(isOpen);
     initScrollSpy(headings, aside, list);
-    return { aside, backdrop, toggle, setCollapsed };
+    return { aside, backdrop, toggle, setOpen };
   }
 
   return { init, ensureHeadingID };
@@ -996,15 +995,14 @@ const ReaderExtrasModule = (() => {
         return;
       }
       const hide = scrollTop > lastScrollTop && scrollTop > 150;
-      const mobile = window.innerWidth < 768;
+      const compactLayout = isCompactLayout();
       settingsToggle?.classList.toggle(
         "hidden",
-        mobile && hide && !settingsPanel?.classList.contains("active"),
+        compactLayout && hide && !settingsPanel?.classList.contains("active"),
       );
       const tocToggle = document.querySelector(".toc-toggle");
-      const tocOpen =
-        window.innerWidth < 1400 && !document.documentElement.classList.contains("toc-collapsed");
-      tocToggle?.classList.toggle("hidden", mobile && hide && !tocOpen);
+      const tocOpen = compactLayout && document.documentElement.classList.contains("toc-open");
+      tocToggle?.classList.toggle("hidden", compactLayout && hide && !tocOpen);
       lastScrollTop = scrollTop;
     };
     window.addEventListener(
@@ -1019,7 +1017,7 @@ const ReaderExtrasModule = (() => {
     window.addEventListener(
       "resize",
       debounce(() => {
-        if (window.innerWidth >= 768) {
+        if (!isCompactLayout()) {
           settingsToggle?.classList.remove("hidden");
           document.querySelector(".toc-toggle")?.classList.remove("hidden");
         }
