@@ -177,6 +177,12 @@ func prepareRuntimeAssets(source assetLocation) (string, func(), []string, error
 		}
 		return "", nil, nil, fmt.Errorf("bundle themes: %w", err)
 	}
+	if err := bundleComponentsIfPresent(dir); err != nil {
+		if cleanup != nil {
+			cleanup()
+		}
+		return "", nil, nil, fmt.Errorf("bundle components: %w", err)
+	}
 	warnings, err := writeBundledFontCSS(filepath.Join(dir, "font-assets.css"))
 	if err != nil {
 		if cleanup != nil {
@@ -245,6 +251,43 @@ func bundleThemesIfPresent(dir string) error {
 
 	if err := os.WriteFile(filepath.Join(dir, "themes.js"), []byte(themesJS), 0o644); err != nil {
 		return fmt.Errorf("write themes.js: %w", err)
+	}
+
+	return nil
+}
+
+func bundleComponentsIfPresent(dir string) error {
+	componentsDir := filepath.Join(dir, "components")
+	if info, err := os.Stat(componentsDir); err != nil || !info.IsDir() {
+		return nil
+	}
+
+	order := []string{
+		"code.css",
+		"tables.css",
+		"settings.css",
+		"responsive.css",
+		"mermaid.css",
+		"reader.css",
+		"loading.css",
+		"headings.css",
+		"lightbox.css",
+		"footer.css",
+	}
+
+	var combinedCSS strings.Builder
+	combinedCSS.WriteString("/* Generated from assets/components/ — do not edit directly */\n\n")
+
+	for _, name := range order {
+		filePath := filepath.Join(componentsDir, name)
+		if data, err := os.ReadFile(filePath); err == nil {
+			combinedCSS.WriteString(strings.TrimSpace(string(data)))
+			combinedCSS.WriteString("\n\n")
+		}
+	}
+
+	if err := os.WriteFile(filepath.Join(dir, "components.css"), []byte(strings.TrimSpace(combinedCSS.String())+"\n"), 0o644); err != nil {
+		return fmt.Errorf("write components.css: %w", err)
 	}
 
 	return nil

@@ -1,0 +1,166 @@
+/* =========================================
+   Tables & Scroll Containers
+   ========================================= */
+
+table {
+  display: block;
+  width: var(--table-width);
+  min-width: 100%;
+  max-width: 100%;
+  border-collapse: var(--table-border-collapse);
+  border-spacing: 0;
+  margin: 1.75rem 0 2rem;
+  font-size: 16px;
+  line-height: 1.45;
+  border: 1px solid var(--color-border);
+  border-radius: var(--table-border-radius);
+  overflow-x: var(--table-overflow-x);
+  overflow-y: var(--table-overflow-y);
+  box-shadow: var(--table-box-shadow);
+}
+
+th,
+td {
+  padding: var(--table-cell-padding);
+  text-align: left;
+  vertical-align: top;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+th:last-child,
+td:last-child {
+  border-right: none;
+}
+
+th {
+  font-family: var(--font-body);
+  color: var(--table-header-color);
+  font-weight: var(--table-header-font-weight);
+  background: var(--table-header-background);
+  border-bottom: var(--table-header-border-bottom);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--color-table-row-alt);
+}
+
+tbody tr:hover {
+  background-color: var(--color-table-row-hover);
+}
+
+.table-scroll-container {
+  position: relative;
+  width: 100%;
+  margin: 1.75rem 0 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg);
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 0;
+  background-color: var(--color-bg);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.table-scroll-container.maximized .table-wrapper {
+  height: calc(85vh - 30px);
+  border: none;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.scroll-shadow {
+  position: absolute;
+  top: 30px;
+  width: 15px;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+  z-index: 10;
+}
+
+.scroll-shadow.left {
+  left: 0;
+  background: linear-gradient(to right, var(--scroll-shadow-color), transparent);
+  border-bottom-left-radius: 6px;
+}
+
+.scroll-shadow.right {
+  right: 0;
+  background: linear-gradient(to left, var(--scroll-shadow-color), transparent);
+  border-bottom-right-radius: 6px;
+}
+
+.table-wrapper table {
+  display: table;
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+  border-collapse: collapse;
+  border: none;
+  margin: 0;
+  border-spacing: 0;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  word-break: normal;
+  overflow-wrap: break-word;
+  min-width: 180px;
+  max-width: 480px;
+}
+
+.table-wrapper th:last-child,
+.table-wrapper td:last-child {
+  border-right: none;
+}
+
+.table-wrapper tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-wrapper th {
+  font-family: var(--font-heading);
+  color: var(--color-heading);
+  font-weight: 600;
+  background-color: var(--color-surface-alt);
+}

@@ -1,0 +1,270 @@
+/* =========================================
+   Mobile Responsiveness & Media Queries
+   ========================================= */
+
+@media (max-width: 768px) {
+  :root {
+    --font-size-body: var(--font-size-body-mobile);
+    --scale-h1: 1.65;
+    --scale-h2: 1.35;
+    --toggle-size: 2.5rem;
+  }
+
+  body {
+    padding: 1.75rem 1.1rem;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    line-height: 25px;
+  }
+
+  header,
+  main,
+  footer,
+  blockquote,
+  ul,
+  ol,
+  p {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  li {
+    overflow-wrap: anywhere;
+  }
+
+  pre {
+    margin: 1.25rem 0;
+    padding: 0.65rem 0 !important;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    font-size: 12.5px;
+  }
+
+  .code-line {
+    padding-left: 0 !important;
+  }
+
+  .code-line::before {
+    position: sticky !important;
+    left: 0 !important;
+    display: inline-block !important;
+    width: 2.25em !important;
+    padding-left: 0.8rem !important;
+    padding-right: 0.5em !important;
+    border-right: 1px solid var(--color-border) !important;
+    background-color: var(--color-code-bg) !important;
+    z-index: 2;
+    margin-right: 0.5em !important;
+  }
+
+  .copy-btn {
+    opacity: 1 !important;
+    padding: 0.4rem 0.7rem !important;
+    font-size: 0.8rem !important;
+    background: var(--color-code-bg) !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 4px !important;
+  }
+
+  .mermaid-btn,
+  .table-btn {
+    padding: 0.4rem 0.7rem !important;
+    font-size: 0.85rem !important;
+    min-height: 2.2rem !important;
+    border-radius: 6px !important;
+  }
+
+  .mermaid-toolbar,
+  .table-toolbar {
+    padding: 0.4rem 0.8rem !important;
+  }
+
+  table {
+    font-size: 13.5px;
+    margin: 1.25rem 0 1.5rem;
+  }
+
+  th,
+  td {
+    padding: 0.55rem 0.65rem;
+  }
+
+  .table-scroll-container {
+    margin: 1.25rem 0 1.5rem;
+  }
+
+  .table-wrapper {
+    margin: 0;
+    border-radius: 4px;
+  }
+
+  .scroll-shadow.left {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+
+  .scroll-shadow.right {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  .table-wrapper th,
+  .table-wrapper td {
+    padding: 0.6rem 0.75rem;
+    font-size: 13px;
+    min-width: 150px;
+    max-width: 360px;
+  }
+
+  code {
+    font-size: 0.78em;
+  }
+
+  pre code,
+  pre code.hljs {
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+
+  hr {
+    width: 100%;
+  }
+
+  .settings-toggle {
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+
+  .settings-toggle svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .settings-popover {
+    bottom: calc(1.5rem + var(--toggle-size) + 8px);
+    right: 1.5rem;
+    left: 1.5rem;
+    width: auto;
+    max-width: none;
+    transform-origin: bottom center;
+    padding: 14px;
+  }
+
+  .settings-header {
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+  }
+
+  .settings-header h3 {
+    font-size: 0.88rem;
+  }
+
+  .settings-section {
+    margin-bottom: 12px;
+  }
+
+  .settings-label {
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+
+  .theme-grid {
+    gap: 6px;
+  }
+
+  .theme-option {
+    padding: 6px 10px;
+    gap: 8px;
+    font-size: 0.78rem;
+    border-radius: 6px;
+  }
+
+  .theme-preview-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .theme-preview-dot::after {
+    width: 5px;
+    height: 5px;
+  }
+
+  .font-selector {
+    border-radius: 6px;
+    padding: 3px;
+  }
+
+  .font-option {
+    padding: 5px 10px;
+    font-size: 0.78rem;
+    border-radius: 4px;
+  }
+
+  .control-row {
+    margin-top: 10px;
+  }
+
+  .control-name {
+    font-size: 0.78rem;
+  }
+
+  .stepper-control {
+    border-radius: 6px;
+    padding: 1px;
+  }
+
+  .stepper-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.78rem;
+    border-radius: 4px;
+  }
+
+  .stepper-val {
+    font-size: 0.75rem;
+    width: 48px;
+  }
+
+  .mermaid-container.maximized,
+  .table-scroll-container.maximized {
+    top: 5vh !important;
+    left: 2.5vw !important;
+    width: 95vw !important;
+    height: 90vh !important;
+    border-radius: 6px !important;
+  }
+
+  .table-scroll-container.maximized .table-wrapper {
+    height: calc(90vh - 30px) !important;
+    border-radius: 0 0 6px 6px !important;
+  }
+
+  .maximized .mermaid-btn.btn-rotate,
+  .maximized .table-btn.btn-rotate {
+    display: flex !important;
+  }
+
+  /* Rotated Landscape mode on mobile */
+  .mermaid-container.maximized.rotated-landscape,
+  .table-scroll-container.maximized.rotated-landscape {
+    top: 50% !important;
+    left: 50% !important;
+    width: 90vh !important;
+    height: 95vw !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    border-radius: 6px !important;
+  }
+
+  .mermaid-container.maximized.rotated-landscape .mermaid-viewport,
+  .table-scroll-container.maximized.rotated-landscape .table-wrapper {
+    height: calc(95vw - 30px) !important;
+  }
+}

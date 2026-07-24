@@ -1,0 +1,122 @@
+/* =========================================
+   Code Blocks & Syntax Highlighting
+   ========================================= */
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  font-weight: 550;
+  padding: var(--inline-code-padding);
+  border: var(--inline-code-border);
+  border-radius: var(--inline-code-border-radius);
+  background-color: var(--color-inline-code-bg);
+  color: var(--color-inline-code-text);
+  vertical-align: baseline;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+pre {
+  background: var(--pre-background);
+  border: var(--pre-border);
+  border-left: var(--pre-border-left);
+  border-radius: var(--pre-border-radius);
+  padding: var(--pre-padding);
+  margin: 1.35rem 0 1.55rem;
+  max-width: 100%;
+  overflow-x: auto;
+  position: relative;
+  box-shadow: var(--pre-box-shadow);
+  font-size: 14px;
+  tab-size: 2;
+}
+
+pre code,
+pre code.hljs {
+  background: transparent !important;
+  padding: 0;
+  color: var(--color-code-text);
+  border: none;
+  font-size: 15px;
+  line-height: var(--pre-line-height);
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 550;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* Copy button */
+.copy-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-muted);
+  border-radius: 0;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+pre:hover .copy-btn {
+  opacity: 1;
+}
+
+.copy-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-border);
+  background: var(--color-bg);
+}
+
+/* Syntax token classes */
+.token.keyword,
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type,
+.hljs-literal {
+  color: var(--code-keyword);
+  font-weight: 550;
+}
+.token.string,
+.hljs-string,
+.hljs-regexp,
+.hljs-template-variable {
+  color: var(--code-string);
+}
+.token.function,
+.hljs-title,
+.hljs-title.function_,
+.hljs-function,
+.hljs-built_in,
+.hljs-section {
+  color: var(--code-function);
+}
+.token.number,
+.hljs-number,
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--code-number);
+}
+.token.comment,
+.hljs-comment,
+.hljs-quote {
+  color: var(--code-comment);
+  font-style: italic;
+}
+.token.operator,
+.hljs-operator,
+.hljs-punctuation {
+  color: var(--code-operator);
+}
+.token.variable,
+.hljs-variable,
+.hljs-params,
+.hljs-attr,
+.hljs-property,
+.hljs-name {
+  color: var(--code-variable);
+}
