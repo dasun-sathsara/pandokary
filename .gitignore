@@ -3,6 +3,7 @@
 
 # Local build/test outputs
 bin/
+node_modules/
 *.tmp
 *.log
 *.out
