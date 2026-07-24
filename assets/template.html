@@ -1,24 +1,67 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
-  $if(assetModeCdn)$<link rel="preconnect" href="https://fonts.googleapis.com" data-external="true"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-external="true">$endif$
+  $if(assetModeCdn)$
+  <link rel="preconnect" href="https://fonts.googleapis.com" data-external="true">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-external="true">
+  $endif$
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Architects+Daughter&display=swap" rel="stylesheet" $if(assetModeCdn)$data-external="true"$endif$>
   <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" $if(assetModeCdn)$data-external="true"$endif$>
-  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-  $if(inline-css)$<style>$inline-css$</style>$else$<link rel="stylesheet" href="base.css"><link rel="stylesheet" href="components.css"><link rel="stylesheet" href="themes.css">$endif$
+  <script>
+    try {
+      var t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  $if(inline-css)$
+  <style>$inline-css$</style>
+  $else$
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="themes.css">
+  $endif$
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
-  $if(inline-mathjax-config)$<script>$inline-mathjax-config$</script>$else$<script src="mathjax-config.js"></script>$endif$
+  $if(inline-mathjax-config)$
+  <script>$inline-mathjax-config$</script>
+  $else$
+  <script src="mathjax-config.js"></script>
+  $endif$
   <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/@mathjax/mathjax-stix2-font@4.0.0/tex-mml-svg-mathjax-stix2.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
-  $if(inline-js)$<script>$inline-js$</script>$else$<script defer src="mermaid.js"></script><script defer src="app.js"></script>$endif$
-  $for(header-includes)$$header-includes$$endfor$
+  $if(inline-js)$
+  <script>$inline-js$</script>
+  $else$
+  <script src="themes.js"></script>
+  <script defer src="mermaid.js"></script>
+  <script defer src="app.js"></script>
+  $endif$
+  $for(header-includes)$
+  $header-includes$
+  $endfor$
 </head>
 <body>
-  <div id="loading-overlay"><div class="loading-spinner"></div><p class="loading-text">Preparing document...</p></div>
-  <header>$if(title)$<h1 class="title">$title$</h1>$endif$$if(author)$<p class="author">$for(author)$$author$$sep$, $endfor$</p>$endif$$if(date)$<p class="date">$date$</p>$endif$</header>
+  <div id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Preparing document...</p>
+  </div>
+  <header>
+    $if(title)$
+    <h1 class="title">$title$</h1>
+    $endif$
+    $if(author)$
+    <p class="author">$for(author)$$author$$sep$, $endfor$</p>
+    $endif$
+    $if(date)$
+    <p class="date">$date$</p>
+    $endif$
+  </header>
   <main>$body$</main>
-  <footer><hr><p class="footer-credits">Generated with <span class="heart-beat">❤️</span> by <span class="footer-name">Dasun Sathsara</span></p></footer>
+  <footer>
+    <hr>
+    <p class="footer-credits">Generated with <span class="heart-beat">❤️</span> by <span class="footer-name">Dasun Sathsara</span></p>
+  </footer>
 </body>
 </html>

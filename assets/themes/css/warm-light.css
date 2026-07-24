@@ -1,0 +1,73 @@
+[data-theme="warm-light"] {
+  /* ─────────────────────────────────────────
+	   1. CORE CANVAS & SURFACES
+	───────────────────────────────────────────── */
+  --color-bg: #faf5ec; /* warm paper canvas */
+  --color-surface: #fffdf8; /* cards, asides, modals */
+  --color-surface-alt: #f2eadd; /* subtle alternate fill */
+  --color-border: rgba(61, 50, 38, 0.12); /* warm hairline border */
+
+  /* ─────────────────────────────────────────
+	   2. TEXT HIERARCHY
+	───────────────────────────────────────────── */
+  --color-text: #3d3730; /* primary charcoal body text */
+  --color-text-muted: #8a7f72; /* muted sand/stone */
+  --color-heading: #2a2520; /* deep reader headings */
+  --color-h1: #211c18;
+  --color-h2: #2a2520;
+  --color-h3: #322c26;
+  --color-h4: #3a332c;
+  --color-h5: #423a32;
+  --color-strong: #29231e; /* bold text contrast color */
+
+  /* ─────────────────────────────────────────
+	   3. BRAND & ACCENT (terracotta)
+	───────────────────────────────────────────── */
+  --color-accent: #b65d3c; /* warm terracotta */
+  --color-accent-hover: #97492d; /* darker version for hover */
+  --color-accent-subtle: rgba(182, 93, 60, 0.1); /* accent-tinted background */
+
+  /* ─────────────────────────────────────────
+	   4. CODEBLOCKS & INLINE CODE
+	───────────────────────────────────────────── */
+  --color-code-bg: #f3ecdf; /* inset well background */
+  --color-code-text: #4a4239; /* default code text */
+  --color-code-border: rgba(61, 50, 38, 0.12);
+  --color-code-chrome-bg: #eae0cf; /* header/action bar */
+  --color-code-chrome-text: #6b6053; /* label and copy icon */
+  --color-inline-code-bg: rgba(182, 93, 60, 0.1);
+  --color-inline-code-text: #97492d;
+
+  /* ─────────────────────────────────────────
+	   5. SYNTAX HIGHLIGHTING TOKENS (Editorial Light)
+	───────────────────────────────────────────── */
+  --code-keyword: #b0452e; /* rust red */
+  --code-string: #4e6b2c; /* olive/forest green */
+  --code-function: #1f6b8c; /* muted slate-blue */
+  --code-number: #99591a; /* warm ochre */
+  --code-comment: #a4937c; /* faded warm gray */
+  --code-operator: #6f6456; /* warm gray-brown */
+  --code-variable: #433b31; /* near body text */
+
+  /* ─────────────────────────────────────────
+	   6. TABLES & HR
+ 	───────────────────────────────────────────── */
+  --color-table-row-alt: rgba(61, 50, 38, 0.035);
+  --color-table-row-hover: rgba(182, 93, 60, 0.07);
+  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(61, 50, 38, 0.18), transparent);
+
+  /* ─────────────────────────────────────────
+	   7. SHADOWS
+	───────────────────────────────────────────── */
+  --shadow-card: 0 1px 2px rgba(60, 45, 30, 0.04), 0 2px 8px rgba(60, 45, 30, 0.06);
+  --shadow-elevated: 0 4px 12px rgba(60, 45, 30, 0.08), 0 12px 32px rgba(60, 45, 30, 0.1);
+
+  --aside-background:
+    linear-gradient(180deg, rgba(182, 93, 60, 0.035), rgba(182, 93, 60, 0.012)),
+    var(--color-surface);
+  --aside-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.035) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
+  --pre-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.025) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
+  --link-border-bottom: 1px solid rgba(182, 93, 60, 0.35);
+  --link-hover-border-color: rgba(182, 93, 60, 0.7);
+  --strong-font-weight: 650;
+}

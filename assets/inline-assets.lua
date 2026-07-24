@@ -36,7 +36,7 @@ function Pandoc(doc)
   local font_css = read_asset("font-assets.css") or ""
   local css = concatenate({ "base.css", "components.css", "themes.css" })
   doc.meta["inline-css"] = raw_html(font_css .. "\n" .. css)
-  doc.meta["inline-js"] = raw_html(concatenate({ "mermaid.js", "app.js" }))
+  doc.meta["inline-js"] = raw_html(concatenate({ "themes.js", "mermaid.js", "app.js" }))
   doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
   return doc
 end

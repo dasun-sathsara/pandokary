@@ -1,0 +1,41 @@
+{
+  "default": "light",
+  "themes": [
+    {
+      "id": "light",
+      "name": "Default",
+      "mode": "light",
+      "accent": "#6366f1"
+    },
+    {
+      "id": "github-light",
+      "name": "GitHub",
+      "mode": "light",
+      "accent": "#0969da"
+    },
+    {
+      "id": "warm-light",
+      "name": "Paper",
+      "mode": "light",
+      "accent": "#b65d3c"
+    },
+    {
+      "id": "dark",
+      "name": "Obsidian",
+      "mode": "dark",
+      "accent": "#8b7dff"
+    },
+    {
+      "id": "vscode-dark",
+      "name": "VS Code",
+      "mode": "dark",
+      "accent": "#007acc"
+    },
+    {
+      "id": "ayu-dark",
+      "name": "Ayu",
+      "mode": "dark",
+      "accent": "#ffb454"
+    }
+  ]
+}
