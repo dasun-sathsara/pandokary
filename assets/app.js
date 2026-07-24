@@ -542,7 +542,12 @@ const SettingsModule = (() => {
 
   function setHighlightTheme(theme) {
     const existing = document.getElementById("hljs-theme");
-    if (existing && !existing.hasAttribute("data-external")) return;
+    const hasEmbeddedOfflineTheme =
+      !document.querySelector("[data-external]") &&
+      [...document.querySelectorAll("style")].some((style) =>
+        style.textContent.includes(".hljs{color:#24292e;background:#fff}"),
+      );
+    if ((existing && !existing.hasAttribute("data-external")) || hasEmbeddedOfflineTheme) return;
 
     const base = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/";
     const file =
@@ -634,29 +639,25 @@ const SettingsModule = (() => {
 
   function bindPanelVisibility(panel, toggle) {
     const closeButton = panel.querySelector(".close-settings");
-    const showFocusableElement = (element) => {
+    const focusableSelector = "a[href], button, input, select, textarea, [tabindex]";
+    const restoreTabindex = (element) => {
       if (!Object.hasOwn(element.dataset, "pdyTabindex")) return;
       const previousTabindex = element.dataset.pdyTabindex;
       if (previousTabindex) element.setAttribute("tabindex", previousTabindex);
       else element.removeAttribute("tabindex");
       delete element.dataset.pdyTabindex;
     };
-
-    const hideFocusableElement = (element) => {
+    const disableTabindex = (element) => {
       if (!Object.hasOwn(element.dataset, "pdyTabindex")) {
         element.dataset.pdyTabindex = element.getAttribute("tabindex") || "";
       }
       element.setAttribute("tabindex", "-1");
     };
-
     const setFocusability = (visible) => {
       if ("inert" in panel) panel.inert = !visible;
-      const elements = panel.querySelectorAll(focusableSelector);
-      if (visible) {
-        elements.forEach(showFocusableElement);
-      } else {
-        elements.forEach(hideFocusableElement);
-      }
+      panel
+        .querySelectorAll(focusableSelector)
+        .forEach(visible ? restoreTabindex : disableTabindex);
     };
     const show = (visible, restoreFocus = false) => {
       panel.classList.toggle("active", visible);
