@@ -844,6 +844,28 @@ function initTaskLists() {
     updateState();
     checkbox.addEventListener("change", updateState);
   });
+
+  document.querySelectorAll("main p, main li:not(.task-list li)").forEach((element) => {
+    if (element.children.length === 0 && /(?:\[\s?\]|\[x\])/i.test(element.innerHTML)) {
+      const html = element.innerHTML.replace(
+        /(\[\s?\]|\[x\])\s*([^[]+)/gi,
+        (_match, mark, text) => {
+          const isChecked = mark.toLowerCase().includes("x");
+          const completedClass = isChecked ? " task-completed" : "";
+          const checkedAttr = isChecked ? " checked" : "";
+          return `<div class="inline-task-item${completedClass}"><input type="checkbox" class="inline-task-checkbox"${checkedAttr}><span>${text.trim()}</span></div>`;
+        },
+      );
+      element.innerHTML = html;
+      element.querySelectorAll(".inline-task-item").forEach((item) => {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        if (!checkbox) return;
+        checkbox.addEventListener("change", () => {
+          item.classList.toggle("task-completed", checkbox.checked);
+        });
+      });
+    }
+  });
 }
 
 async function main() {

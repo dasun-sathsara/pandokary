@@ -362,15 +362,30 @@ li::marker {
     color 0.2s ease,
     opacity 0.2s ease;
 }
+.task-list li > p {
+  margin: 0 !important;
+}
 
 .task-list li.task-completed,
-.task-list li:has(input:checked) {
+.task-list li:has(input:checked),
+.inline-task-item.task-completed {
   color: var(--color-text-muted);
   text-decoration: line-through;
   text-decoration-color: var(--color-border);
 }
 
-.task-list input[type="checkbox"] {
+.inline-task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 0.4rem 0;
+  line-height: 1.55;
+  color: var(--color-text);
+  transition: color 0.2s ease;
+}
+
+.task-list input[type="checkbox"],
+.inline-task-checkbox {
   appearance: none;
   -webkit-appearance: none;
   background-color: var(--color-surface);
@@ -390,13 +405,15 @@ li::marker {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.task-list input[type="checkbox"]:hover {
+.task-list input[type="checkbox"]:hover,
+.inline-task-checkbox:hover {
   border-color: var(--color-accent);
   background-color: var(--color-surface-alt);
   transform: scale(1.05);
 }
 
-.task-list input[type="checkbox"]::before {
+.task-list input[type="checkbox"]::before,
+.inline-task-checkbox::before {
   content: "";
   width: 0.65em;
   height: 0.65em;
@@ -407,12 +424,14 @@ li::marker {
   clip-path: polygon(14% 44%, 0 65%, 45% 100%, 100% 16%, 82% 0%, 41% 65%);
 }
 
-.task-list input[type="checkbox"]:checked {
+.task-list input[type="checkbox"]:checked,
+.inline-task-checkbox:checked {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
 }
 
-.task-list input[type="checkbox"]:checked::before {
+.task-list input[type="checkbox"]:checked::before,
+.inline-task-checkbox:checked::before {
   transform: scale(1);
 }
 
