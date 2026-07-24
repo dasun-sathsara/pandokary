@@ -1,0 +1,58 @@
+[data-theme="midnight-fjord"] {
+  /* 1. CORE CANVAS & SURFACES */
+  --color-bg: #111827;
+  --color-surface: #172033;
+  --color-surface-alt: #1e2a40;
+  --color-border: rgba(183, 207, 230, 0.2);
+
+  /* 2. TEXT HIERARCHY */
+  --color-text: #e6edf7;
+  --color-text-muted: #a9b6c9;
+  --color-heading: #f5f9ff;
+  --color-h1: #f3f8ff;
+  --color-h2: #bce7fa;
+  --color-h3: #8cd8f7;
+  --color-h4: #afcde2;
+  --color-h5: #b4c2d4;
+  --color-strong: #ffffff;
+
+  /* 3. BRAND & ACCENT */
+  --color-accent: #7dd3fc;
+  --color-accent-hover: #bae6fd;
+  --color-accent-subtle: rgba(125, 211, 252, 0.12);
+
+  /* 4. CODEBLOCKS & INLINE CODE */
+  --color-code-bg: #0b1220;
+  --color-code-text: #e5edf7;
+  --color-code-border: rgba(125, 211, 252, 0.22);
+  --color-code-chrome-bg: #080e19;
+  --color-code-chrome-text: #9fb0c6;
+  --color-inline-code-bg: rgba(125, 211, 252, 0.12);
+  --color-inline-code-text: #a9e3fd;
+
+  /* 5. SYNTAX HIGHLIGHTING TOKENS */
+  --code-keyword: #cdb5ff; /* soft periwinkle */
+  --code-string: #8dd9a2; /* mint green */
+  --code-function: #7bd1f9; /* sky cyan (accent) */
+  --code-number: #eeba70; /* warm amber */
+  --code-comment: #768395; /* muted slate */
+  --code-operator: #83d6cd; /* soft teal */
+  --code-variable: #cedbe7; /* cool off-white */
+
+  /* 6. TABLES & HR */
+  --color-table-row-alt: rgba(125, 211, 252, 0.035);
+  --color-table-row-hover: rgba(125, 211, 252, 0.09);
+  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.42), transparent);
+
+  /* 7. SHADOWS */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.18);
+  --shadow-elevated: 0 5px 14px rgba(0, 0, 0, 0.34), 0 22px 48px rgba(0, 0, 0, 0.28);
+
+  --scroll-shadow-color: rgba(0, 0, 0, 0.3);
+  --modal-backdrop-background: rgba(0, 0, 0, 0.6);
+  --focused-line-background: rgba(125, 211, 252, 0.12);
+  --focused-line-border: #7dd3fc;
+  --mermaid-note-fill: #1e2838;
+  --mermaid-note-stroke: #7dd3fc;
+  --mermaid-note-text: #f3f8ff;
+}

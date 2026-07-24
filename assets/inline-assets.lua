@@ -49,18 +49,26 @@ local theme_files = {
   "themes/css/lumina.css",
   "themes/css/primer.css",
   "themes/css/parchment.css",
+ "themes/css/verdant-paper.css",
+ "themes/css/lilac-frost.css",
   "themes/css/obsidian.css",
   "themes/css/studio-dark.css",
   "themes/css/ayu-mirage.css",
+ "themes/css/midnight-fjord.css",
+ "themes/css/boreal.css",
 }
 
 local mermaid_files = {
   { id = "lumina", path = "themes/mermaid/lumina.json" },
   { id = "primer", path = "themes/mermaid/primer.json" },
   { id = "parchment", path = "themes/mermaid/parchment.json" },
+ { id = "verdant-paper", path = "themes/mermaid/verdant-paper.json" },
+ { id = "lilac-frost", path = "themes/mermaid/lilac-frost.json" },
   { id = "obsidian", path = "themes/mermaid/obsidian.json" },
   { id = "studio-dark", path = "themes/mermaid/studio-dark.json" },
   { id = "ayu-mirage", path = "themes/mermaid/ayu-mirage.json" },
+ { id = "midnight-fjord", path = "themes/mermaid/midnight-fjord.json" },
+ { id = "boreal", path = "themes/mermaid/boreal.json" },
 }
 
 local function build_theme_js()
