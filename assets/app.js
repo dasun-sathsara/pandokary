@@ -250,18 +250,20 @@ function initSettings() {
     <div class="settings-section">
       <div class="settings-label">Theme</div>
       <div class="theme-grid">
-        ${[
-          ["light", "Default"],
-          ["github-light", "GitHub"],
-          ["warm-light", "Paper"],
-          ["dark", "Obsidian"],
-          ["vscode-dark", "VS Code"],
-          ["ayu-dark", "Ayu"],
-        ]
+        ${(
+          window.PDY_THEME_MANIFEST || [
+            { id: "light", name: "Default" },
+            { id: "github-light", name: "GitHub" },
+            { id: "warm-light", name: "Paper" },
+            { id: "dark", name: "Obsidian" },
+            { id: "vscode-dark", name: "VS Code" },
+            { id: "ayu-dark", name: "Ayu" },
+          ]
+        )
           .map(
-            ([key, name]) =>
-              `<button class="theme-option" data-theme-key="${key}">` +
-              `<span class="theme-preview-dot ${key}-dot"></span>${name}` +
+            (theme) =>
+              `<button class="theme-option" data-theme-key="${theme.id}">` +
+              `<span class="theme-preview-dot ${theme.id}-dot"></span>${theme.name}` +
               "</button>",
           )
           .join("")}

@@ -1,5 +1,3 @@
-// MathJax v4 minimal config when using the STIX2 font bundle.
-
 window.MathJax = {
   loader: {
     paths: {

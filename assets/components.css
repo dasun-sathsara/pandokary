@@ -1207,7 +1207,10 @@ tbody tr:hover {
 
   body {
     padding-left: 310px; /* Shift body to make room for sidebar */
-    max-width: calc(var(--content-max-width, 1040px) + 310px); /* Increase max-width to offset shifting */
+    max-width: calc(
+      var(--content-max-width, 1040px) +
+      310px
+    ); /* Increase max-width to offset shifting */
     transition:
       padding-left 0.3s ease,
       max-width 0.3s ease;

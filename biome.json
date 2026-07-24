@@ -18,7 +18,6 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",
         "noImportantStyles": "off"
@@ -36,9 +35,6 @@
       "correctness": {
         "noUnusedVariables": "error",
         "noUnusedImports": "error"
-      },
-      "a11y": {
-        "recommended": true
       }
     }
   },

@@ -1,8 +1,10 @@
 {
   "name": "pandokary-assets",
   "private": true,
+  "type": "module",
   "description": "Lint/format tooling for pandokary's browser assets (JS/CSS).",
   "scripts": {
+    "build:themes": "node scripts/build-themes.js",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format --write .",
@@ -10,6 +12,6 @@
     "check:fix": "biome check --write ."
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.0"
+    "@biomejs/biome": "^2.5.5"
   }
 }

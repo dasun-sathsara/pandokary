@@ -1,0 +1,83 @@
+[data-theme="ayu-dark"] {
+  /* ─────────────────────────────────────────
+	   1. CORE CANVAS & SURFACES
+	───────────────────────────────────────────── */
+  --color-bg: #0b0e14; /* warm ink canvas */
+  --color-surface: #11151d; /* cards, asides, modals */
+  --color-surface-alt: #171b24; /* subtle distinct fill */
+  --color-border: rgba(191, 161, 111, 0.16); /* warm border */
+
+  /* ─────────────────────────────────────────
+	   2. TEXT HIERARCHY
+	───────────────────────────────────────────── */
+  --color-text: #d9d7ce; /* soft cream body */
+  --color-text-muted: #8f8a7d; /* muted sand/stone */
+  --color-heading: #f3ead3; /* cream heading base */
+  --color-h1: #fff4d6; /* warm golden h1 */
+  --color-h2: #f4e6c3;
+  --color-h3: #ead7ad;
+  --color-h4: #d9c79f;
+  --color-h5: #bfae8a;
+  --color-strong: #fff0c2; /* bold pops warm */
+
+  /* ─────────────────────────────────────────
+	   3. BRAND & ACCENT (amber/gold)
+	───────────────────────────────────────────── */
+  --color-accent: #ffb454; /* restraint amber */
+  --color-accent-hover: #ffd580; /* warm gold */
+  --color-accent-subtle: rgba(255, 180, 84, 0.12); /* accent-tinted background */
+
+  /* ─────────────────────────────────────────
+	   4. CODEBLOCKS & INLINE CODE
+	───────────────────────────────────────────── */
+  --color-code-bg: #0d1017; /* inset well background */
+  --color-code-text: #d6d1c2; /* code neutral text */
+  --color-code-border: rgba(255, 180, 84, 0.16);
+  --color-code-chrome-bg: #141821; /* header/action bar */
+  --color-code-chrome-text: #8f8a7d; /* label and copy icon */
+  --color-inline-code-bg: rgba(255, 180, 84, 0.11);
+  --color-inline-code-text: #ffd580; /* amber-leaning */
+
+  /* ─────────────────────────────────────────
+	   5. SYNTAX HIGHLIGHTING TOKENS (Ayu Dark)
+	───────────────────────────────────────────── */
+  --code-keyword: #ff8f40; /* orange keywords */
+  --code-string: #b8cc52; /* warm green strings */
+  --code-function: #73d0ff; /* cyan functions */
+  --code-number: #d2a6ff; /* violet numbers */
+  --code-comment: #5c6773; /* slate comments */
+  --code-operator: #f29668; /* warm orange/salmon operator */
+  --code-variable: #d9d7ce; /* cream variable */
+
+  /* ─────────────────────────────────────────
+	   6. TABLES & HR
+	───────────────────────────────────────────── */
+  --color-table-row-alt: rgba(255, 180, 84, 0.035);
+  --color-table-row-hover: rgba(255, 180, 84, 0.085);
+  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(191, 161, 111, 0.22), transparent);
+
+  /* ─────────────────────────────────────────
+	   7. SHADOWS
+	───────────────────────────────────────────── */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 180, 84, 0.03);
+  --shadow-elevated: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 180, 84, 0.05);
+
+  --scroll-shadow-color: rgba(0, 0, 0, 0.25);
+  --modal-backdrop-background: rgba(0, 0, 0, 0.6);
+  --focused-line-background: rgba(253, 224, 71, 0.08);
+  --focused-line-border: #ca8a04;
+  --mermaid-note-fill: #2d2a1e;
+  --mermaid-note-stroke: #8a7330;
+  --mermaid-note-text: #ffeb99;
+  --body-background:
+    radial-gradient(circle at top left, rgba(255, 180, 84, 0.045), transparent 34rem),
+    var(--color-bg);
+  --aside-background:
+    linear-gradient(180deg, rgba(255, 213, 128, 0.035), rgba(255, 180, 84, 0.012)),
+    var(--color-surface);
+  --aside-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.035) inset, 0 18px 42px rgba(0, 0, 0, 0.28);
+  --pre-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.025) inset, 0 18px 44px rgba(0, 0, 0, 0.32);
+  --link-border-bottom: 1px solid rgba(255, 180, 84, 0.35);
+  --link-hover-border-color: rgba(255, 213, 128, 0.7);
+  --strong-font-weight: 650;
+}
