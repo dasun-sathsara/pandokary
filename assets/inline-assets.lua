@@ -32,11 +32,60 @@ local function raw_html(content)
   return pandoc.MetaInlines({ pandoc.RawInline("html", content) })
 end
 
+local component_files = {
+  "components/code.css",
+  "components/tables.css",
+  "components/settings.css",
+  "components/responsive.css",
+  "components/mermaid.css",
+  "components/reader.css",
+  "components/loading.css",
+  "components/headings.css",
+  "components/lightbox.css",
+  "components/footer.css",
+}
+
+local theme_files = {
+  "themes/css/light.css",
+  "themes/css/dark.css",
+  "themes/css/github-light.css",
+  "themes/css/warm-light.css",
+  "themes/css/vscode-dark.css",
+  "themes/css/ayu-dark.css",
+}
+
+local mermaid_files = {
+  { id = "light", path = "themes/mermaid/light.json" },
+  { id = "dark", path = "themes/mermaid/dark.json" },
+  { id = "github-light", path = "themes/mermaid/github-light.json" },
+  { id = "warm-light", path = "themes/mermaid/warm-light.json" },
+  { id = "vscode-dark", path = "themes/mermaid/vscode-dark.json" },
+  { id = "ayu-dark", path = "themes/mermaid/ayu-dark.json" },
+}
+
+local function build_theme_js()
+  local manifest = read_asset("themes/manifest.json") or "[]"
+  local m_parts = {}
+  for _, item in ipairs(mermaid_files) do
+    local json_str = read_asset(item.path)
+    if json_str then
+      table.insert(m_parts, string.format("%q:%s", item.id, json_str))
+    end
+  end
+  local mermaid_json = "{" .. table.concat(m_parts, ",") .. "}"
+  return string.format("window.PDY_THEME_MANIFEST = (%s).themes || %s;\nwindow.PDY_MERMAID_THEMES = %s;", manifest, manifest, mermaid_json)
+end
+
 function Pandoc(doc)
   local font_css = read_asset("font-assets.css") or ""
-  local css = concatenate({ "base.css", "components.css", "themes.css" })
-  doc.meta["inline-css"] = raw_html(font_css .. "\n" .. css)
-  doc.meta["inline-js"] = raw_html(concatenate({ "themes.js", "mermaid.js", "app.js" }))
+  local base_css = concatenate({ "base.css" })
+  local comp_css = concatenate(component_files)
+  local th_css = concatenate(theme_files)
+  local theme_js = build_theme_js()
+
+  doc.meta["theme-js"] = raw_html(theme_js)
+  doc.meta["inline-css"] = raw_html(font_css .. "\n" .. base_css .. "\n" .. comp_css .. "\n" .. th_css)
+  doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate({ "mermaid.js", "app.js" }))
   doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
   return doc
 end

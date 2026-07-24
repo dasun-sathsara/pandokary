@@ -4,9 +4,6 @@
   "type": "module",
   "description": "Lint/format tooling for pandokary's browser assets (JS/CSS).",
   "scripts": {
-    "build": "npm run build:themes && npm run build:components",
-    "build:themes": "node scripts/build-themes.js",
-    "build:components": "node scripts/build-components.js",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format --write .",

@@ -20,8 +20,22 @@
   <style>$inline-css$</style>
   $else$
   <link rel="stylesheet" href="base.css">
-  <link rel="stylesheet" href="components.css">
-  <link rel="stylesheet" href="themes.css">
+  <link rel="stylesheet" href="components/code.css">
+  <link rel="stylesheet" href="components/tables.css">
+  <link rel="stylesheet" href="components/settings.css">
+  <link rel="stylesheet" href="components/responsive.css">
+  <link rel="stylesheet" href="components/mermaid.css">
+  <link rel="stylesheet" href="components/reader.css">
+  <link rel="stylesheet" href="components/loading.css">
+  <link rel="stylesheet" href="components/headings.css">
+  <link rel="stylesheet" href="components/lightbox.css">
+  <link rel="stylesheet" href="components/footer.css">
+  <link rel="stylesheet" href="themes/css/light.css">
+  <link rel="stylesheet" href="themes/css/dark.css">
+  <link rel="stylesheet" href="themes/css/github-light.css">
+  <link rel="stylesheet" href="themes/css/warm-light.css">
+  <link rel="stylesheet" href="themes/css/vscode-dark.css">
+  <link rel="stylesheet" href="themes/css/ayu-dark.css">
   $endif$
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   $if(inline-mathjax-config)$
@@ -34,7 +48,7 @@
   $if(inline-js)$
   <script>$inline-js$</script>
   $else$
-  <script src="themes.js"></script>
+  $if(theme-js)$<script>$theme-js$</script>$endif$
   <script defer src="mermaid.js"></script>
   <script defer src="app.js"></script>
   $endif$
