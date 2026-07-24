@@ -1,0 +1,422 @@
+package pdy
+
+import (
+	"bytes"
+	"encoding/base64"
+	"errors"
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
+	"strings"
+
+	pandokary "pdy"
+)
+
+type Options struct {
+	InputPath, ExportName, AssetMode, PandocPath    string
+	Export, EmbedResources, FormatMarkdown, Verbose bool
+}
+
+type Result struct{ OutputPath string }
+
+type assetLocation struct {
+	dir      string
+	cleanup  func()
+	writable bool
+}
+
+var requiredAssets = []string{"template.html", "inline-assets.lua", "mathjax-config.js", "app.js", "mermaid.js", "base.css", "components.css", "themes.css"}
+
+func Run(options Options) (Result, error) {
+	if options.AssetMode == "" {
+		options.AssetMode = "cdn"
+	}
+	assets, err := resolveAssets()
+	if err != nil {
+		return Result{}, err
+	}
+	if assets.cleanup != nil {
+		defer assets.cleanup()
+	}
+	runtimeAssets, cleanup, fontWarnings, err := prepareRuntimeAssets(assets)
+	if err != nil {
+		return Result{}, fmt.Errorf("prepare runtime assets: %w", err)
+	}
+	if cleanup != nil {
+		defer cleanup()
+	}
+	for _, warning := range fontWarnings {
+		fmt.Fprintf(os.Stderr, "warning: %s\n", warning)
+	}
+
+	pandoc, err := findPandoc(options.PandocPath)
+	if err != nil {
+		return Result{}, err
+	}
+	if options.FormatMarkdown {
+		if err := formatMarkdown(options.InputPath, options.Verbose); err != nil {
+			fmt.Fprintf(os.Stderr, "warning: source formatting requested but skipped: %v\n", err)
+		}
+	} else if options.Verbose {
+		fmt.Fprintln(os.Stderr, "source formatting: disabled")
+	}
+
+	output, previewDir, err := determineOutput(options)
+	if err != nil {
+		return Result{}, err
+	}
+	args := pandocArgs(options, runtimeAssets, output)
+	if options.Verbose {
+		fmt.Printf("input: %s\noutput: %s\nassets dir: %s\nsource formatting: %t\npandoc argv: %s\n",
+			options.InputPath, output, runtimeAssets, options.FormatMarkdown, strings.Join(quoteArgs(append([]string{pandoc}, args...)), " "))
+	}
+	if err := runPandoc(pandoc, args, runtimeAssets); err != nil {
+		if previewDir != "" {
+			_ = os.RemoveAll(previewDir)
+		}
+		return Result{}, err
+	}
+	if !options.Export {
+		if err := openInBrowser(output); err != nil {
+			_ = os.RemoveAll(previewDir)
+			return Result{}, fmt.Errorf("open browser: %w", err)
+		}
+		// A browser opener returns before the browser consumes linked resources. Keep the
+		// preview directory for that session; failed/incomplete previews are removed above.
+	}
+	return Result{OutputPath: output}, nil
+}
+
+func resolveAssets() (assetLocation, error) {
+	if override := strings.TrimSpace(os.Getenv("PDY_ASSETS_DIR")); override != "" {
+		dir, err := filepath.Abs(override)
+		if err != nil {
+			return assetLocation{}, fmt.Errorf("invalid PDY_ASSETS_DIR: %w", err)
+		}
+		if err = checkAssets(dir); err != nil {
+			return assetLocation{}, fmt.Errorf("invalid PDY_ASSETS_DIR: %w", err)
+		}
+		return assetLocation{dir: dir}, nil
+	}
+	if executable, err := os.Executable(); err == nil {
+		if resolved, resolveErr := filepath.EvalSymlinks(executable); resolveErr == nil {
+			dir := filepath.Join(filepath.Dir(resolved), "assets")
+			if checkAssets(dir) == nil {
+				return assetLocation{dir: dir}, nil
+			}
+		}
+	}
+	if dir, err := findAssetsFromCWD(); err == nil {
+		return assetLocation{dir: dir}, nil
+	}
+	dir, cleanup, err := pandokary.ExtractEmbeddedAssets()
+	if err != nil {
+		return assetLocation{}, fmt.Errorf("extract embedded assets: %w", err)
+	}
+	if err = checkAssets(dir); err != nil {
+		cleanup()
+		return assetLocation{}, err
+	}
+	return assetLocation{dir: dir, cleanup: cleanup, writable: true}, nil
+}
+
+func checkAssets(dir string) error {
+	var missing []string
+	for _, name := range requiredAssets {
+		if info, err := os.Stat(filepath.Join(dir, name)); err != nil || info.IsDir() {
+			missing = append(missing, name)
+		}
+	}
+	if len(missing) != 0 {
+		return fmt.Errorf("missing required asset(s) in %s: %s", dir, strings.Join(missing, ", "))
+	}
+	return nil
+}
+
+func findAssetsFromCWD() (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	for i := 0; i < 8; i++ {
+		candidate := filepath.Join(dir, "assets")
+		if checkAssets(candidate) == nil {
+			return candidate, nil
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	return "", errors.New("assets not found")
+}
+
+func prepareRuntimeAssets(source assetLocation) (string, func(), []string, error) {
+	dir := source.dir
+	var cleanup func()
+	if !source.writable {
+		var err error
+		dir, err = os.MkdirTemp("", "pdy-runtime-assets-*")
+		if err != nil {
+			return "", nil, nil, err
+		}
+		cleanup = func() { _ = os.RemoveAll(dir) }
+		if err = copyDir(source.dir, dir); err != nil {
+			cleanup()
+			return "", nil, nil, err
+		}
+	}
+	warnings, err := writeBundledFontCSS(filepath.Join(dir, "font-assets.css"))
+	if err != nil {
+		if cleanup != nil {
+			cleanup()
+		}
+		return "", nil, warnings, err
+	}
+	return dir, cleanup, warnings, nil
+}
+
+func copyDir(source, target string) error {
+	return filepath.WalkDir(source, func(path string, entry os.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		rel, err := filepath.Rel(source, path)
+		if err != nil {
+			return err
+		}
+		destination := filepath.Join(target, rel)
+		if entry.IsDir() {
+			return os.MkdirAll(destination, 0o755)
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		input, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		output, err := os.OpenFile(destination, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
+		if err != nil {
+			_ = input.Close()
+			return err
+		}
+		_, copyErr := io.Copy(output, input)
+		inputErr := input.Close()
+		outputErr := output.Close()
+		if copyErr != nil {
+			return copyErr
+		}
+		if inputErr != nil {
+			return inputErr
+		}
+		return outputErr
+	})
+}
+
+type font struct{ family, spec, env, weight string }
+
+func writeBundledFontCSS(path string) ([]string, error) {
+	fonts := []font{{"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Regular", "PDY_BODY_FONT_REGULAR", "400"}, {"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Semibold", "PDY_BODY_FONT_SEMIBOLD", "600"}, {"Maple Mono NF", "Maple Mono NF", "PDY_MONO_FONT_MEDIUM", "500"}}
+	var css strings.Builder
+	var warnings []string
+	for _, item := range fonts {
+		fontPath, err := resolveFont(item.env, item.spec)
+		if err != nil {
+			warnings = append(warnings, fmt.Sprintf("font %q unavailable: %v; using CSS fallback", item.spec, err))
+			continue
+		}
+		data, err := os.ReadFile(fontPath)
+		if err != nil {
+			warnings = append(warnings, fmt.Sprintf("font %q could not be read: %v; using CSS fallback", fontPath, err))
+			continue
+		}
+		fmt.Fprintf(&css, "@font-face{font-family:%q;font-style:normal;font-weight:%s;font-display:swap;src:url(\"data:%s;base64,%s\") format(\"%s\");}\n", item.family, item.weight, fontMIME(fontPath), base64.StdEncoding.EncodeToString(data), fontFormat(fontPath))
+	}
+	return warnings, os.WriteFile(path, []byte(css.String()), 0o644)
+}
+
+func resolveFont(env, spec string) (string, error) {
+	if override := strings.TrimSpace(os.Getenv(env)); override != "" {
+		if info, err := os.Stat(override); err == nil && !info.IsDir() {
+			return override, nil
+		}
+		return "", fmt.Errorf("%s points to an invalid file: %s", env, override)
+	}
+	matcher, err := exec.LookPath("fc-match")
+	if err != nil {
+		return "", errors.New("fc-match not installed")
+	}
+	out, err := exec.Command(matcher, "-f", "%{file}", spec).CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("fc-match: %s", strings.TrimSpace(string(out)))
+	}
+	path := strings.TrimSpace(string(out))
+	info, statErr := os.Stat(path)
+	if path == "" || statErr != nil || info.IsDir() {
+		return "", errors.New("no usable matching font file")
+	}
+	return path, nil
+}
+func fontMIME(path string) string {
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".otf":
+		return "font/otf"
+	case ".woff":
+		return "font/woff"
+	case ".woff2":
+		return "font/woff2"
+	default:
+		return "font/ttf"
+	}
+}
+func fontFormat(path string) string {
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".otf":
+		return "opentype"
+	case ".woff":
+		return "woff"
+	case ".woff2":
+		return "woff2"
+	default:
+		return "truetype"
+	}
+}
+
+func findPandoc(override string) (string, error) {
+	if override == "" {
+		if path, err := exec.LookPath("pandoc"); err == nil {
+			return path, nil
+		}
+		return "", errors.New("pandoc not found (install Pandoc or pass --pandoc <path>)")
+	}
+	if path, err := exec.LookPath(override); err == nil {
+		return path, nil
+	}
+	path, _ := filepath.Abs(override)
+	if info, err := os.Stat(path); err == nil && !info.IsDir() {
+		return path, nil
+	}
+	return "", fmt.Errorf("pandoc not found: %s", override)
+}
+
+func formatMarkdown(input string, verbose bool) error {
+	binary, err := exec.LookPath("dprint")
+	if err != nil {
+		return fmt.Errorf("dprint not found: %w", err)
+	}
+	source, err := os.ReadFile(input)
+	if err != nil {
+		return err
+	}
+	cmd := exec.Command(binary, "fmt", "--stdin", input)
+	cmd.Stdin = bytes.NewReader(source)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout, cmd.Stderr = &stdout, &stderr
+	if err = cmd.Run(); err != nil {
+		return fmt.Errorf("dprint failed: %s: %w", strings.TrimSpace(stderr.String()), err)
+	}
+	if stdout.Len() != 0 && !bytes.Equal(source, stdout.Bytes()) {
+		mode := os.FileMode(0o644)
+		if info, statErr := os.Stat(input); statErr == nil {
+			mode = info.Mode()
+		}
+		if err = os.WriteFile(input, stdout.Bytes(), mode); err != nil {
+			return err
+		}
+		if verbose {
+			fmt.Fprintf(os.Stderr, "formatted source Markdown: %s\n", input)
+		}
+	} else if verbose {
+		fmt.Fprintln(os.Stderr, "source Markdown already formatted")
+	}
+	return nil
+}
+
+func determineOutput(options Options) (string, string, error) {
+	base := strings.TrimSuffix(filepath.Base(options.InputPath), filepath.Ext(options.InputPath))
+	if options.Export {
+		name := options.ExportName
+		if name == "" {
+			name = base
+		}
+		if strings.ToLower(filepath.Ext(name)) != ".html" {
+			name += ".html"
+		}
+		if filepath.IsAbs(name) {
+			return filepath.Clean(name), "", nil
+		}
+		cwd, err := os.Getwd()
+		if err != nil {
+			return "", "", err
+		}
+		return filepath.Join(cwd, name), "", nil
+	}
+	dir, err := os.MkdirTemp("", "pdy-preview-*")
+	if err != nil {
+		return "", "", err
+	}
+	return filepath.Join(dir, base+".html"), dir, nil
+}
+
+func pandocArgs(options Options, assets, output string) []string {
+	resourcePath := filepath.Dir(options.InputPath) + string(os.PathListSeparator) + assets
+	args := []string{"--from", "markdown+tex_math_dollars+tex_math_single_backslash", options.InputPath, "--template", filepath.Join(assets, "template.html"), "--standalone", "--resource-path", resourcePath, "--syntax-highlighting=none", "--mathjax", "--lua-filter", filepath.Join(assets, "inline-assets.lua"), "--metadata=assetMode:" + options.AssetMode}
+	if options.AssetMode == "cdn" {
+		args = append(args, "--metadata=assetModeCdn:true")
+	} else {
+		args = append(args, "--metadata=assetModeOffline:true")
+	}
+	if options.AssetMode == "offline" && options.EmbedResources {
+		args = append(args, "--embed-resources")
+	}
+	return append(args, "--output", output)
+}
+
+func runPandoc(binary string, args []string, assets string) error {
+	cmd := exec.Command(binary, args...)
+	cmd.Env = append(os.Environ(), "PDY_ASSETS_DIR="+assets)
+	cmd.Stdout = os.Stdout
+	var stderr bytes.Buffer
+	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
+	if err := cmd.Run(); err != nil {
+		message := strings.TrimSpace(stderr.String())
+		if message == "" {
+			message = err.Error()
+		}
+		var exit *exec.ExitError
+		if errors.As(err, &exit) {
+			return fmt.Errorf("pandoc exited with code %d: %s", exit.ExitCode(), message)
+		}
+		return fmt.Errorf("run pandoc: %w: %s", err, message)
+	}
+	return nil
+}
+
+func openInBrowser(path string) error {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin":
+		cmd = exec.Command("open", path)
+	case "linux":
+		cmd = exec.Command("xdg-open", path)
+	case "windows":
+		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", path)
+	default:
+		return fmt.Errorf("unsupported platform %s", runtime.GOOS)
+	}
+	return cmd.Run()
+}
+func quoteArgs(args []string) []string {
+	for i, arg := range args {
+		if strings.ContainsAny(arg, " \t\n\"'\\") {
+			args[i] = fmt.Sprintf("%q", arg)
+		}
+	}
+	return args
+}

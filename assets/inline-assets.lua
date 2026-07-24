@@ -1,54 +1,42 @@
 local function read_file(path)
-    local file = io.open(path, 'r')
-    if not file then
-        return nil
-    end
-    -- Use 'a' instead of '*a' for Lua 5.3+ compatibility (Pandoc default)
-    local content = file:read('a')
-    file:close()
-    return content
+  local file = io.open(path, "r")
+  if not file then return nil end
+  local content = file:read("a")
+  file:close()
+  return content
 end
 
-local function resolve_asset_path(name)
-    local base = os.getenv('PDY_ASSETS_DIR')
-    if not base or base == '' then
-        return name
-    end
-    -- Get system-specific separator from package config
-    local sep = package.config:sub(1, 1)
-    if base:sub(-1) == sep then
-        return base .. name
-    end
-    return base .. sep .. name
+local function asset_path(name)
+  local base = os.getenv("PDY_ASSETS_DIR")
+  if not base or base == "" then return name end
+  local separator = package.config:sub(1, 1)
+  if base:sub(-1) == separator then return base .. name end
+  return base .. separator .. name
 end
 
 local function read_asset(name)
-    local path = resolve_asset_path(name)
-    local content = read_file(path)
-    if content then
-        return content
-    end
-    -- Fallback to relative lookup so behaviour matches previous versions.
-    return read_file(name)
+  return read_file(asset_path(name)) or read_file(name)
 end
 
-local function as_meta_raw(content)
-    if not content then
-        return nil
-    end
-    -- We use RawInline to inject the code literally, preventing Pandoc
-    -- from escaping characters like '<', '>', or '&' inside your JS/CSS.
-    return pandoc.MetaInlines({ pandoc.RawInline('html', content) })
+local function concatenate(names)
+  local parts = {}
+  for _, name in ipairs(names) do
+    local content = read_asset(name)
+    if not content then error("required pdy asset not found: " .. name) end
+    table.insert(parts, content)
+  end
+  return table.concat(parts, "\n")
+end
+
+local function raw_html(content)
+  return pandoc.MetaInlines({ pandoc.RawInline("html", content) })
 end
 
 function Pandoc(doc)
-    -- Inline our core assets when available.
-    -- These keys match the $variable$ names in your HTML template.
-    local font_css = read_asset('font-assets.css') or ''
-    local styles_css = read_asset('styles.css') or ''
-    doc.meta['inline-css'] = as_meta_raw(font_css .. '\n' .. styles_css)
-    doc.meta['inline-js'] = as_meta_raw(read_asset('script.js'))
-    doc.meta['inline-mathjax-config'] = as_meta_raw(read_asset('mathjax-config.js'))
-
-    return doc
+  local font_css = read_asset("font-assets.css") or ""
+  local css = concatenate({ "base.css", "components.css", "themes.css" })
+  doc.meta["inline-css"] = raw_html(font_css .. "\n" .. css)
+  doc.meta["inline-js"] = raw_html(concatenate({ "mermaid.js", "app.js" }))
+  doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
+  return doc
 end
