@@ -199,8 +199,8 @@
 }
 
 .mermaid-viewport svg .edgeLabel rect {
-  fill: var(--mermaid-edge-label-fill) !important;
-  stroke: var(--mermaid-border-color) !important;
+  fill: transparent !important;
+  stroke: none !important;
 }
 
 .mermaid-viewport svg .grid line {

@@ -17,7 +17,7 @@
     "nodeBorder": "rgba(255, 180, 84, 0.45)",
     "clusterBkg": "rgba(255, 180, 84, 0.045)",
     "clusterBorder": "rgba(191, 161, 111, 0.18)",
-    "edgeLabelBackground": "#141821",
+    "edgeLabelBackground": "transparent",
     "noteBkgColor": "rgba(255, 180, 84, 0.105)",
     "noteTextColor": "#f3ead3",
     "noteBorderColor": "rgba(255, 180, 84, 0.32)",
