@@ -341,29 +341,59 @@ li::marker {
 .task-list {
   list-style: none;
   padding-left: 0;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.task-list .task-list {
+  padding-left: 1.75rem;
+  margin: 0.4rem 0 0 0;
 }
 
 .task-list li {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
+  gap: 0.7rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.task-list li.task-completed,
+.task-list li:has(input:checked) {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-border);
 }
 
 .task-list input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
   background-color: var(--color-surface);
-  margin-top: 0.35em;
-  font: inherit;
-  color: currentColor;
-  width: 1.1em;
-  height: 1.1em;
-  border: 1px solid var(--color-border);
-  border-radius: 0;
+  width: 1.2em;
+  height: 1.2em;
+  min-width: 1.2em;
+  min-height: 1.2em;
+  border-radius: 5px;
+  border: 1.5px solid var(--color-border);
+  flex-shrink: 0;
+  margin-top: 0.18em;
   display: grid;
   place-content: center;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  opacity: 1 !important;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.task-list input[type="checkbox"]:hover {
+  border-color: var(--color-accent);
+  background-color: var(--color-surface-alt);
+  transform: scale(1.05);
 }
 
 .task-list input[type="checkbox"]::before {
@@ -371,10 +401,10 @@ li::marker {
   width: 0.65em;
   height: 0.65em;
   transform: scale(0);
-  transition: 120ms transform ease-in-out;
+  transition: 150ms transform cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: inset 1em 1em var(--white-100);
   transform-origin: center;
-  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  clip-path: polygon(14% 44%, 0 65%, 45% 100%, 100% 16%, 82% 0%, 41% 65%);
 }
 
 .task-list input[type="checkbox"]:checked {
