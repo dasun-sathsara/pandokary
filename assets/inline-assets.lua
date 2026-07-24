@@ -32,30 +32,42 @@ local function raw_html(content)
   return pandoc.MetaInlines({ pandoc.RawInline("html", content) })
 end
 
-local component_files = {
+local function has_class(classes, class_name)
+  for _, class in ipairs(classes) do
+    if class == class_name then return true end
+  end
+  return false
+end
+
+function CodeBlock(block)
+  if has_class(block.classes, "mermaid") then
+    block.attributes["data-mermaid-code"] = block.text
+  end
+  return block
+end
+
+local stylesheet_files = {
+  "base.css",
   "components/code.css",
   "components/tables.css",
   "components/settings.css",
-  "components/responsive.css",
   "components/mermaid.css",
   "components/reader.css",
   "components/loading.css",
   "components/headings.css",
   "components/lightbox.css",
   "components/footer.css",
-}
-
-local theme_files = {
   "themes/css/lumina.css",
   "themes/css/primer.css",
   "themes/css/parchment.css",
- "themes/css/verdant-paper.css",
- "themes/css/lilac-frost.css",
+  "themes/css/verdant-paper.css",
+  "themes/css/lilac-frost.css",
   "themes/css/obsidian.css",
   "themes/css/studio-dark.css",
   "themes/css/ayu-mirage.css",
- "themes/css/midnight-fjord.css",
- "themes/css/boreal.css",
+  "themes/css/midnight-fjord.css",
+  "themes/css/boreal.css",
+  "components/responsive.css",
 }
 
 local mermaid_files = {
@@ -86,20 +98,16 @@ end
 
 function Pandoc(doc)
   local mode = doc.meta.assetMode and pandoc.utils.stringify(doc.meta.assetMode) or "cdn"
-  local base_css = concatenate({ "base.css" })
-  local comp_css = concatenate(component_files)
-  local th_css = concatenate(theme_files)
+  local css = concatenate(stylesheet_files)
   local theme_js = build_theme_js()
-
-  doc.meta["theme-js"] = raw_html(theme_js)
 
   if mode == "offline" then
     local font_css = read_asset("font-assets.css") or ""
-    doc.meta["inline-css"] = raw_html(font_css .. "\n" .. base_css .. "\n" .. comp_css .. "\n" .. th_css)
-  else
-    doc.meta["inline-css"] = raw_html(base_css .. "\n" .. comp_css .. "\n" .. th_css)
+    if font_css ~= "" then css = font_css .. "\n" .. css end
   end
 
+  doc.meta["theme-js"] = raw_html(theme_js)
+  doc.meta["inline-css"] = raw_html(css)
   doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate({ "mermaid.js", "app.js" }))
   doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
   return doc

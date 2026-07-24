@@ -21,7 +21,14 @@
   flex-shrink: 0;
 }
 /* Scrollspy Table of Contents */
-@media (min-width: 1400px) {
+.toc-toggle {
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 1000;
+  display: none;
+}
+
+@media (min-width: 1200px) {
   .toc-sidebar {
     display: block;
     position: fixed;
@@ -49,32 +56,23 @@
       max-width 0.3s ease;
   }
 
-  .toc-collapsed .toc-sidebar {
+  html:not(.toc-open) .toc-sidebar {
     transform: translateX(-310px);
   }
 
-  .toc-collapsed body {
+  html:not(.toc-open) body {
     padding-left: 1.75rem;
     max-width: var(--content-max-width, 1040px);
   }
-}
 
-.toc-toggle {
-  bottom: 1.5rem;
-  left: 1.5rem;
-  z-index: 1000;
-  display: none;
-}
-
-@media (min-width: 1400px) {
   .toc-toggle {
     display: flex;
   }
 }
 
-@media (max-width: 1399px) {
+@media (max-width: 1199px) {
   .toc-sidebar {
-    display: block;
+    display: none;
     position: fixed;
     left: 0;
     top: 0;
@@ -97,11 +95,13 @@
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  html:not(.toc-collapsed) .toc-sidebar {
+  html.toc-open .toc-sidebar {
+    display: block;
     transform: translateX(0);
   }
 
   .toc-backdrop {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -116,7 +116,8 @@
     transition: opacity 0.35s ease;
   }
 
-  html:not(.toc-collapsed) .toc-backdrop {
+  html.toc-open .toc-backdrop {
+    display: block;
     opacity: 1;
     pointer-events: auto;
   }
