@@ -148,16 +148,28 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-text);
-  padding: 0.15rem 0.3rem;
+  width: 26px;
+  height: 26px;
+  padding: 0;
   font-size: 0.75rem;
   cursor: pointer;
-  border-radius: 4px;
-  display: flex;
+  border-radius: 6px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
   transition: all 0.2s ease;
   font-family: inherit;
+  box-shadow: var(--shadow-sm);
+}
+
+.mermaid-btn svg,
+.table-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: currentColor;
+  color: currentColor;
+  display: block;
 }
 
 .mermaid-btn:hover,
