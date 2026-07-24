@@ -78,19 +78,21 @@ end
 
 function Pandoc(doc)
   local mode = doc.meta.assetMode and pandoc.utils.stringify(doc.meta.assetMode) or "cdn"
+  local base_css = concatenate({ "base.css" })
+  local comp_css = concatenate(component_files)
+  local th_css = concatenate(theme_files)
   local theme_js = build_theme_js()
 
   doc.meta["theme-js"] = raw_html(theme_js)
 
   if mode == "offline" then
     local font_css = read_asset("font-assets.css") or ""
-    local base_css = concatenate({ "base.css" })
-    local comp_css = concatenate(component_files)
-    local th_css = concatenate(theme_files)
     doc.meta["inline-css"] = raw_html(font_css .. "\n" .. base_css .. "\n" .. comp_css .. "\n" .. th_css)
-    doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate({ "mermaid.js", "app.js" }))
+  else
+    doc.meta["inline-css"] = raw_html(base_css .. "\n" .. comp_css .. "\n" .. th_css)
   end
 
+  doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate({ "mermaid.js", "app.js" }))
   doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
   return doc
 end
