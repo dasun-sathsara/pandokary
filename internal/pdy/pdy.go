@@ -395,7 +395,7 @@ func pandocArgs(options Options, assets, output string) []string {
 	} else {
 		args = append(args, "--metadata=assetModeOffline:true")
 	}
-	if options.AssetMode == "offline" && options.EmbedResources {
+	if options.EmbedResources {
 		args = append(args, "--embed-resources")
 	}
 	return append(args, "--output", output)

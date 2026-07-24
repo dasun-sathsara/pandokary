@@ -780,6 +780,9 @@ if (window.mermaid) {
         this.content.style.transformOrigin = "0 0";
         this.queueReset();
       } catch (error) {
+        document.querySelectorAll(`#d${id}, #${id}`).forEach((el) => {
+          el.remove();
+        });
         if (token === this.renderToken) {
           this.showRenderError(error);
         }
