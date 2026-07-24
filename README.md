@@ -66,6 +66,7 @@ You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a director
 ### Markdown formatting
 
 By default, `pdy` runs `dprint fmt` on the input Markdown file before passing it to Pandoc. This normalises list indentation, whitespace, and other formatting inconsistencies. Use `--no-fmt` to skip this step.
+
 ## Testing
 
 ```sh

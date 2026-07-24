@@ -874,7 +874,7 @@ const TaskListModule = (() => {
 
   function initInlineTasks() {
     document.querySelectorAll("main p, main li:not(.task-list li)").forEach((element) => {
-      if (element.children.length > 0 || !/(?:\[\s?\]|\[x\])/i.test(element.innerHTML)) return;
+      if (!/(?:\[\s?\]|\[x\])/i.test(element.innerHTML)) return;
       element.innerHTML = element.innerHTML.replace(
         /(\[\s?\]|\[x\])\s*([^[]+)/gi,
         (_match, mark, text) => {
