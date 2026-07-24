@@ -277,7 +277,7 @@
   flex-shrink: 0;
   stroke: currentColor;
   color: currentColor;
-  fill: none;
+  display: block;
 }
 .code-toggle-btn:hover {
   background: var(--color-surface-alt);
