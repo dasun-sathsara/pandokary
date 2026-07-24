@@ -200,9 +200,9 @@ const FONT_OPTIONS = {
 function setHighlightTheme(theme) {
   const base = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/";
   const file =
-    theme === "vscode-dark"
+    theme === "studio-dark"
       ? "vs2015.min.css"
-      : ["dark", "ayu-dark"].includes(theme)
+      : ["obsidian", "ayu-mirage"].includes(theme)
         ? "tokyo-night-dark.min.css"
         : "github.min.css";
   const existing = document.getElementById("hljs-theme");
@@ -329,7 +329,7 @@ function initSettings() {
   panel.querySelectorAll(".theme-option").forEach((button) => {
     button.addEventListener("click", () => applyTheme(button.dataset.themeKey));
   });
-  applyTheme(storageGet("theme", "light"));
+  applyTheme(storageGet("theme", "lumina"));
 
   const applyFont = (key) => {
     const selectedKey = FONT_OPTIONS[key] ? key : "studio-feixen";

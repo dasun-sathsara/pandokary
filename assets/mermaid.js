@@ -44,7 +44,7 @@ async function initMermaid() {
     return;
   }
 
-  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "lumina";
   initializeMermaid(currentTheme);
 
   const blocks = document.querySelectorAll("pre.mermaid");
@@ -105,7 +105,7 @@ async function initMermaid() {
 async function updateMermaidTheme() {
   if (!window.mermaid) return;
 
-  const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+  const currentTheme = document.documentElement.getAttribute("data-theme") || "lumina";
   initializeMermaid(currentTheme);
 
   const containers = document.querySelectorAll(".mermaid-container");
