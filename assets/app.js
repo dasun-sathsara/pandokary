@@ -60,6 +60,11 @@ const StorageManager = (() => {
     isScrollListenerEnabled = true;
   }
 
+  function flushScrollPosition() {
+    window.clearTimeout(scrollSaveTimer);
+    if (isScrollListenerEnabled) saveScrollPosition();
+  }
+
   function init() {
     window.addEventListener(
       "scroll",
@@ -70,6 +75,10 @@ const StorageManager = (() => {
       },
       { passive: true },
     );
+    window.addEventListener("pagehide", flushScrollPosition, { passive: true });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flushScrollPosition();
+    });
   }
 
   return {
@@ -81,6 +90,7 @@ const StorageManager = (() => {
     getScrollPosition,
     saveScrollPosition,
     enableScrollListener,
+    flushScrollPosition,
     init,
   };
 })();
@@ -157,6 +167,13 @@ const UIComponentFactory = (() => {
     if (!copied) throw new Error("Clipboard copy was rejected");
   }
 
+  function requestFrame(callback) {
+    if (typeof window.requestAnimationFrame === "function") {
+      return window.requestAnimationFrame(callback);
+    }
+    return window.setTimeout(callback, 0);
+  }
+
   function updateScrollLock() {
     const modalSelector = [
       ".table-scroll-container.maximized",
@@ -183,7 +200,7 @@ const UIComponentFactory = (() => {
     });
     document.body.append(backdrop);
     container._modalBackdrop = backdrop;
-    window.requestAnimationFrame(() => {
+    requestFrame(() => {
       container.classList.add("visible");
       backdrop.classList.add("visible");
     });
@@ -209,6 +226,7 @@ const UIComponentFactory = (() => {
     setButtonContent,
     setButtonTitle,
     copyText,
+    requestFrame,
     updateScrollLock,
     openModal,
     closeModal,
@@ -494,7 +512,7 @@ const TableModule = (() => {
 })();
 
 const SettingsModule = (() => {
-  const { ICONS } = UIComponentFactory;
+  const { ICONS, requestFrame } = UIComponentFactory;
   const FONT_OPTIONS = Object.freeze({
     "studio-feixen": ["'Studio Feixen Sans TRIAL','Studio Feixen Sans',sans-serif", "normal"],
     "google-sans-flex": [
@@ -523,6 +541,9 @@ const SettingsModule = (() => {
   }
 
   function setHighlightTheme(theme) {
+    const existing = document.getElementById("hljs-theme");
+    if (existing && !existing.hasAttribute("data-external")) return;
+
     const base = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/";
     const file =
       theme === "studio-dark"
@@ -530,7 +551,6 @@ const SettingsModule = (() => {
         : ["obsidian", "ayu-mirage"].includes(theme)
           ? "tokyo-night-dark.min.css"
           : "github.min.css";
-    const existing = document.getElementById("hljs-theme");
     if (existing?.tagName.toLowerCase() === "link") {
       existing.href = base + file;
       return;
@@ -539,6 +559,7 @@ const SettingsModule = (() => {
     link.id = "hljs-theme";
     link.rel = "stylesheet";
     link.href = base + file;
+    link.dataset.external = "true";
     if (existing) existing.replaceWith(link);
     else document.head.append(link);
   }
@@ -612,25 +633,54 @@ const SettingsModule = (() => {
   }
 
   function bindPanelVisibility(panel, toggle) {
-    const show = (visible) => {
+    const closeButton = panel.querySelector(".close-settings");
+    const showFocusableElement = (element) => {
+      if (!Object.hasOwn(element.dataset, "pdyTabindex")) return;
+      const previousTabindex = element.dataset.pdyTabindex;
+      if (previousTabindex) element.setAttribute("tabindex", previousTabindex);
+      else element.removeAttribute("tabindex");
+      delete element.dataset.pdyTabindex;
+    };
+
+    const hideFocusableElement = (element) => {
+      if (!Object.hasOwn(element.dataset, "pdyTabindex")) {
+        element.dataset.pdyTabindex = element.getAttribute("tabindex") || "";
+      }
+      element.setAttribute("tabindex", "-1");
+    };
+
+    const setFocusability = (visible) => {
+      if ("inert" in panel) panel.inert = !visible;
+      const elements = panel.querySelectorAll(focusableSelector);
+      if (visible) {
+        elements.forEach(showFocusableElement);
+      } else {
+        elements.forEach(hideFocusableElement);
+      }
+    };
+    const show = (visible, restoreFocus = false) => {
       panel.classList.toggle("active", visible);
       toggle.classList.toggle("active", visible);
       toggle.setAttribute("aria-expanded", String(visible));
       panel.setAttribute("aria-hidden", String(!visible));
+      setFocusability(visible);
+      if (visible) requestFrame(() => closeButton?.focus());
+      else if (restoreFocus) toggle.focus();
     };
     toggle.addEventListener("click", (event) => {
       event.stopPropagation();
       show(!panel.classList.contains("active"));
     });
     panel.addEventListener("click", (event) => event.stopPropagation());
-    panel.querySelector(".close-settings")?.addEventListener("click", (event) => {
+    closeButton?.addEventListener("click", (event) => {
       event.stopPropagation();
-      show(false);
+      show(false, true);
     });
     window.addEventListener("click", () => show(false));
     window.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") show(false);
+      if (event.key === "Escape") show(false, true);
     });
+    show(false);
   }
 
   function bindThemeControls(panel) {
@@ -900,7 +950,7 @@ const TaskListModule = (() => {
 })();
 
 const ReaderExtrasModule = (() => {
-  const { ICONS, copyText, createButton, updateScrollLock } = UIComponentFactory;
+  const { ICONS, copyText, createButton, requestFrame, updateScrollLock } = UIComponentFactory;
 
   function debounce(callback, delay) {
     let timer;
@@ -952,7 +1002,7 @@ const ReaderExtrasModule = (() => {
       () => {
         if (scheduled) return;
         scheduled = true;
-        window.requestAnimationFrame(update);
+        requestFrame(update);
       },
       { passive: true },
     );
@@ -995,7 +1045,7 @@ const ReaderExtrasModule = (() => {
       () => {
         if (scheduled) return;
         scheduled = true;
-        window.requestAnimationFrame(update);
+        requestFrame(update);
       },
       { passive: true },
     );
@@ -1020,7 +1070,7 @@ const ReaderExtrasModule = (() => {
     const close = createButton("lightbox-close", ICONS.x, "Close image");
     backdrop.append(close, zoomed);
     document.body.append(backdrop);
-    window.requestAnimationFrame(() => {
+    requestFrame(() => {
       backdrop.classList.add("active");
       updateScrollLock();
     });
@@ -1174,7 +1224,11 @@ const ReaderExtrasModule = (() => {
     document.querySelectorAll("main img").forEach((image) => {
       if (image.closest(".mermaid-container")) return;
       image.style.cursor = "zoom-in";
-      image.addEventListener("click", () => openLightbox(image));
+      image.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openLightbox(image);
+      });
     });
   }
 
@@ -1276,6 +1330,9 @@ const ReaderExtrasModule = (() => {
     finishLoading,
   };
 })();
+
+// Mermaid predates the module boundary and calls this hook when closing fullscreen dialogs.
+window.updateScrollLock = UIComponentFactory.updateScrollLock;
 
 function reportModuleError(moduleName, error) {
   console.error(`${moduleName} initialization failed`, error);
