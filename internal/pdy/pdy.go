@@ -3,7 +3,6 @@ package pdy
 import (
 	"bytes"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -29,7 +28,7 @@ type assetLocation struct {
 	writable bool
 }
 
-var requiredAssets = []string{"template.html", "inline-assets.lua", "mathjax-config.js", "themes.js", "app.js", "mermaid.js", "base.css", "components.css", "themes.css"}
+var requiredAssets = []string{"template.html", "inline-assets.lua", "mathjax-config.js", "app.js", "mermaid.js", "base.css", "themes/manifest.json"}
 
 func Run(options Options) (Result, error) {
 	if options.AssetMode == "" {
@@ -171,18 +170,6 @@ func prepareRuntimeAssets(source assetLocation) (string, func(), []string, error
 			return "", nil, nil, err
 		}
 	}
-	if err := bundleThemesIfPresent(dir); err != nil {
-		if cleanup != nil {
-			cleanup()
-		}
-		return "", nil, nil, fmt.Errorf("bundle themes: %w", err)
-	}
-	if err := bundleComponentsIfPresent(dir); err != nil {
-		if cleanup != nil {
-			cleanup()
-		}
-		return "", nil, nil, fmt.Errorf("bundle components: %w", err)
-	}
 	warnings, err := writeBundledFontCSS(filepath.Join(dir, "font-assets.css"))
 	if err != nil {
 		if cleanup != nil {
@@ -193,105 +180,6 @@ func prepareRuntimeAssets(source assetLocation) (string, func(), []string, error
 	return dir, cleanup, warnings, nil
 }
 
-func bundleThemesIfPresent(dir string) error {
-	manifestPath := filepath.Join(dir, "themes", "manifest.json")
-	if _, err := os.Stat(manifestPath); os.IsNotExist(err) {
-		return nil
-	}
-	data, err := os.ReadFile(manifestPath)
-	if err != nil {
-		return fmt.Errorf("read theme manifest: %w", err)
-	}
-
-	type themeItem struct {
-		ID     string `json:"id"`
-		Name   string `json:"name"`
-		Mode   string `json:"mode"`
-		Accent string `json:"accent"`
-	}
-	type themeManifest struct {
-		Default string      `json:"default"`
-		Themes  []themeItem `json:"themes"`
-	}
-
-	var manifest themeManifest
-	if err := json.Unmarshal(data, &manifest); err != nil {
-		return fmt.Errorf("parse theme manifest: %w", err)
-	}
-
-	var combinedCSS strings.Builder
-	combinedCSS.WriteString("/* Generated from assets/themes/css/ — do not edit directly */\n\n")
-
-	mermaidThemes := make(map[string]any)
-
-	for _, item := range manifest.Themes {
-		cssPath := filepath.Join(dir, "themes", "css", item.ID+".css")
-		if cssData, err := os.ReadFile(cssPath); err == nil {
-			combinedCSS.WriteString(strings.TrimSpace(string(cssData)))
-			combinedCSS.WriteString("\n\n")
-		}
-
-		mermaidPath := filepath.Join(dir, "themes", "mermaid", item.ID+".json")
-		if mermaidData, err := os.ReadFile(mermaidPath); err == nil {
-			var mObj any
-			if err := json.Unmarshal(mermaidData, &mObj); err == nil {
-				mermaidThemes[item.ID] = mObj
-			}
-		}
-	}
-
-	if err := os.WriteFile(filepath.Join(dir, "themes.css"), []byte(strings.TrimSpace(combinedCSS.String())+"\n"), 0o644); err != nil {
-		return fmt.Errorf("write themes.css: %w", err)
-	}
-
-	manifestJSON, _ := json.MarshalIndent(manifest.Themes, "", "  ")
-	mermaidJSON, _ := json.MarshalIndent(mermaidThemes, "", "  ")
-
-	themesJS := fmt.Sprintf("// Generated from assets/themes/ — do not edit directly\nwindow.PDY_THEME_MANIFEST = %s;\nwindow.PDY_MERMAID_THEMES = %s;\n", manifestJSON, mermaidJSON)
-
-	if err := os.WriteFile(filepath.Join(dir, "themes.js"), []byte(themesJS), 0o644); err != nil {
-		return fmt.Errorf("write themes.js: %w", err)
-	}
-
-	return nil
-}
-
-func bundleComponentsIfPresent(dir string) error {
-	componentsDir := filepath.Join(dir, "components")
-	if info, err := os.Stat(componentsDir); err != nil || !info.IsDir() {
-		return nil
-	}
-
-	order := []string{
-		"code.css",
-		"tables.css",
-		"settings.css",
-		"responsive.css",
-		"mermaid.css",
-		"reader.css",
-		"loading.css",
-		"headings.css",
-		"lightbox.css",
-		"footer.css",
-	}
-
-	var combinedCSS strings.Builder
-	combinedCSS.WriteString("/* Generated from assets/components/ — do not edit directly */\n\n")
-
-	for _, name := range order {
-		filePath := filepath.Join(componentsDir, name)
-		if data, err := os.ReadFile(filePath); err == nil {
-			combinedCSS.WriteString(strings.TrimSpace(string(data)))
-			combinedCSS.WriteString("\n\n")
-		}
-	}
-
-	if err := os.WriteFile(filepath.Join(dir, "components.css"), []byte(strings.TrimSpace(combinedCSS.String())+"\n"), 0o644); err != nil {
-		return fmt.Errorf("write components.css: %w", err)
-	}
-
-	return nil
-}
 func copyDir(source, target string) error {
 	return filepath.WalkDir(source, func(path string, entry os.DirEntry, walkErr error) error {
 		if walkErr != nil {
