@@ -73,11 +73,13 @@ function closeModal(container) {
 async function loadFonts() {
   if (!document.fonts) return;
   try {
-    await Promise.all([
-      document.fonts.load("12px 'Architects Daughter'"),
-      document.fonts.load("12px 'Google Sans Flex'"),
+    await Promise.race([
+      Promise.all([
+        document.fonts.load("12px 'Architects Daughter'"),
+        document.fonts.load("12px 'Google Sans Flex'"),
+      ]),
+      new Promise((resolve) => setTimeout(resolve, 2000)),
     ]);
-    await document.fonts.ready;
   } catch (error) {
     console.warn("Font loading failed; CSS fallbacks remain active", error);
   }
