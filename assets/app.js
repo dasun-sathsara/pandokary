@@ -36,8 +36,7 @@ function updateScrollLock() {
     ".lightbox-backdrop.active",
   ].join(",");
   const mobileTOC =
-    window.innerWidth < 1400 &&
-    !document.documentElement.classList.contains("toc-collapsed");
+    window.innerWidth < 1400 && !document.documentElement.classList.contains("toc-collapsed");
   document.body.classList.toggle(
     "scroll-locked",
     Boolean(document.querySelector(modalSelector)) || mobileTOC,
@@ -87,9 +86,7 @@ async function loadFonts() {
 function initCodeBlocks() {
   document.querySelectorAll("pre:not(.mermaid) code").forEach((code) => {
     const language = [...code.classList].find(
-      (name) =>
-        !["sourceCode", "code", "hljs"].includes(name) &&
-        !name.startsWith("language-"),
+      (name) => !["sourceCode", "code", "hljs"].includes(name) && !name.startsWith("language-"),
     );
     if (language) code.classList.add(`language-${language.toLowerCase()}`);
     code.classList.add("hljs");
@@ -98,15 +95,10 @@ function initCodeBlocks() {
     const lines = code.innerHTML.split(/\r?\n/);
     if (!lines.at(-1)?.trim()) lines.pop();
     if (lines.length >= 3) {
-      code.innerHTML = lines
-        .map((line) => `<div class="code-line">${line || " "}</div>`)
-        .join("");
+      code.innerHTML = lines.map((line) => `<div class="code-line">${line || " "}</div>`).join("");
       code.addEventListener("click", (event) => {
         const line = event.target.closest(".code-line");
-        if (
-          line &&
-          event.clientX - line.getBoundingClientRect().left < 55
-        ) {
+        if (line && event.clientX - line.getBoundingClientRect().left < 55) {
           line.classList.toggle("focused-line");
         }
       });
@@ -168,38 +160,26 @@ function initTables() {
     const updateShadows = () => {
       left.style.opacity = wrapper.scrollLeft > 2 ? "1" : "0";
       right.style.opacity =
-        wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth - 2
-          ? "1"
-          : "0";
+        wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth - 2 ? "1" : "0";
     };
-    const maximize = createButton(
-      "table-btn btn-maximize",
-      "🔍",
-      "Toggle fullscreen",
-      (event) => {
-        const button = event.currentTarget;
-        if (!container.classList.contains("maximized")) {
-          const backdrop = openModal(container);
-          backdrop.addEventListener("click", () => button.click());
-          button.textContent = "🚪";
-          button.title = "Restore Normal View";
-        } else {
-          closeModal(container);
-          button.textContent = "🔍";
-          button.title = "Toggle Fullscreen";
-        }
-        setTimeout(updateShadows, 50);
-      },
-    );
-    const rotate = createButton(
-      "table-btn btn-rotate",
-      "🔄",
-      "Rotate landscape",
-      () => {
-        container.classList.toggle("rotated-landscape");
-        setTimeout(updateShadows, 50);
-      },
-    );
+    const maximize = createButton("table-btn btn-maximize", "🔍", "Toggle fullscreen", (event) => {
+      const button = event.currentTarget;
+      if (!container.classList.contains("maximized")) {
+        const backdrop = openModal(container);
+        backdrop.addEventListener("click", () => button.click());
+        button.textContent = "🚪";
+        button.title = "Restore Normal View";
+      } else {
+        closeModal(container);
+        button.textContent = "🔍";
+        button.title = "Toggle Fullscreen";
+      }
+      setTimeout(updateShadows, 50);
+    });
+    const rotate = createButton("table-btn btn-rotate", "🔄", "Rotate landscape", () => {
+      container.classList.toggle("rotated-landscape");
+      setTimeout(updateShadows, 50);
+    });
 
     actions.append(maximize, rotate);
     toolbar.append(actions);
@@ -213,19 +193,12 @@ function initTables() {
 }
 
 const FONT_OPTIONS = {
-  "studio-feixen": [
-    "'Studio Feixen Sans TRIAL','Studio Feixen Sans',sans-serif",
-    "normal",
-  ],
-  "google-sans-flex": [
-    "'Google Sans Flex',sans-serif",
-    '"slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0',
-  ],
+  "studio-feixen": ["'Studio Feixen Sans TRIAL','Studio Feixen Sans',sans-serif", "normal"],
+  "google-sans-flex": ["'Google Sans Flex',sans-serif", '"slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0'],
 };
 
 function setHighlightTheme(theme) {
-  const base =
-    "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/";
+  const base = "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/";
   const file =
     theme === "vscode-dark"
       ? "vs2015.min.css"
@@ -363,10 +336,7 @@ function initSettings() {
     document.documentElement.style.setProperty("--font-body", font[0]);
     document.documentElement.style.setProperty("--font-heading", font[0]);
     document.documentElement.style.setProperty("--font-optical-sizing", "auto");
-    document.documentElement.style.setProperty(
-      "--font-variation-settings",
-      font[1],
-    );
+    document.documentElement.style.setProperty("--font-variation-settings", font[1]);
     storageSet("fontChoice", selectedKey);
     panel.querySelectorAll(".font-option").forEach((button) => {
       button.classList.toggle("active", button.dataset.fontKey === selectedKey);
@@ -377,17 +347,12 @@ function initSettings() {
   });
   applyFont(storageGet("fontChoice", "studio-feixen"));
 
-  let size = Math.max(
-    -4,
-    Math.min(8, parseInt(storageGet("font-size-adjust", "0"), 10) || 0),
-  );
+  let size = Math.max(-4, Math.min(8, parseInt(storageGet("font-size-adjust", "0"), 10) || 0));
   const decreaseSize = panel.querySelector(".dec-font-size");
   const increaseSize = panel.querySelector(".inc-font-size");
   const updateSize = () => {
     document.documentElement.style.setProperty("--font-size-adjust", `${size}px`);
-    panel.querySelector(".font-size-val").textContent = `${Math.round(
-      ((18 + size) / 18) * 100,
-    )}%`;
+    panel.querySelector(".font-size-val").textContent = `${Math.round(((18 + size) / 18) * 100)}%`;
     decreaseSize.disabled = size <= -4;
     increaseSize.disabled = size >= 8;
     storageSet("font-size-adjust", size);
@@ -408,10 +373,7 @@ function initSettings() {
   const decreaseWidth = panel.querySelector(".dec-layout-width");
   const increaseWidth = panel.querySelector(".inc-layout-width");
   const updateWidth = () => {
-    document.documentElement.style.setProperty(
-      "--content-max-width",
-      `${width}px`,
-    );
+    document.documentElement.style.setProperty("--content-max-width", `${width}px`);
     panel.querySelector(".layout-width-val").textContent = `${width}px`;
     decreaseWidth.disabled = width <= widths[0];
     increaseWidth.disabled = width >= widths.at(-1);
@@ -468,15 +430,10 @@ function initTableOfContents() {
     passive: false,
   });
   document.body.append(backdrop);
-  const toggle = createButton(
-    "floating-toggle toc-toggle",
-    "📖",
-    "Show Table of Contents",
-  );
+  const toggle = createButton("floating-toggle toc-toggle", "📖", "Show Table of Contents");
   document.body.append(toggle);
 
-  let collapsed =
-    window.innerWidth < 1400 || storageGet("tocCollapsed", "false") === "true";
+  let collapsed = window.innerWidth < 1400 || storageGet("tocCollapsed", "false") === "true";
   const setCollapsed = (value) => {
     collapsed = value;
     document.documentElement.classList.toggle("toc-collapsed", value);
@@ -530,7 +487,7 @@ function initTableOfContents() {
     },
     { rootMargin: "0px 0px -60% 0px", threshold: 0 },
   );
-  headings.forEach((heading) => observer.observe(heading));
+  for (const heading of headings) observer.observe(heading);
 }
 
 function initFloatingButtonAutoHide(settings) {
@@ -558,8 +515,7 @@ function initFloatingButtonAutoHide(settings) {
       const tocToggle = document.querySelector(".toc-toggle");
       if (tocToggle) {
         const tocOpen =
-          window.innerWidth < 1400 &&
-          !document.documentElement.classList.contains("toc-collapsed");
+          window.innerWidth < 1400 && !document.documentElement.classList.contains("toc-collapsed");
         tocToggle.classList.toggle("hidden", mobile && hide && !tocOpen);
       }
       lastScrollTop = scrollTop;
@@ -642,9 +598,7 @@ function openLightbox(image) {
   let initialScale = 1;
 
   const draw = (transition = false) => {
-    zoomed.style.transition = transition
-      ? "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
-      : "none";
+    zoomed.style.transition = transition ? "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)" : "none";
     zoomed.style.transform = `translate(${x}px,${y}px) scale(${scale})`;
   };
   const stopMouseDrag = () => {
@@ -739,10 +693,7 @@ function openLightbox(image) {
           event.touches[0].clientX - event.touches[1].clientX,
           event.touches[0].clientY - event.touches[1].clientY,
         );
-        scale = Math.max(
-          0.8,
-          Math.min(5, initialScale * (distance / initialDistance)),
-        );
+        scale = Math.max(0.8, Math.min(5, initialScale * (distance / initialDistance)));
         draw();
       }
     },
@@ -794,10 +745,7 @@ function initScrollPosition() {
     "scroll",
     () => {
       clearTimeout(timer);
-      timer = setTimeout(
-        () => storageSet(`pdy_scroll_${document.title}`, window.scrollY),
-        150,
-      );
+      timer = setTimeout(() => storageSet(`pdy_scroll_${document.title}`, window.scrollY), 150);
     },
     { passive: true },
   );
@@ -806,11 +754,11 @@ function initScrollPosition() {
 function initKeyboardShortcuts() {
   window.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
-    document
-      .querySelectorAll(
-        ".table-scroll-container.maximized,.mermaid-container.maximized",
-      )
-      .forEach((container) => container.querySelector(".btn-maximize")?.click());
+    for (const container of document.querySelectorAll(
+      ".table-scroll-container.maximized,.mermaid-container.maximized",
+    )) {
+      container.querySelector(".btn-maximize")?.click();
+    }
     document.querySelector(".lightbox-close")?.click();
   });
   window.addEventListener("resize", updateScrollLock, { passive: true });
@@ -822,10 +770,7 @@ function finishLoading() {
       document.querySelector(window.location.hash)?.scrollIntoView({ block: "start" });
       return;
     }
-    const saved = parseInt(
-      storageGet(`pdy_scroll_${document.title}`, "0"),
-      10,
-    );
+    const saved = parseInt(storageGet(`pdy_scroll_${document.title}`, "0"), 10);
     if (saved) window.scrollTo(0, saved);
   };
   const overlay = document.getElementById("loading-overlay");

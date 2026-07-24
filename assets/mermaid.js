@@ -16,162 +16,162 @@ const MERMAID_THEMES = {
     theme: "base",
     themeVariables: {
       darkMode: false,
-          background: "#ffffff",
-          mainBkg: "#ddf4ff",
-          secondBkg: "#f6f8fa",
-          tertiaryColor: "#eaeef2",
-          primaryColor: "#ddf4ff",
-          primaryTextColor: "#1f2328",
-          primaryBorderColor: "#0969da",
-          secondaryColor: "#f6f8fa",
-          secondaryTextColor: "#1f2328",
-          secondaryBorderColor: "#d0d7de",
-          lineColor: "#57606a",
-          textColor: "#1f2328",
-          nodeBorder: "#0969da",
-          clusterBkg: "#f6f8fa",
-          clusterBorder: "#d0d7de",
-          edgeLabelBackground: "#ffffff",
-          noteBkgColor: "#fff8c5",
-          noteTextColor: "#1f2328",
-          noteBorderColor: "#d4a72c",
-          actorBkg: "#ddf4ff",
-          actorBorder: "#0969da",
-          actorTextColor: "#1f2328",
-          actorLineColor: "#57606a",
-          signalColor: "#1f2328",
-          signalTextColor: "#1f2328",
-          labelBoxBkgColor: "#f6f8fa",
-          labelBoxBorderColor: "#d0d7de",
-          labelTextColor: "#1f2328",
+      background: "#ffffff",
+      mainBkg: "#ddf4ff",
+      secondBkg: "#f6f8fa",
+      tertiaryColor: "#eaeef2",
+      primaryColor: "#ddf4ff",
+      primaryTextColor: "#1f2328",
+      primaryBorderColor: "#0969da",
+      secondaryColor: "#f6f8fa",
+      secondaryTextColor: "#1f2328",
+      secondaryBorderColor: "#d0d7de",
+      lineColor: "#57606a",
+      textColor: "#1f2328",
+      nodeBorder: "#0969da",
+      clusterBkg: "#f6f8fa",
+      clusterBorder: "#d0d7de",
+      edgeLabelBackground: "#ffffff",
+      noteBkgColor: "#fff8c5",
+      noteTextColor: "#1f2328",
+      noteBorderColor: "#d4a72c",
+      actorBkg: "#ddf4ff",
+      actorBorder: "#0969da",
+      actorTextColor: "#1f2328",
+      actorLineColor: "#57606a",
+      signalColor: "#1f2328",
+      signalTextColor: "#1f2328",
+      labelBoxBkgColor: "#f6f8fa",
+      labelBoxBorderColor: "#d0d7de",
+      labelTextColor: "#1f2328",
     },
   },
   "warm-light": {
     theme: "base",
     themeVariables: {
       darkMode: false,
-          background: "#faf5ec",
-          mainBkg: "#fffdf8",
-          secondBkg: "#f2eadd",
-          tertiaryColor: "#f3ecdf",
-          primaryColor: "#fffdf8",
-          primaryTextColor: "#3d3730",
-          primaryBorderColor: "rgba(182, 93, 60, 0.45)",
-          secondaryColor: "#f2eadd",
-          secondaryTextColor: "#3d3730",
-          secondaryBorderColor: "rgba(61, 50, 38, 0.22)",
-          lineColor: "rgba(61, 50, 38, 0.42)",
-          textColor: "#3d3730",
-          nodeBorder: "rgba(182, 93, 60, 0.45)",
-          clusterBkg: "rgba(182, 93, 60, 0.045)",
-          clusterBorder: "rgba(61, 50, 38, 0.18)",
-          edgeLabelBackground: "#fffdf8",
-          noteBkgColor: "rgba(182, 93, 60, 0.105)",
-          noteTextColor: "#2a2520",
-          noteBorderColor: "rgba(182, 93, 60, 0.32)",
-          actorBkg: "#fffdf8",
-          actorBorder: "rgba(182, 93, 60, 0.45)",
-          actorTextColor: "#3d3730",
-          actorLineColor: "rgba(61, 50, 38, 0.34)",
-          signalColor: "#b65d3c",
-          signalTextColor: "#3d3730",
-          labelBoxBkgColor: "#fffdf8",
-          labelBoxBorderColor: "rgba(61, 50, 38, 0.18)",
-          labelTextColor: "#3d3730",
+      background: "#faf5ec",
+      mainBkg: "#fffdf8",
+      secondBkg: "#f2eadd",
+      tertiaryColor: "#f3ecdf",
+      primaryColor: "#fffdf8",
+      primaryTextColor: "#3d3730",
+      primaryBorderColor: "rgba(182, 93, 60, 0.45)",
+      secondaryColor: "#f2eadd",
+      secondaryTextColor: "#3d3730",
+      secondaryBorderColor: "rgba(61, 50, 38, 0.22)",
+      lineColor: "rgba(61, 50, 38, 0.42)",
+      textColor: "#3d3730",
+      nodeBorder: "rgba(182, 93, 60, 0.45)",
+      clusterBkg: "rgba(182, 93, 60, 0.045)",
+      clusterBorder: "rgba(61, 50, 38, 0.18)",
+      edgeLabelBackground: "#fffdf8",
+      noteBkgColor: "rgba(182, 93, 60, 0.105)",
+      noteTextColor: "#2a2520",
+      noteBorderColor: "rgba(182, 93, 60, 0.32)",
+      actorBkg: "#fffdf8",
+      actorBorder: "rgba(182, 93, 60, 0.45)",
+      actorTextColor: "#3d3730",
+      actorLineColor: "rgba(61, 50, 38, 0.34)",
+      signalColor: "#b65d3c",
+      signalTextColor: "#3d3730",
+      labelBoxBkgColor: "#fffdf8",
+      labelBoxBorderColor: "rgba(61, 50, 38, 0.18)",
+      labelTextColor: "#3d3730",
     },
   },
   dark: {
     theme: "base",
     themeVariables: {
       darkMode: true,
-          background: "#0B0D12",
-          primaryColor: "#14171F",
-          primaryBorderColor: "#8B7DFF",
-          primaryTextColor: "#E4E7EC",
-          secondaryColor: "#1A1E27",
-          secondaryBorderColor: "rgba(255,255,255,0.08)",
-          secondaryTextColor: "#E4E7EC",
-          tertiaryColor: "#12151C",
-          tertiaryBorderColor: "rgba(255,255,255,0.06)",
-          lineColor: "#8A92A6",
-          edgeLabelBackground: "#14171F",
-          textColor: "#E4E7EC",
-          noteBkgColor: "rgba(139,125,255,0.12)",
-          noteBorderColor: "#8B7DFF",
-          noteTextColor: "#E4E7EC",
-          clusterBkg: "#101319",
-          clusterBorder: "rgba(255,255,255,0.08)",
-          actorBkg: "#14171F",
-          actorBorder: "#8B7DFF",
-          activationBkgColor: "#1A1E27",
+      background: "#0B0D12",
+      primaryColor: "#14171F",
+      primaryBorderColor: "#8B7DFF",
+      primaryTextColor: "#E4E7EC",
+      secondaryColor: "#1A1E27",
+      secondaryBorderColor: "rgba(255,255,255,0.08)",
+      secondaryTextColor: "#E4E7EC",
+      tertiaryColor: "#12151C",
+      tertiaryBorderColor: "rgba(255,255,255,0.06)",
+      lineColor: "#8A92A6",
+      edgeLabelBackground: "#14171F",
+      textColor: "#E4E7EC",
+      noteBkgColor: "rgba(139,125,255,0.12)",
+      noteBorderColor: "#8B7DFF",
+      noteTextColor: "#E4E7EC",
+      clusterBkg: "#101319",
+      clusterBorder: "rgba(255,255,255,0.08)",
+      actorBkg: "#14171F",
+      actorBorder: "#8B7DFF",
+      activationBkgColor: "#1A1E27",
     },
   },
   "vscode-dark": {
     theme: "base",
     themeVariables: {
       darkMode: true,
-          background: "#1f1f1f",
-          mainBkg: "#252526",
-          secondBkg: "#2d2d2d",
-          tertiaryColor: "#333333",
-          primaryColor: "#264f78",
-          primaryTextColor: "#d4d4d4",
-          primaryBorderColor: "#0078d4",
-          secondaryColor: "#252526",
-          secondaryTextColor: "#d4d4d4",
-          secondaryBorderColor: "#3c3c3c",
-          lineColor: "#858585",
-          textColor: "#d4d4d4",
-          nodeBorder: "#0078d4",
-          clusterBkg: "#252526",
-          clusterBorder: "#3c3c3c",
-          edgeLabelBackground: "#1f1f1f",
-          noteBkgColor: "#3a3d41",
-          noteTextColor: "#d4d4d4",
-          noteBorderColor: "#569cd6",
-          actorBkg: "#264f78",
-          actorBorder: "#0078d4",
-          actorTextColor: "#d4d4d4",
-          actorLineColor: "#858585",
-          signalColor: "#d4d4d4",
-          signalTextColor: "#d4d4d4",
-          labelBoxBkgColor: "#252526",
-          labelBoxBorderColor: "#3c3c3c",
-          labelTextColor: "#d4d4d4",
+      background: "#1f1f1f",
+      mainBkg: "#252526",
+      secondBkg: "#2d2d2d",
+      tertiaryColor: "#333333",
+      primaryColor: "#264f78",
+      primaryTextColor: "#d4d4d4",
+      primaryBorderColor: "#0078d4",
+      secondaryColor: "#252526",
+      secondaryTextColor: "#d4d4d4",
+      secondaryBorderColor: "#3c3c3c",
+      lineColor: "#858585",
+      textColor: "#d4d4d4",
+      nodeBorder: "#0078d4",
+      clusterBkg: "#252526",
+      clusterBorder: "#3c3c3c",
+      edgeLabelBackground: "#1f1f1f",
+      noteBkgColor: "#3a3d41",
+      noteTextColor: "#d4d4d4",
+      noteBorderColor: "#569cd6",
+      actorBkg: "#264f78",
+      actorBorder: "#0078d4",
+      actorTextColor: "#d4d4d4",
+      actorLineColor: "#858585",
+      signalColor: "#d4d4d4",
+      signalTextColor: "#d4d4d4",
+      labelBoxBkgColor: "#252526",
+      labelBoxBorderColor: "#3c3c3c",
+      labelTextColor: "#d4d4d4",
     },
   },
   "ayu-dark": {
     theme: "base",
     themeVariables: {
       darkMode: true,
-          background: "#0b0e14",
-          mainBkg: "#11151d",
-          secondBkg: "#171b24",
-          tertiaryColor: "#0d1017",
-          primaryColor: "#11151d",
-          primaryTextColor: "#d9d7ce",
-          primaryBorderColor: "rgba(255, 180, 84, 0.45)",
-          secondaryColor: "#171b24",
-          secondaryTextColor: "#d9d7ce",
-          secondaryBorderColor: "rgba(191, 161, 111, 0.22)",
-          lineColor: "rgba(191, 161, 111, 0.42)",
-          textColor: "#d9d7ce",
-          nodeBorder: "rgba(255, 180, 84, 0.45)",
-          clusterBkg: "rgba(255, 180, 84, 0.045)",
-          clusterBorder: "rgba(191, 161, 111, 0.18)",
-          edgeLabelBackground: "#141821",
-          noteBkgColor: "rgba(255, 180, 84, 0.105)",
-          noteTextColor: "#f3ead3",
-          noteBorderColor: "rgba(255, 180, 84, 0.32)",
-          actorBkg: "#11151d",
-          actorBorder: "rgba(255, 180, 84, 0.45)",
-          actorTextColor: "#d9d7ce",
-          actorLineColor: "rgba(191, 161, 111, 0.34)",
-          signalColor: "#bfa16f",
-          signalTextColor: "#d9d7ce",
-          labelBoxBkgColor: "#11151d",
-          labelBoxBorderColor: "rgba(191, 161, 111, 0.18)",
-          labelTextColor: "#d9d7ce",
+      background: "#0b0e14",
+      mainBkg: "#11151d",
+      secondBkg: "#171b24",
+      tertiaryColor: "#0d1017",
+      primaryColor: "#11151d",
+      primaryTextColor: "#d9d7ce",
+      primaryBorderColor: "rgba(255, 180, 84, 0.45)",
+      secondaryColor: "#171b24",
+      secondaryTextColor: "#d9d7ce",
+      secondaryBorderColor: "rgba(191, 161, 111, 0.22)",
+      lineColor: "rgba(191, 161, 111, 0.42)",
+      textColor: "#d9d7ce",
+      nodeBorder: "rgba(255, 180, 84, 0.45)",
+      clusterBkg: "rgba(255, 180, 84, 0.045)",
+      clusterBorder: "rgba(191, 161, 111, 0.18)",
+      edgeLabelBackground: "#141821",
+      noteBkgColor: "rgba(255, 180, 84, 0.105)",
+      noteTextColor: "#f3ead3",
+      noteBorderColor: "rgba(255, 180, 84, 0.32)",
+      actorBkg: "#11151d",
+      actorBorder: "rgba(255, 180, 84, 0.45)",
+      actorTextColor: "#d9d7ce",
+      actorLineColor: "rgba(191, 161, 111, 0.34)",
+      signalColor: "#bfa16f",
+      signalTextColor: "#d9d7ce",
+      labelBoxBkgColor: "#11151d",
+      labelBoxBorderColor: "rgba(191, 161, 111, 0.18)",
+      labelTextColor: "#d9d7ce",
     },
   },
 };
@@ -194,6 +194,7 @@ function initializeMermaid(theme) {
 }
 let mermaidIdCounter = 0;
 
+// biome-ignore lint/correctness/noUnusedVariables: called from app.js as a global entry point.
 async function initMermaid() {
   if (!window.mermaid) {
     console.warn("Mermaid library is not loaded; skipping diagram rendering.");
@@ -220,31 +221,11 @@ async function initMermaid() {
     const actions = document.createElement("div");
     actions.className = "mermaid-actions";
 
-    const zoomOutBtn = createButton(
-      "mermaid-btn btn-zoom-out",
-      "➖",
-      "Zoom Out",
-    );
-    const resetBtn = createButton(
-      "mermaid-btn btn-zoom-reset",
-      "↺",
-      "Reset View",
-    );
-    const zoomInBtn = createButton(
-      "mermaid-btn btn-zoom-in",
-      "➕",
-      "Zoom In",
-    );
-    const maximizeBtn = createButton(
-      "mermaid-btn btn-maximize",
-      "🔍",
-      "Toggle Fullscreen",
-    );
-    const rotateBtn = createButton(
-      "mermaid-btn btn-rotate",
-      "🔄",
-      "Rotate Landscape",
-    );
+    const zoomOutBtn = createButton("mermaid-btn btn-zoom-out", "➖", "Zoom Out");
+    const resetBtn = createButton("mermaid-btn btn-zoom-reset", "↺", "Reset View");
+    const zoomInBtn = createButton("mermaid-btn btn-zoom-in", "➕", "Zoom In");
+    const maximizeBtn = createButton("mermaid-btn btn-maximize", "🔍", "Toggle Fullscreen");
+    const rotateBtn = createButton("mermaid-btn btn-rotate", "🔄", "Rotate Landscape");
 
     actions.append(zoomOutBtn, resetBtn, zoomInBtn, maximizeBtn, rotateBtn);
 
@@ -263,10 +244,21 @@ async function initMermaid() {
 
     block.replaceWith(container);
 
-    await setupInteractiveDiagram(container, content, viewport, code, zoomInBtn, zoomOutBtn, resetBtn, maximizeBtn, rotateBtn);
+    await setupInteractiveDiagram(
+      container,
+      content,
+      viewport,
+      code,
+      zoomInBtn,
+      zoomOutBtn,
+      resetBtn,
+      maximizeBtn,
+      rotateBtn,
+    );
   }
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: called from app.js as a global entry point.
 async function updateMermaidTheme() {
   if (!window.mermaid) return;
 
@@ -284,11 +276,31 @@ async function updateMermaidTheme() {
     const maximizeBtn = container.querySelector(".btn-maximize");
     const rotateBtn = container.querySelector(".btn-rotate");
 
-    await setupInteractiveDiagram(container, content, viewport, code, zoomInBtn, zoomOutBtn, resetBtn, maximizeBtn, rotateBtn);
+    await setupInteractiveDiagram(
+      container,
+      content,
+      viewport,
+      code,
+      zoomInBtn,
+      zoomOutBtn,
+      resetBtn,
+      maximizeBtn,
+      rotateBtn,
+    );
   }
 }
 
-async function setupInteractiveDiagram(container, content, viewport, code, zoomInBtn, zoomOutBtn, resetBtn, maximizeBtn, rotateBtn) {
+async function setupInteractiveDiagram(
+  container,
+  content,
+  viewport,
+  code,
+  zoomInBtn,
+  zoomOutBtn,
+  resetBtn,
+  maximizeBtn,
+  rotateBtn,
+) {
   const id = `mermaid-svg-${++mermaidIdCounter}`;
 
   try {
@@ -336,7 +348,10 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
     let svgW = 800;
     let svgH = 600;
     if (viewBox) {
-      const parts = viewBox.split(/[\s,]+/).filter(Boolean).map(Number);
+      const parts = viewBox
+        .split(/[\s,]+/)
+        .filter(Boolean)
+        .map(Number);
       if (parts.length === 4) {
         svgW = parts[2];
         svgH = parts[3];
@@ -349,13 +364,13 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
     viewport.x = 0;
     viewport.y = 0;
 
-    content.style.width = svgW + "px";
-    content.style.height = svgH + "px";
+    content.style.width = `${svgW}px`;
+    content.style.height = `${svgH}px`;
 
     const updateTransform = () => {
       content.style.transform = `translate(${viewport.x}px, ${viewport.y}px)`;
-      content.style.width = (viewport.svgW * viewport.scale) + "px";
-      content.style.height = (viewport.svgH * viewport.scale) + "px";
+      content.style.width = `${viewport.svgW * viewport.scale}px`;
+      content.style.height = `${viewport.svgH * viewport.scale}px`;
     };
 
     const resetView = () => {
@@ -392,25 +407,20 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
 
     const newZoomInBtn = zoomInBtn.cloneNode(true);
     zoomInBtn.replaceWith(newZoomInBtn);
-    zoomInBtn = newZoomInBtn;
 
     const newZoomOutBtn = zoomOutBtn.cloneNode(true);
     zoomOutBtn.replaceWith(newZoomOutBtn);
-    zoomOutBtn = newZoomOutBtn;
 
     const newResetBtn = resetBtn.cloneNode(true);
     resetBtn.replaceWith(newResetBtn);
-    resetBtn = newResetBtn;
 
     const newMaximizeBtn = maximizeBtn.cloneNode(true);
     maximizeBtn.replaceWith(newMaximizeBtn);
-    maximizeBtn = newMaximizeBtn;
 
     const newRotateBtn = rotateBtn.cloneNode(true);
     rotateBtn.replaceWith(newRotateBtn);
-    rotateBtn = newRotateBtn;
 
-    zoomInBtn.addEventListener("click", () => {
+    newZoomInBtn.addEventListener("click", () => {
       const isRotated = container.classList.contains("rotated-landscape");
       const rect = viewport.getBoundingClientRect();
       const px = isRotated ? rect.height / 2 : rect.width / 2;
@@ -418,7 +428,7 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
       viewport.zoomAtPoint(px, py, 1.25);
     });
 
-    zoomOutBtn.addEventListener("click", () => {
+    newZoomOutBtn.addEventListener("click", () => {
       const isRotated = container.classList.contains("rotated-landscape");
       const rect = viewport.getBoundingClientRect();
       const px = isRotated ? rect.height / 2 : rect.width / 2;
@@ -426,25 +436,25 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
       viewport.zoomAtPoint(px, py, 0.8);
     });
 
-    resetBtn.addEventListener("click", () => {
+    newResetBtn.addEventListener("click", () => {
       viewport.resetView();
     });
 
-    maximizeBtn.addEventListener("click", () => {
+    newMaximizeBtn.addEventListener("click", () => {
       if (!container.classList.contains("maximized")) {
         const backdrop = openModal(container);
-        backdrop.addEventListener("click", () => maximizeBtn.click());
-        maximizeBtn.innerText = "🚪";
-        maximizeBtn.title = "Restore Normal View";
+        backdrop.addEventListener("click", () => newMaximizeBtn.click());
+        newMaximizeBtn.innerText = "🚪";
+        newMaximizeBtn.title = "Restore Normal View";
       } else {
         closeModal(container);
-        maximizeBtn.innerText = "🔍";
-        maximizeBtn.title = "Toggle Fullscreen";
+        newMaximizeBtn.innerText = "🔍";
+        newMaximizeBtn.title = "Toggle Fullscreen";
       }
       setTimeout(viewport.resetView, 50);
     });
 
-    rotateBtn.addEventListener("click", () => {
+    newRotateBtn.addEventListener("click", () => {
       container.classList.toggle("rotated-landscape");
       setTimeout(viewport.resetView, 50);
     });
@@ -469,9 +479,14 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
 
       viewport.addEventListener("pointerdown", (e) => {
         if (e.target.closest(".mermaid-btn")) return;
-        
+
         const rect = viewport.getBoundingClientRect();
-        viewport.cachedRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+        viewport.cachedRect = {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        };
 
         activePointers.set(e.pointerId, { clientX: e.clientX, clientY: e.clientY });
         viewport.setPointerCapture(e.pointerId);
@@ -521,18 +536,18 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
           if (initialPointerDist > 0) {
             const factor = dist / initialPointerDist;
             const rect = viewport.cachedRect || viewport.getBoundingClientRect();
-            
+
             let px, py;
             if (isRotated) {
-              const sx = ((pts[0].clientX + pts[1].clientX) / 2) - rect.left;
-              const sy = ((pts[0].clientY + pts[1].clientY) / 2) - rect.top;
+              const sx = (pts[0].clientX + pts[1].clientX) / 2 - rect.left;
+              const sy = (pts[0].clientY + pts[1].clientY) / 2 - rect.top;
               const cx = sx - rect.width / 2;
               const cy = sy - rect.height / 2;
               px = cy + rect.height / 2;
               py = -cx + rect.width / 2;
             } else {
-              px = ((pts[0].clientX + pts[1].clientX) / 2) - rect.left;
-              py = ((pts[0].clientY + pts[1].clientY) / 2) - rect.top;
+              px = (pts[0].clientX + pts[1].clientX) / 2 - rect.left;
+              py = (pts[0].clientY + pts[1].clientY) / 2 - rect.top;
             }
 
             viewport.zoomAtPoint(px, py, factor / (viewport.scale / initialPointerScale));
@@ -562,37 +577,46 @@ async function setupInteractiveDiagram(container, content, viewport, code, zoomI
       viewport.addEventListener("pointerup", handlePointerUp);
       viewport.addEventListener("pointercancel", handlePointerUp);
 
-      viewport.addEventListener("wheel", (e) => {
-        e.preventDefault();
-        
-        if (!viewport.cachedRect) {
-          const rect = viewport.getBoundingClientRect();
-          viewport.cachedRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
-        }
-        const rect = viewport.cachedRect;
-        
-        const isRotated = container.classList.contains("rotated-landscape");
-        let px, py;
-        if (isRotated) {
-          const sx = e.clientX - rect.left;
-          const sy = e.clientY - rect.top;
-          const cx = sx - rect.width / 2;
-          const cy = sy - rect.height / 2;
-          px = cy + rect.height / 2;
-          py = -cx + rect.width / 2;
-        } else {
-          px = e.clientX - rect.left;
-          py = e.clientY - rect.top;
-        }
-        
-        const factor = Math.exp(-e.deltaY * 0.0015);
-        viewport.zoomAtPoint(px, py, factor);
-        
-        clearTimeout(viewport.wheelTimeout);
-        viewport.wheelTimeout = setTimeout(() => {
-          viewport.cachedRect = null;
-        }, 300);
-      }, { passive: false });
+      viewport.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+
+          if (!viewport.cachedRect) {
+            const rect = viewport.getBoundingClientRect();
+            viewport.cachedRect = {
+              left: rect.left,
+              top: rect.top,
+              width: rect.width,
+              height: rect.height,
+            };
+          }
+          const rect = viewport.cachedRect;
+
+          const isRotated = container.classList.contains("rotated-landscape");
+          let px, py;
+          if (isRotated) {
+            const sx = e.clientX - rect.left;
+            const sy = e.clientY - rect.top;
+            const cx = sx - rect.width / 2;
+            const cy = sy - rect.height / 2;
+            px = cy + rect.height / 2;
+            py = -cx + rect.width / 2;
+          } else {
+            px = e.clientX - rect.left;
+            py = e.clientY - rect.top;
+          }
+
+          const factor = Math.exp(-e.deltaY * 0.0015);
+          viewport.zoomAtPoint(px, py, factor);
+
+          clearTimeout(viewport.wheelTimeout);
+          viewport.wheelTimeout = setTimeout(() => {
+            viewport.cachedRect = null;
+          }, 300);
+        },
+        { passive: false },
+      );
 
       viewport.dataset.hasListeners = "true";
     }
