@@ -1,3 +1,4 @@
+// Package pandokary provides embedded runtime assets for pdy.
 package pandokary
 
 import (

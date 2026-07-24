@@ -1,9 +1,17 @@
 {
   "name": "pandokary-assets",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Lint/format tooling for pandokary's browser assets (JS/CSS).",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appledore_labs/pandokary"
+  },
+  "author": "Dasun Sathsara",
+  "license": "MIT",
   "scripts": {
+    "test": "npm run check",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format --write .",

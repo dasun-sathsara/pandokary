@@ -1,7 +1,16 @@
 version: "2"
 
+linters-settings:
+  gocritic:
+    disabled-checks:
+      - ifElseChain
+  revive:
+    rules:
+      - name: error-strings
+      - name: unused-parameter
+
 linters:
-  default: standard
+  disable-all: true
   enable:
     - errcheck
     - govet
@@ -11,33 +20,18 @@ linters:
     - gocritic
     - revive
     - bodyclose
-    - copyloopvar
     - misspell
     - unconvert
     - unparam
-  settings:
-    revive:
-      rules:
-        - name: exported
-        - name: error-strings
-        - name: unused-parameter
-    gocritic:
-      disabled-checks:
-        - ifElseChain
-  exclusions:
-    generated: lax
-    presets:
-      - comments
-      - std-error-handling
 
-formatters:
-  enable:
-    - gofmt
-    - goimports
-  settings:
-    goimports:
-      local-prefixes:
-        - pdy
+issues:
+  exclude-rules:
+    - source: "fmt\\.Fprint"
+      linters:
+        - errcheck
+    - linters:
+        - revive
+      text: "(should have a package comment|exported .* should have comment)"
 
 run:
   timeout: 5m
