@@ -136,6 +136,10 @@
 .mermaid-title svg,
 .table-title svg {
   flex-shrink: 0;
+  stroke: currentColor;
+  color: currentColor;
+  width: 15px;
+  height: 15px;
 }
 .mermaid-actions,
 .table-actions {
