@@ -1,3 +1,4 @@
+// Package main is the entry point for the pdy CLI.
 package main
 
 import (
@@ -102,11 +103,11 @@ func rewriteAliases(args []string) []string {
 
 func usageSynopsis() string { var b strings.Builder; printUsage(&b); return b.String() }
 func printUsage(w io.Writer) {
-	fmt.Fprintln(w, "Usage:\n  pdy [flags] <input.md>\n  pdy -e|--export <input.md> [optional-name]\n\nFlags:")
-	fmt.Fprintln(w, "  -e, --export              export instead of preview")
-	fmt.Fprintln(w, "      --no-embed            leave local resources external")
-	fmt.Fprintln(w, "      --no-fmt              skip source Markdown formatting")
-	fmt.Fprintln(w, "      --asset-mode <mode>   cdn (default) or offline")
-	fmt.Fprintln(w, "      --pandoc <path>       override the Pandoc binary")
-	fmt.Fprintln(w, "      --verbose             print resolved paths and commands")
+	_, _ = fmt.Fprintln(w, "Usage:\n  pdy [flags] <input.md>\n  pdy -e|--export <input.md> [optional-name]\n\nFlags:")
+	_, _ = fmt.Fprintln(w, "  -e, --export              export instead of preview")
+	_, _ = fmt.Fprintln(w, "      --no-embed            leave local resources external")
+	_, _ = fmt.Fprintln(w, "      --no-fmt              skip source Markdown formatting")
+	_, _ = fmt.Fprintln(w, "      --asset-mode <mode>   cdn (default) or offline")
+	_, _ = fmt.Fprintln(w, "      --pandoc <path>       override the Pandoc binary")
+	_, _ = fmt.Fprintln(w, "      --verbose             print resolved paths and commands")
 }

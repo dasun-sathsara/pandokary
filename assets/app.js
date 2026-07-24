@@ -769,7 +769,12 @@ function initKeyboardShortcuts() {
 function finishLoading() {
   const restore = () => {
     if (window.location.hash) {
-      document.querySelector(window.location.hash)?.scrollIntoView({ block: "start" });
+      try {
+        document.querySelector(window.location.hash)?.scrollIntoView({ block: "start" });
+      } catch (_e) {
+        const target = document.getElementById(window.location.hash.slice(1));
+        target?.scrollIntoView({ block: "start" });
+      }
       return;
     }
     const saved = parseInt(storageGet(`pdy_scroll_${document.title}`, "0"), 10);

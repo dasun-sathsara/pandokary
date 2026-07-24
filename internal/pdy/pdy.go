@@ -1,3 +1,4 @@
+// Package pdy provides the rendering and asset preparation pipeline.
 package pdy
 
 import (
@@ -15,11 +16,13 @@ import (
 	pandokary "pdy"
 )
 
+// Options configures a single pdy rendering run.
 type Options struct {
 	InputPath, ExportName, AssetMode, PandocPath    string
 	Export, EmbedResources, FormatMarkdown, Verbose bool
 }
 
+// Result contains the output path of a rendering run.
 type Result struct{ OutputPath string }
 
 type assetLocation struct {
@@ -30,6 +33,7 @@ type assetLocation struct {
 
 var requiredAssets = []string{"template.html", "inline-assets.lua", "mathjax-config.js", "app.js", "mermaid.js", "base.css", "components/code.css", "themes/manifest.json"}
 
+// Run executes the pandokary rendering pipeline.
 func Run(options Options) (Result, error) {
 	if options.AssetMode == "" {
 		options.AssetMode = "cdn"
@@ -70,7 +74,7 @@ func Run(options Options) (Result, error) {
 	}
 	args := pandocArgs(options, runtimeAssets, output)
 	if options.Verbose {
-		fmt.Printf("input: %s\noutput: %s\nassets dir: %s\nsource formatting: %t\npandoc argv: %s\n",
+		fmt.Fprintf(os.Stderr, "input: %s\noutput: %s\nassets dir: %s\nsource formatting: %t\npandoc argv: %s\n",
 			options.InputPath, output, runtimeAssets, options.FormatMarkdown, strings.Join(quoteArgs(append([]string{pandoc}, args...)), " "))
 	}
 	if err := runPandoc(pandoc, args, runtimeAssets); err != nil {
@@ -81,8 +85,7 @@ func Run(options Options) (Result, error) {
 	}
 	if !options.Export {
 		if err := openInBrowser(output); err != nil {
-			_ = os.RemoveAll(previewDir)
-			return Result{}, fmt.Errorf("open browser: %w", err)
+			fmt.Fprintf(os.Stderr, "warning: could not open browser automatically: %v\npreview file saved to: %s\n", err, output)
 		}
 		// A browser opener returns before the browser consumes linked resources. Keep the
 		// preview directory for that session; failed/incomplete previews are removed above.
@@ -326,8 +329,28 @@ func formatMarkdown(input string, verbose bool) error {
 		if info, statErr := os.Stat(input); statErr == nil {
 			mode = info.Mode()
 		}
-		if err = os.WriteFile(input, stdout.Bytes(), mode); err != nil {
-			return err
+		dir := filepath.Dir(input)
+		tmpFile, tmpErr := os.CreateTemp(dir, ".pdy-fmt-*")
+		if tmpErr != nil {
+			return tmpErr
+		}
+		tmpPath := tmpFile.Name()
+		if _, writeErr := tmpFile.Write(stdout.Bytes()); writeErr != nil {
+			_ = tmpFile.Close()
+			_ = os.Remove(tmpPath)
+			return writeErr
+		}
+		if closeErr := tmpFile.Close(); closeErr != nil {
+			_ = os.Remove(tmpPath)
+			return closeErr
+		}
+		if chmodErr := os.Chmod(tmpPath, mode); chmodErr != nil {
+			_ = os.Remove(tmpPath)
+			return chmodErr
+		}
+		if renameErr := os.Rename(tmpPath, input); renameErr != nil {
+			_ = os.Remove(tmpPath)
+			return renameErr
 		}
 		if verbose {
 			fmt.Fprintf(os.Stderr, "formatted source Markdown: %s\n", input)
@@ -372,7 +395,7 @@ func pandocArgs(options Options, assets, output string) []string {
 	} else {
 		args = append(args, "--metadata=assetModeOffline:true")
 	}
-	if options.AssetMode == "offline" && options.EmbedResources {
+	if options.EmbedResources {
 		args = append(args, "--embed-resources")
 	}
 	return append(args, "--output", output)
@@ -383,7 +406,7 @@ func runPandoc(binary string, args []string, assets string) error {
 	cmd.Env = append(os.Environ(), "PDY_ASSETS_DIR="+assets)
 	cmd.Stdout = os.Stdout
 	var stderr bytes.Buffer
-	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
+	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
 		message := strings.TrimSpace(stderr.String())
 		if message == "" {
@@ -406,7 +429,7 @@ func openInBrowser(path string) error {
 	case "linux":
 		cmd = exec.Command("xdg-open", path)
 	case "windows":
-		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", path)
+		cmd = exec.Command("cmd", "/c", "start", "", path)
 	default:
 		return fmt.Errorf("unsupported platform %s", runtime.GOOS)
 	}
