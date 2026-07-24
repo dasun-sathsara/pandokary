@@ -524,9 +524,13 @@ const SettingsModule = (() => {
     { id: "lumina", name: "Lumina" },
     { id: "primer", name: "Primer" },
     { id: "parchment", name: "Parchment" },
+    { id: "verdant-paper", name: "Verdant Paper" },
+    { id: "lilac-frost", name: "Lilac Frost" },
     { id: "obsidian", name: "Obsidian" },
     { id: "studio-dark", name: "Studio Dark" },
     { id: "ayu-mirage", name: "Ayu Mirage" },
+    { id: "midnight-fjord", name: "Midnight Fjord" },
+    { id: "boreal", name: "Boreal" },
   ]);
 
   async function loadFonts() {
@@ -553,7 +557,12 @@ const SettingsModule = (() => {
     const file =
       theme === "studio-dark"
         ? "vs2015.min.css"
-        : ["obsidian", "ayu-mirage"].includes(theme)
+        : [
+              "obsidian",
+              "ayu-mirage",
+              "midnight-fjord",
+              "boreal",
+            ].includes(theme)
           ? "tokyo-night-dark.min.css"
           : "github.min.css";
     if (existing?.tagName.toLowerCase() === "link") {

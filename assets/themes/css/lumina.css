@@ -41,13 +41,13 @@
   /* ─────────────────────────────────────────
 	   5. SYNTAX HIGHLIGHTING TOKENS
 	───────────────────────────────────────────── */
-  --code-keyword: #2563eb; /* clean blue */
-  --code-string: #15803d; /* forest green */
-  --code-function: #7c3aed; /* violet/indigo */
-  --code-number: #ea580c; /* amber/orange */
-  --code-comment: #475569; /* Slate-600 high-contrast comment */
-  --code-operator: #0891b2; /* cyan */
-  --code-variable: #334155;
+  --code-keyword: #3963ba; /* clean blue */
+  --code-string: #0d7c39; /* forest green */
+  --code-function: #6c53b2; /* violet/indigo */
+  --code-number: #a94316; /* amber/orange */
+  --code-comment: #6a7586; /* Slate-600 high-contrast comment */
+  --code-operator: #00738e; /* cyan */
+  --code-variable: #4c5768;
 
   /* ─────────────────────────────────────────
 	   6. TABLES & HR
