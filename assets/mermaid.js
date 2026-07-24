@@ -1,3 +1,14 @@
+// Disable Mermaid's built-in auto-init immediately, before DOMContentLoaded fires.
+// Without this, Mermaid's default startOnLoad:true races our own render pipeline
+// in initMermaid() and replaces pre.mermaid blocks before we read their code text.
+if (window.mermaid) {
+  try {
+    mermaid.initialize({ startOnLoad: false });
+  } catch (error) {
+    console.error("Failed to disable Mermaid auto-init", error);
+  }
+}
+
 const MERMAID_DEFAULTS = {
   startOnLoad: false,
   look: "handDrawn",
