@@ -48,7 +48,7 @@
   --aside-padding: 1.25rem 1.5rem;
   --aside-color: var(--color-text);
   --pre-background: var(--color-code-bg);
-  --pre-border: 1px solid var(--color-code-border);
+  --pre-border: 1.5px solid var(--color-code-border);
   --pre-border-left: 4px solid var(--color-accent);
   --pre-border-radius: 8px;
   --pre-box-shadow: none;
