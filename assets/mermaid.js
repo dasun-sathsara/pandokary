@@ -364,7 +364,6 @@ if (initialMermaid) {
       this.modalAbortController = null;
       this.renderToken = 0;
       this.resizeObserver = null;
-      this.viewport.style.touchAction = "none";
       this.bindControls();
       this.bindGestures();
       this.observeViewport();
@@ -506,6 +505,9 @@ if (initialMermaid) {
     }
 
     handlePointerDown(event) {
+      if (!this.container.classList.contains("maximized")) {
+        return;
+      }
       if (event.pointerType === "mouse" && event.button !== 0) {
         return;
       }
@@ -534,6 +536,9 @@ if (initialMermaid) {
     }
 
     handlePointerMove(event) {
+      if (!this.container.classList.contains("maximized")) {
+        return;
+      }
       const pointer = this.activePointers.get(event.pointerId);
       if (!pointer) {
         return;
@@ -626,7 +631,11 @@ if (initialMermaid) {
     stopDragging() {
       this.dragStart = null;
       this.isDragging = false;
-      this.viewport.style.cursor = "grab";
+      if (this.container.classList.contains("maximized")) {
+        this.viewport.style.cursor = "grab";
+      } else {
+        this.viewport.style.cursor = "";
+      }
     }
 
     releasePointer(pointerId) {
@@ -733,6 +742,7 @@ if (initialMermaid) {
       this.modalBackdrop = backdrop;
       activeModalController = this;
       this.container.classList.add("maximized");
+      this.viewport.style.touchAction = "none";
       document.body.append(backdrop);
       this.setMaximizeButtonState(true);
       updateScrollLockFallback();
@@ -768,6 +778,7 @@ if (initialMermaid) {
           this.modalBackdrop = null;
         }
         this.container.classList.remove("maximized", "rotated-landscape");
+        this.viewport.style.touchAction = "";
         this.clearPointers();
         updateScrollLockFallback();
         this.queueReset();
