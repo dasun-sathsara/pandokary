@@ -214,8 +214,16 @@
   }
 }
 
+/* Subgraph Cluster Backgrounds */
+.mermaid-viewport svg .cluster rect,
+.mermaid-viewport svg .cluster polygon,
+.mermaid-viewport svg g.cluster > rect,
+.mermaid-viewport svg g.cluster > polygon {
+  fill: var(--color-surface-alt) !important;
+  stroke: var(--color-border) !important;
+}
+
 /* Dark Mode Overrides for Mermaid Diagrams */
-.mermaid-viewport svg text,
 .mermaid-viewport svg tspan,
 .mermaid-viewport svg .label,
 .mermaid-viewport svg .label span,
