@@ -540,8 +540,9 @@ const SettingsModule = (() => {
   async function loadFonts() {
     if (!document.fonts?.load) return;
     const fontLoads = Promise.all([
-      document.fonts.load("12px 'Architects Daughter'"),
       document.fonts.load("12px 'Google Sans Flex'"),
+      document.fonts.load("12px 'Studio Feixen Sans TRIAL'"),
+      document.fonts.load("12px 'Maple Mono NF'"),
     ]).catch((error) => {
       console.warn("Font loading failed; CSS fallbacks remain active", error);
     });

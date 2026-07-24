@@ -97,14 +97,11 @@ local function build_theme_js()
 end
 
 function Pandoc(doc)
-  local mode = doc.meta.assetMode and pandoc.utils.stringify(doc.meta.assetMode) or "cdn"
   local css = concatenate(stylesheet_files)
   local theme_js = build_theme_js()
 
-  if mode == "offline" then
-    local font_css = read_asset("font-assets.css") or ""
-    if font_css ~= "" then css = font_css .. "\n" .. css end
-  end
+  local font_css = read_asset("font-assets.css") or ""
+  if font_css ~= "" then css = font_css .. "\n" .. css end
 
   doc.meta["theme-js"] = raw_html(theme_js)
   doc.meta["inline-css"] = raw_html(css)

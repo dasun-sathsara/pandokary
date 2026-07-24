@@ -12,7 +12,7 @@ if (initialMermaid) {
 }
 
 (() => {
-  const FONT_FAMILY = "'Architects Daughter', cursive, sans-serif";
+  const FONT_FAMILY = '"Maple Mono NF", "Maple Mono", monospace';
   const MIN_SCALE = 0.05;
   const MAX_SCALE = 15;
   const NOTE_PADDING = 50;
@@ -29,10 +29,17 @@ if (initialMermaid) {
 
   const MERMAID_DEFAULTS = {
     startOnLoad: false,
-    look: "handDrawn",
+    look: "classic",
     fontFamily: FONT_FAMILY,
-    flowchart: { useMaxWidth: false, htmlLabels: true },
-    sequence: { useMaxWidth: false },
+    flowchart: {
+      useMaxWidth: false,
+      htmlLabels: false,
+      subGraphTitleMargin: { top: 16, bottom: 16 },
+      nodeSpacing: 50,
+      rankSpacing: 50,
+      diagramPadding: 20,
+    },
+    sequence: { useMaxWidth: false, boxMargin: 12, noteMargin: 12 },
     gantt: { useMaxWidth: false },
   };
 
@@ -86,11 +93,16 @@ if (initialMermaid) {
       ...MERMAID_DEFAULTS,
       ...selectedConfig,
       startOnLoad: false,
-      look: "handDrawn",
+      look: "classic",
       fontFamily: FONT_FAMILY,
       flowchart: {
         ...MERMAID_DEFAULTS.flowchart,
         ...(selectedConfig.flowchart || {}),
+        subGraphTitleMargin: {
+          top: 16,
+          bottom: 16,
+          ...(selectedConfig.flowchart?.subGraphTitleMargin || {}),
+        },
       },
       sequence: {
         ...MERMAID_DEFAULTS.sequence,
@@ -101,6 +113,7 @@ if (initialMermaid) {
         ...(selectedConfig.gantt || {}),
       },
       themeVariables: {
+        fontSize: "14px",
         ...(selectedConfig.themeVariables || {}),
         fontFamily: FONT_FAMILY,
       },
@@ -143,7 +156,7 @@ if (initialMermaid) {
 
     const title = document.createElement("span");
     title.className = "mermaid-title";
-    title.innerHTML = `${ICONS.diagram} <span>Sketch Diagram</span>`;
+    title.innerHTML = `${ICONS.diagram} <span>Diagram</span>`;
 
     const actions = document.createElement("div");
     actions.className = "mermaid-actions";

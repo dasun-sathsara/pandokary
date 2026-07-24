@@ -1,5 +1,5 @@
 /* =========================================
-   Mermaid Diagrams & Sketchy Viewer
+   Mermaid Diagrams & Pan/Zoom Viewer
    ========================================= */
 /* Edge label background transparency & text knockout halo */
 .mermaid-viewport svg .edgeLabel,
@@ -44,7 +44,7 @@
 .mermaid-viewport svg g.cluster span {
   paint-order: stroke fill;
   stroke: var(--color-code-bg);
-  stroke-width: 6px;
+  stroke-width: 4px;
   stroke-linejoin: round;
 }
 .mermaid-container {
@@ -217,6 +217,8 @@
   display: block;
   user-select: none;
   background: transparent !important;
+  text-rendering: optimizeLegibility;
+  shape-rendering: geometricPrecision;
 }
 
 .mermaid-container.maximized .mermaid-viewport {
@@ -224,8 +226,15 @@
 }
 
 .mermaid-viewport svg text,
-.mermaid-viewport svg .label {
-  font-family: "Architects Daughter", cursive, sans-serif !important;
+.mermaid-viewport svg .label,
+.mermaid-viewport svg .label span,
+.mermaid-viewport svg .labelText,
+.mermaid-viewport svg .nodeLabel,
+.mermaid-viewport svg .edgeLabel,
+.mermaid-viewport svg .cluster-label,
+.mermaid-viewport svg .actorText,
+.mermaid-viewport svg tspan {
+  font-family: var(--font-mono), "Maple Mono NF", "Maple Mono", monospace !important;
 }
 
 @media (max-width: 768px) {
