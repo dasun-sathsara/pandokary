@@ -50,7 +50,7 @@
   --pre-background: var(--color-code-bg);
   --pre-border: 1px solid var(--color-code-border);
   --pre-border-left: 4px solid var(--color-accent);
-  --pre-border-radius: 0;
+  --pre-border-radius: 8px;
   --pre-box-shadow: none;
   --pre-padding: 0.55rem 0.75rem;
   --pre-line-height: 1.4;
