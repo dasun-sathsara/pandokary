@@ -351,6 +351,41 @@ async function setupInteractiveDiagram(
         }
       });
 
+      const handleSinglePointerMove = (e, isRotated) => {
+        const dx = e.clientX - viewport.startTouchX;
+        const dy = e.clientY - viewport.startTouchY;
+        if (isRotated) {
+          viewport.x = viewport.startXVal + dy;
+          viewport.y = viewport.startYVal - dx;
+        } else {
+          viewport.x = viewport.startXVal + dx;
+          viewport.y = viewport.startYVal + dy;
+        }
+        viewport.updateTransform();
+      };
+
+      const handleDualPointerMove = (isRotated) => {
+        const pts = Array.from(activePointers.values());
+        const dx = pts[0].clientX - pts[1].clientX;
+        const dy = pts[0].clientY - pts[1].clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (initialPointerDist <= 0) return;
+
+        const factor = dist / initialPointerDist;
+        const rect = viewport.cachedRect || viewport.getBoundingClientRect();
+
+        let px = (pts[0].clientX + pts[1].clientX) / 2 - rect.left;
+        let py = (pts[0].clientY + pts[1].clientY) / 2 - rect.top;
+        if (isRotated) {
+          const cx = px - rect.width / 2;
+          const cy = py - rect.height / 2;
+          px = cy + rect.height / 2;
+          py = -cx + rect.width / 2;
+        }
+
+        viewport.zoomAtPoint(px, py, factor / (viewport.scale / initialPointerScale));
+      };
+
       viewport.addEventListener("pointermove", (e) => {
         if (!activePointers.has(e.pointerId)) return;
 
@@ -361,43 +396,11 @@ async function setupInteractiveDiagram(
         const isRotated = container.classList.contains("rotated-landscape");
 
         if (activePointers.size === 1 && isDragging) {
-          const dx = e.clientX - viewport.startTouchX;
-          const dy = e.clientY - viewport.startTouchY;
-          if (isRotated) {
-            viewport.x = viewport.startXVal + dy;
-            viewport.y = viewport.startYVal - dx;
-          } else {
-            viewport.x = viewport.startXVal + dx;
-            viewport.y = viewport.startYVal + dy;
-          }
-          viewport.updateTransform();
+          handleSinglePointerMove(e, isRotated);
         } else if (activePointers.size === 2) {
-          const pts = Array.from(activePointers.values());
-          const dx = pts[0].clientX - pts[1].clientX;
-          const dy = pts[0].clientY - pts[1].clientY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (initialPointerDist > 0) {
-            const factor = dist / initialPointerDist;
-            const rect = viewport.cachedRect || viewport.getBoundingClientRect();
-
-            let px, py;
-            if (isRotated) {
-              const sx = (pts[0].clientX + pts[1].clientX) / 2 - rect.left;
-              const sy = (pts[0].clientY + pts[1].clientY) / 2 - rect.top;
-              const cx = sx - rect.width / 2;
-              const cy = sy - rect.height / 2;
-              px = cy + rect.height / 2;
-              py = -cx + rect.width / 2;
-            } else {
-              px = (pts[0].clientX + pts[1].clientX) / 2 - rect.left;
-              py = (pts[0].clientY + pts[1].clientY) / 2 - rect.top;
-            }
-
-            viewport.zoomAtPoint(px, py, factor / (viewport.scale / initialPointerScale));
-          }
+          handleDualPointerMove(isRotated);
         }
       });
-
       const handlePointerUp = (e) => {
         if (activePointers.has(e.pointerId)) {
           activePointers.delete(e.pointerId);

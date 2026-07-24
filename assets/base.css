@@ -2,6 +2,10 @@
    1. System Tokens & Layout Variables
    ========================================= */
 :root {
+  --white-100: #ffffff;
+  --shadow-sm: var(--shadow-card, 0 1px 2px rgba(0, 0, 0, 0.05));
+  --shadow-lg: var(--shadow-elevated, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+
   /* Fonts */
   --font-body: "Studio Feixen Sans TRIAL", "Studio Feixen Sans", sans-serif;
   --font-heading: "Studio Feixen Sans TRIAL", "Studio Feixen Sans", sans-serif;
