@@ -190,11 +190,11 @@
 }
 
 /* Theme Dot Definitions */
-.light-dot {
+.lumina-dot {
   background: #f8fafc;
   box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.15);
 }
-.light-dot::after {
+.lumina-dot::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -206,11 +206,11 @@
   background: #15803d;
 }
 
-.github-light-dot {
+.primer-dot {
   background: #ffffff;
   box-shadow: inset 0 0 0 1px #d0d7de;
 }
-.github-light-dot::after {
+.primer-dot::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -222,11 +222,11 @@
   background: #0969da;
 }
 
-.warm-light-dot {
+.parchment-dot {
   background: #faf5ec;
   box-shadow: inset 0 0 0 1px rgba(61, 50, 38, 0.2);
 }
-.warm-light-dot::after {
+.parchment-dot::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -238,11 +238,11 @@
   background: #cb4b16;
 }
 
-.dark-dot {
+.obsidian-dot {
   background: #0b0d12;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
-.dark-dot::after {
+.obsidian-dot::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -251,14 +251,14 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #15803d;
+  background: #8b7dff;
 }
 
-.vscode-dark-dot {
+.studio-dark-dot {
   background: #1f1f1f;
   box-shadow: inset 0 0 0 1px #3c3c3c;
 }
-.vscode-dark-dot::after {
+.studio-dark-dot::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -270,11 +270,11 @@
   background: #0078d4;
 }
 
-.ayu-dark-dot {
+.ayu-mirage-dot {
   background: #0b0e14;
   box-shadow: inset 0 0 0 1px rgba(191, 161, 111, 0.2);
 }
-.ayu-dark-dot::after {
+.ayu-mirage-dot::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -283,7 +283,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #cb4b16;
+  background: #ffb454;
 }
 
 /* Font Segment Selector */

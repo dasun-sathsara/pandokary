@@ -1,4 +1,4 @@
-[data-theme="dark"] {
+[data-theme="obsidian"] {
   /* ─────────────────────────────────────────
 	   1. CORE CANVAS & SURFACES
 	   A 3-step elevation ladder. Each surface is
@@ -55,7 +55,7 @@
   --code-string: #9ece6a; /* calm green — the warm counterweight */
   --code-function: #7aa2f7; /* azure blue — distinct from keywords */
   --code-number: #ff9e64; /* warm amber — numerics jump out */
-  --code-comment: #5c6370; /* low-contrast on purpose; italic in CSS */
+  --code-comment: #5c6c7d; /* low-contrast on purpose; italic in CSS */
   --code-operator: #89ddff; /* bright cyan — punctuation & operators */
   --code-variable: #e4e7ec; /* identifiers = body text (quiet by default) */
 

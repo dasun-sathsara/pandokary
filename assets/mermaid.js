@@ -20,7 +20,7 @@ const MERMAID_DEFAULTS = {
 
 function getMermaidConfig(theme) {
   const themesMap = window.PDY_MERMAID_THEMES || {};
-  const selectedTheme = themesMap[theme] ? theme : themesMap.dark ? "dark" : "light";
+  const selectedTheme = themesMap[theme] ? theme : themesMap.obsidian ? "obsidian" : "lumina";
   const selectedConfig = themesMap[selectedTheme] || { theme: "default", themeVariables: {} };
   return {
     ...MERMAID_DEFAULTS,

@@ -46,21 +46,21 @@ local component_files = {
 }
 
 local theme_files = {
-  "themes/css/light.css",
-  "themes/css/dark.css",
-  "themes/css/github-light.css",
-  "themes/css/warm-light.css",
-  "themes/css/vscode-dark.css",
-  "themes/css/ayu-dark.css",
+  "themes/css/lumina.css",
+  "themes/css/primer.css",
+  "themes/css/parchment.css",
+  "themes/css/obsidian.css",
+  "themes/css/studio-dark.css",
+  "themes/css/ayu-mirage.css",
 }
 
 local mermaid_files = {
-  { id = "light", path = "themes/mermaid/light.json" },
-  { id = "dark", path = "themes/mermaid/dark.json" },
-  { id = "github-light", path = "themes/mermaid/github-light.json" },
-  { id = "warm-light", path = "themes/mermaid/warm-light.json" },
-  { id = "vscode-dark", path = "themes/mermaid/vscode-dark.json" },
-  { id = "ayu-dark", path = "themes/mermaid/ayu-dark.json" },
+  { id = "lumina", path = "themes/mermaid/lumina.json" },
+  { id = "primer", path = "themes/mermaid/primer.json" },
+  { id = "parchment", path = "themes/mermaid/parchment.json" },
+  { id = "obsidian", path = "themes/mermaid/obsidian.json" },
+  { id = "studio-dark", path = "themes/mermaid/studio-dark.json" },
+  { id = "ayu-mirage", path = "themes/mermaid/ayu-mirage.json" },
 }
 
 local function build_theme_js()
