@@ -21,6 +21,7 @@ pre {
   border: var(--pre-border);
   border-left: var(--pre-border-left);
   border-radius: var(--pre-border-radius);
+  overflow: hidden;
   padding: var(--pre-padding);
   margin: 1.35rem 0 1.55rem;
   max-width: 100%;
