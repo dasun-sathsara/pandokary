@@ -1,39 +1,39 @@
 {
-  "default": "light",
+  "default": "lumina",
   "themes": [
     {
-      "id": "light",
-      "name": "Default",
+      "id": "lumina",
+      "name": "Lumina",
       "mode": "light",
-      "accent": "#6366f1"
+      "accent": "#15803d"
     },
     {
-      "id": "github-light",
-      "name": "GitHub",
+      "id": "primer",
+      "name": "Primer",
       "mode": "light",
       "accent": "#0969da"
     },
     {
-      "id": "warm-light",
-      "name": "Paper",
+      "id": "parchment",
+      "name": "Parchment",
       "mode": "light",
       "accent": "#b65d3c"
     },
     {
-      "id": "dark",
+      "id": "obsidian",
       "name": "Obsidian",
       "mode": "dark",
       "accent": "#8b7dff"
     },
     {
-      "id": "vscode-dark",
-      "name": "VS Code",
+      "id": "studio-dark",
+      "name": "Studio Dark",
       "mode": "dark",
       "accent": "#007acc"
     },
     {
-      "id": "ayu-dark",
-      "name": "Ayu",
+      "id": "ayu-mirage",
+      "name": "Ayu Mirage",
       "mode": "dark",
       "accent": "#ffb454"
     }

@@ -252,12 +252,12 @@ function initSettings() {
       <div class="theme-grid">
         ${(
           window.PDY_THEME_MANIFEST || [
-            { id: "light", name: "Default" },
-            { id: "github-light", name: "GitHub" },
-            { id: "warm-light", name: "Paper" },
-            { id: "dark", name: "Obsidian" },
-            { id: "vscode-dark", name: "VS Code" },
-            { id: "ayu-dark", name: "Ayu" },
+            { id: "lumina", name: "Lumina" },
+            { id: "primer", name: "Primer" },
+            { id: "parchment", name: "Parchment" },
+            { id: "obsidian", name: "Obsidian" },
+            { id: "studio-dark", name: "Studio Dark" },
+            { id: "ayu-mirage", name: "Ayu Mirage" },
           ]
         )
           .map(
