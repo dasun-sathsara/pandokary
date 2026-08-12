@@ -15,6 +15,7 @@
   --color-h4: #b6d8c7;
   --color-h5: #adc3b6;
   --color-strong: #ffffff;
+  --strong-font-weight: 500;
 
   /* 3. BRAND & ACCENT */
   --color-accent: #34d399; /* emerald */

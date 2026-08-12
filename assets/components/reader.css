@@ -136,7 +136,7 @@
   letter-spacing: 0.05em;
   color: var(--color-text-muted);
   margin-bottom: 1rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .toc-list {
@@ -149,7 +149,7 @@
 }
 
 .toc-item-h2 {
-  font-weight: 550;
+  font-weight: 600;
   font-size: 0.85rem;
 }
 
@@ -174,7 +174,7 @@
 
 .toc-link.active {
   color: var(--color-accent);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* Lightbox Image Zoom */
@@ -262,7 +262,7 @@
   font-size: 0.8rem;
   cursor: pointer;
   border-radius: 20px;
-  font-weight: 550;
+  font-weight: 600;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
   display: inline-flex;

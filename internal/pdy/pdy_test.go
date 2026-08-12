@@ -15,6 +15,7 @@ func TestWriteBundledFontCSS(t *testing.T) {
 	}
 
 	t.Setenv("PDY_BODY_FONT_REGULAR", fontFile)
+	t.Setenv("PDY_BODY_FONT_MEDIUM", fontFile)
 	t.Setenv("PDY_BODY_FONT_SEMIBOLD", fontFile)
 	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
 

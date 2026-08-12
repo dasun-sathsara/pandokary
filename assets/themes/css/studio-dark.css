@@ -8,7 +8,7 @@
   --mermaid-note-text: #ffeb99;
   --body-background:
     radial-gradient(circle at 50% 0%, rgba(0, 120, 212, 0.045), transparent 45rem), var(--color-bg);
-  --strong-font-weight: 650;
+  --strong-font-weight: 500;
   --inline-code-border: 1px solid #313131;
   --inline-code-border-radius: 4px;
   --inline-code-padding: 0.15em 0.3em;
@@ -18,7 +18,7 @@
   --pre-border-radius: 6px;
   --pre-box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   --pre-padding: 1rem;
-  --pre-line-height: 1.5;
+  --pre-line-height: 1.42;
   --link-color: #4daafc;
   --link-transition: border-bottom-color 0.25s ease, color 0.25s ease;
   --link-hover-color: #6cb6ff;

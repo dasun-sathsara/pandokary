@@ -225,7 +225,7 @@ func copyDir(source, target string) error {
 type font struct{ family, spec, env, weight string }
 
 func writeBundledFontCSS(path string) ([]string, error) {
-	fonts := []font{{"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Regular", "PDY_BODY_FONT_REGULAR", "400"}, {"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Semibold", "PDY_BODY_FONT_SEMIBOLD", "600"}, {"Maple Mono NF", "Maple Mono NF", "PDY_MONO_FONT_MEDIUM", "500"}}
+	fonts := []font{{"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Regular", "PDY_BODY_FONT_REGULAR", "400"}, {"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Medium", "PDY_BODY_FONT_MEDIUM", "500"}, {"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Semibold", "PDY_BODY_FONT_SEMIBOLD", "600"}, {"Maple Mono NF", "Maple Mono NF", "PDY_MONO_FONT_MEDIUM", "500"}}
 	var css strings.Builder
 	var warnings []string
 	for _, item := range fonts {

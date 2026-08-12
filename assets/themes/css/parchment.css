@@ -10,15 +10,15 @@
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
 	───────────────────────────────────────────── */
-  --color-text: #3d3730; /* primary charcoal body text */
+  --color-text: #1c1814; /* primary charcoal body text */
   --color-text-muted: #8a7f72; /* muted sand/stone */
-  --color-heading: #2a2520; /* deep reader headings */
-  --color-h1: #211c18;
-  --color-h2: #2a2520;
-  --color-h3: #322c26;
-  --color-h4: #3a332c;
-  --color-h5: #423a32;
-  --color-strong: #29231e; /* bold text contrast color */
+  --color-heading: #14100c; /* deep reader headings */
+  --color-h1: #100c0a;
+  --color-h2: #14100c;
+  --color-h3: #181410;
+  --color-h4: #1c1814;
+  --color-h5: #201c18;
+  --color-strong: #14100c; /* bold text contrast color */
 
   /* ─────────────────────────────────────────
 	   3. BRAND & ACCENT (terracotta)
@@ -31,7 +31,7 @@
 	   4. CODEBLOCKS & INLINE CODE
 	───────────────────────────────────────────── */
   --color-code-bg: #f3ecdf; /* inset well background */
-  --color-code-text: #4a4239; /* default code text */
+  --color-code-text: #1c1814; /* default code text */
   --color-code-border: rgba(61, 50, 38, 0.12);
   --color-code-chrome-bg: #eae0cf; /* header/action bar */
   --color-code-chrome-text: #6b6053; /* label and copy icon */
@@ -69,5 +69,5 @@
   --pre-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.025) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
   --link-border-bottom: 1px solid rgba(182, 93, 60, 0.35);
   --link-hover-border-color: rgba(182, 93, 60, 0.7);
-  --strong-font-weight: 650;
+  --strong-font-weight: 500;
 }

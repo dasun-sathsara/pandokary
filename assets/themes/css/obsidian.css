@@ -25,6 +25,7 @@
   --color-h4: #dde2ea;
   --color-h5: #c9d0dc;
   --color-strong: #ffffff; /* bold pops cleanly above body text */
+  --strong-font-weight: 500;
 
   /* ─────────────────────────────────────────
 	   3. BRAND & ACCENT (violet)
