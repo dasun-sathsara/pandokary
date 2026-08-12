@@ -131,7 +131,7 @@ body.scroll-locked {
 
 body {
   font-family: var(--font-body);
-  font-weight: 450;
+  font-weight: 400;
   font-optical-sizing: var(--font-optical-sizing);
   font-variation-settings: var(--font-variation-settings);
   background: var(--body-background);
