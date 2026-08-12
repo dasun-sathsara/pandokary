@@ -151,5 +151,5 @@ pre:hover .copy-btn {
 .code-line.highlighted-line {
   background-color: var(--focused-line-background, rgba(253, 224, 71, 0.12)) !important;
   border-left: 3px solid var(--color-accent) !important;
-  padding-left: calc(3.5em - 3px) !important;
+  padding-left: calc(3.8em - 3px) !important;
 }
