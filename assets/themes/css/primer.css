@@ -6,15 +6,16 @@
   --color-border: #d0d7de; /* Hairline border */
 
   /* 2. TEXT HIERARCHY */
-  --color-text: #1f2328; /* Body text color */
+  --color-text: #0f1419; /* Body text color */
   --color-text-muted: #656d76; /* Captions, table headers, metadata */
-  --color-heading: #1f2328; /* Heading base color */
-  --color-h1: #1f2328; /* H1 heading */
-  --color-h2: #1f2328; /* H2 heading */
-  --color-h3: #24292f; /* H3 heading */
+  --color-heading: #0f1419; /* Heading base color */
+  --color-h1: #0f1419; /* H1 heading */
+  --color-h2: #0f1419; /* H2 heading */
+  --color-h3: #0f1419; /* H3 heading */
   --color-h4: #424a53; /* H4 heading */
   --color-h5: #57606a; /* H5 heading */
-  --color-strong: #1f2328; /* Bold/strong text */
+  --color-strong: #0f1419; /* Bold/strong text */
+  --strong-font-weight: 500;
 
   /* 3. BRAND & ACCENT */
   --color-accent: #0969da; /* Main accent color */
@@ -23,12 +24,12 @@
 
   /* 4. CODEBLOCKS & INLINE CODE */
   --color-code-bg: #f6f8fa; /* Codeblock background */
-  --color-code-text: #1f2328; /* Default code text */
+  --color-code-text: #0f1419; /* Default code text */
   --color-code-border: #d0d7de; /* Codeblock border */
   --color-code-chrome-bg: #eaeef2; /* Codeblock header/action bar */
   --color-code-chrome-text: #57606a; /* Copy button & language label */
   --color-inline-code-bg: rgba(175, 184, 193, 0.2); /* Inline code background */
-  --color-inline-code-text: #1f2328; /* Inline code text */
+  --color-inline-code-text: #0f1419; /* Inline code text */
 
   /* 5. SYNTAX HIGHLIGHTING TOKENS */
   --code-keyword: #cf222e; /* Code keyword color */
@@ -58,7 +59,7 @@
   --pre-border-left: 1px solid var(--color-code-border);
   --pre-border-radius: 6px;
   --pre-padding: 1rem;
-  --pre-line-height: 1.45;
+  --pre-line-height: 1.4;
   --link-hover-decoration: underline;
   --blockquote-color: var(--color-text-muted);
   --blockquote-border-left: 0.25em solid var(--color-border);

@@ -23,15 +23,15 @@
   --font-size-body-mobile: 14.5px;
   --font-size-body: var(--font-size-body-desktop);
 
-  --scale-h1: 1.85;
-  --scale-h2: 1.5;
-  --scale-h3: 1.28;
-  --scale-h4: 1.12;
-  --scale-h5: 1.02;
+  --scale-h1: 2.1;
+  --scale-h2: 1.65;
+  --scale-h3: 1.38;
+  --scale-h4: 1.2;
+  --scale-h5: 1.08;
   --scale-h6: 1;
 
   /* Spacing */
-  --line-height-body: 27px;
+  --line-height-body: 25px;
   --spacing-paragraph: 14px;
   --radius-std: 0;
 }
@@ -53,7 +53,7 @@
   --pre-border-radius: 8px;
   --pre-box-shadow: none;
   --pre-padding: 0.55rem 0.75rem;
-  --pre-line-height: 1.4;
+  --pre-line-height: 1.35;
   --link-color: var(--color-accent);
   --link-decoration: none;
   --link-border-bottom: 1px solid transparent;
@@ -87,7 +87,7 @@
   --table-box-shadow: none;
   --table-header-background: var(--color-surface-alt);
   --table-header-color: var(--color-heading);
-  --table-header-font-weight: 550;
+  --table-header-font-weight: 600;
   --table-header-border-bottom: 1px solid var(--color-border);
   --table-cell-padding: 0.7rem 0.85rem;
   --mermaid-text-color: var(--color-text);
@@ -153,7 +153,7 @@ body {
 
 body:lang(si) {
   font-family: var(--font-sinhala);
-  line-height: 1.8;
+  line-height: 1.7;
 }
 
 /* =========================================
@@ -180,8 +180,8 @@ h6 {
   font-family: var(--font-heading);
   margin-top: 2.5rem;
   margin-bottom: 1rem;
-  line-height: 1.3;
-  font-weight: 550;
+  line-height: 1.25;
+  font-weight: 600;
   letter-spacing: -0.015em;
   color: var(--color-heading);
 }
@@ -208,8 +208,6 @@ h3 {
 
 h4 {
   color: var(--color-h4);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   font-size: calc(var(--font-size-body) * var(--scale-h4));
   margin-top: 2rem;
 }
@@ -222,6 +220,8 @@ h5 {
 h6 {
   font-size: calc(var(--font-size-body) * var(--scale-h6));
   color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 p {
@@ -250,6 +250,15 @@ b {
   font-weight: var(--strong-font-weight);
   line-height: inherit;
   color: var(--color-strong);
+}
+
+a strong,
+a b,
+code strong,
+code b,
+pre strong,
+pre b {
+  color: inherit;
 }
 
 blockquote {
@@ -292,7 +301,7 @@ aside {
 aside p {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  line-height: 1.65;
+  line-height: 1.55;
 }
 
 aside p:first-child {
@@ -329,12 +338,12 @@ ol {
 li {
   margin-bottom: 0.2rem;
   padding-left: 0.4rem;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 li::marker {
   color: var(--color-accent);
-  font-weight: 550;
+  font-weight: 600;
 }
 
 /* Task List */
@@ -355,7 +364,7 @@ li::marker {
 .task-list li {
   display: block;
   padding-left: 0;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--color-text);
   transition:
     color 0.2s ease,
@@ -386,7 +395,7 @@ li::marker {
   align-items: flex-start;
   gap: 0.65rem;
   margin: 0.4rem 0;
-  line-height: 1.55;
+  line-height: 1.45;
   color: var(--color-text);
   transition: color 0.2s ease;
 }

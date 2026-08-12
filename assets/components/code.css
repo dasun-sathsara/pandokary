@@ -4,8 +4,8 @@
 
 code {
   font-family: var(--font-mono);
-  font-size: 0.82em;
-  font-weight: 550;
+  font-size: 0.88em;
+  font-weight: 600;
   padding: var(--inline-code-padding);
   border: var(--inline-code-border);
   border-radius: var(--inline-code-border-radius);
@@ -38,11 +38,11 @@ pre code.hljs {
   padding: 0;
   color: var(--color-code-text);
   border: none;
-  font-size: 15px;
+  font-size: 14.5px;
   line-height: var(--pre-line-height);
   display: block;
   font-family: var(--font-mono);
-  font-weight: 550;
+  font-weight: 600;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -86,7 +86,7 @@ pre:hover .copy-btn {
 .hljs-type,
 .hljs-literal {
   color: var(--code-keyword);
-  font-weight: 550;
+  font-weight: 600;
 }
 .token.string,
 .hljs-string,

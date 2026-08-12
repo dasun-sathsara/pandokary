@@ -6,7 +6,7 @@
   --color-border: #d7d9e7;
 
   /* 2. TEXT HIERARCHY */
-  --color-text: #263044;
+  --color-text: #101520;
   --color-text-muted: #5e6678;
   --color-heading: #30245d;
   --color-h1: #39266e;
@@ -15,6 +15,7 @@
   --color-h4: #55477d;
   --color-h5: #5e5872;
   --color-strong: #241c43;
+  --strong-font-weight: 500;
 
   /* 3. BRAND & ACCENT */
   --color-accent: #5b3fb8;
@@ -23,7 +24,7 @@
 
   /* 4. CODEBLOCKS & INLINE CODE (light inset well) */
   --color-code-bg: #efeef8; /* soft lilac paper well */
-  --color-code-text: #263044; /* default code text */
+  --color-code-text: #101520; /* default code text */
   --color-code-border: #d7d9e7;
   --color-code-chrome-bg: #e5e4f1; /* header/action bar */
   --color-code-chrome-text: #5e6678; /* label and copy icon */

@@ -5,8 +5,12 @@
 @media (max-width: 1199px) {
   :root {
     --font-size-body: var(--font-size-body-mobile);
-    --scale-h1: 1.5;
-    --scale-h2: 1.25;
+    --scale-h1: 1.65;
+    --scale-h2: 1.4;
+    --scale-h3: 1.24;
+    --scale-h4: 1.12;
+    --scale-h5: 1.04;
+    --scale-h6: 1;
     --toggle-size: 2.25rem;
   }
 
@@ -15,7 +19,7 @@
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    line-height: 25px;
+    line-height: 23px;
   }
 
   header,
@@ -50,25 +54,21 @@
   }
 
   h3 {
-    font-size: calc(var(--font-size-body) * 1.12);
     margin-top: 1.5rem;
     margin-bottom: 0.65rem;
   }
 
   h4 {
-    font-size: calc(var(--font-size-body) * 1.0);
     margin-top: 1.25rem;
     margin-bottom: 0.5rem;
   }
 
   h5 {
-    font-size: calc(var(--font-size-body) * 0.92);
     margin-top: 1.15rem;
     margin-bottom: 0.5rem;
   }
 
   h6 {
-    font-size: calc(var(--font-size-body) * 0.85);
     margin-top: 1rem;
     margin-bottom: 0.45rem;
   }
@@ -207,12 +207,12 @@
   }
 
   code {
-    font-size: 0.8em;
+    font-size: 0.88em;
   }
 
   pre code,
   pre code.hljs {
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.35;
   }
 
