@@ -312,18 +312,12 @@ aside p:last-child {
   margin-bottom: 0;
 }
 
-/* Style for aside block starting with emoji as a separate paragraph */
-aside > p:first-child {
+/* Style for aside block starting with a dedicated emoji/icon paragraph */
+aside > p.aside-icon,
+aside > p.callout-icon {
   font-size: 1.45rem;
   line-height: 1;
   margin-bottom: 0.6rem;
-}
-
-/* If the first paragraph is the only paragraph, it's just text or text with inline emoji */
-aside > p:first-child:last-child {
-  font-size: inherit;
-  line-height: inherit;
-  margin-bottom: 0;
 }
 
 /* =========================================
