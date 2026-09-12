@@ -67,7 +67,7 @@
     var(--color-surface);
   --aside-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.035) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
   --pre-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.025) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
-  --strong-font-weight: 500;
+  --strong-font-weight: 600;
   --color-on-accent: #ffffff;
   --glass-background: rgba(255, 253, 248, 0.94);
   --glass-highlight: rgba(255, 255, 255, 0.65);

@@ -5,7 +5,7 @@
 code {
   font-family: var(--font-mono);
   font-size: 0.88em;
-  font-weight: 500;
+  font-weight: 400;
   padding: var(--inline-code-padding);
   border: var(--inline-code-border);
   border-radius: var(--inline-code-border-radius);
@@ -42,7 +42,7 @@ pre code.hljs {
   line-height: var(--pre-line-height);
   display: block;
   font-family: var(--font-mono);
-  font-weight: 600;
+  font-weight: 400;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -91,7 +91,7 @@ pre:focus-within .copy-btn {
 .hljs-type,
 .hljs-literal {
   color: var(--code-keyword);
-  font-weight: 500;
+  font-weight: 400;
 }
 .token.string,
 .hljs-string,
@@ -180,5 +180,5 @@ pre:focus-within .copy-btn {
 }
 
 .hljs-strong {
-  font-weight: 500;
+  font-weight: 600;
 }

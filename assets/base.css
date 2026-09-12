@@ -50,8 +50,8 @@
 /* Structural theme hooks. themes.css provides theme variable values. */
 :root {
   --body-background: var(--color-bg);
-  --strong-font-weight: 500;
-  --heading-font-weight: 500;
+  --strong-font-weight: 600;
+  --heading-font-weight: 600;
   --aside-background: var(--color-surface);
   --aside-border: 1px solid var(--color-border);
   --aside-border-left: 4px solid var(--color-accent);
@@ -204,7 +204,7 @@ h6 {
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   line-height: 1.25;
-  font-weight: var(--heading-font-weight, 500);
+  font-weight: var(--heading-font-weight, 600);
   letter-spacing: -0.015em;
   color: var(--color-heading);
 }
