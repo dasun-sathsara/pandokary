@@ -2,7 +2,7 @@
   "theme": "base",
   "themeVariables": {
     "darkMode": false,
-    "background": "#f8fafc",
+    "background": "#f1f5f9",
     "mainBkg": "#ffffff",
     "primaryColor": "#ffffff",
     "primaryTextColor": "#000000",

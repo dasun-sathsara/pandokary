@@ -31,13 +31,13 @@
   /* ─────────────────────────────────────────
 	   4. CODEBLOCKS & INLINE CODE
 	───────────────────────────────────────────── */
-  --color-code-bg: #f8fafc;
-  --color-code-text: #000000;
-  --color-code-border: rgba(15, 23, 42, 0.06);
-  --color-code-chrome-bg: #f1f5f9;
+  --color-code-bg: #f1f5f9;
+  --color-code-text: #0f172a;
+  --color-code-border: rgba(15, 23, 42, 0.08);
+  --color-code-chrome-bg: #e8edf3;
   --color-code-chrome-text: #5d6c83;
-  --color-inline-code-bg: rgba(21, 128, 61, 0.06);
-  --color-inline-code-text: #0e7039;
+  --color-inline-code-bg: rgba(15, 23, 42, 0.055);
+  --color-inline-code-text: #0f172a;
 
   /* ─────────────────────────────────────────
 	   5. SYNTAX HIGHLIGHTING TOKENS

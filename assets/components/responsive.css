@@ -89,6 +89,10 @@
     border-width: 1px !important;
   }
 
+  pre[data-lang]::before {
+    display: none;
+  }
+
   blockquote,
   main aside,
   main .aside {
