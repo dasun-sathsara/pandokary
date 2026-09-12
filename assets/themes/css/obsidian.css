@@ -43,8 +43,8 @@
   --color-code-border: rgba(255, 255, 255, 0.06);
   --color-code-chrome-bg: #12151c; /* header/action bar, sits above well */
   --color-code-chrome-text: #8a92a6; /* lang label & copy icon (muted) */
-  --color-inline-code-bg: rgba(139, 125, 255, 0.055); /* accent-tinted */
-  --color-inline-code-text: #b3a6f0; /* violet-leaning, ties to accent */
+  --color-inline-code-bg: rgba(0, 0, 0, 0); /* transparent */
+  --color-inline-code-text: #a08aff; /* violet-leaning, ties to accent */
 
   /* ─────────────────────────────────────────
 	   5. SYNTAX HIGHLIGHTING TOKENS
@@ -56,7 +56,7 @@
   --code-function: #7aa2f7; /* azure blue — distinct from keywords */
   --code-number: #ff9e64; /* warm amber — numerics jump out */
   --code-comment: #8394a6; /* muted, readable comments */
-  --code-operator: #80d2e8; /* soft cyan — punctuation & operators */
+  --code-operator: #89ddff; /* bright cyan — punctuation & operators */
   --code-variable: #e4e7ec; /* identifiers = body text (quiet by default) */
 
   /* ─────────────────────────────────────────

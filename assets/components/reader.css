@@ -310,7 +310,7 @@ pre code {
   width: 2.8em !important;
   text-align: right !important;
   color: var(--color-text-muted);
-  opacity: 0.65;
+  opacity: 0.75;
   border-right: 1px solid var(--color-code-border) !important;
   padding-right: 0.5em !important;
   user-select: none;
@@ -326,7 +326,7 @@ pre code {
 }
 
 .code-line:hover {
-  background-color: rgba(128, 128, 128, 0.05);
+  background-color: var(--color-table-row-hover);
 }
 
 .code-line.focused-line {
