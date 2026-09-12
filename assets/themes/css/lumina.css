@@ -2,63 +2,65 @@
   /* ─────────────────────────────────────────
 	   1. CORE CANVAS & SURFACES
 	───────────────────────────────────────────── */
-  --color-bg: #f8fafc; /* soft slate-white canvas */
-  --color-surface: #ffffff; /* clean white cards and modals */
-  --color-surface-alt: #f1f5f9; /* distinct layout elements */
-  --color-border: rgba(15, 23, 42, 0.08); /* hairline border */
+  --color-bg: #f8fafc; /* crisp cool slate-white canvas (L=98.4%) */
+  --color-surface: #ffffff; /* elevated pure white card surface (L=100%) */
+  --color-surface-alt: #f1f5f9; /* distinct structural layout surface (L=96.8%) */
+  --color-border: rgba(15, 23, 42, 0.08); /* fine slate hairline */
 
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
 	───────────────────────────────────────────── */
-  --color-text: #000000; /* Black body text */
-  --color-text-muted: #5d6c83; /* Slate-500 captions and meta */
-  --color-heading: #000000; /* Black punch title */
-  --color-h1: #000000;
-  --color-h2: #000000;
-  --color-h3: #000000;
-  --color-h4: #334155;
-  --color-h5: #475569;
-  --color-strong: #107a40;
+  --color-text: #0f172a; /* deep slate ink (L=20.8%, APCA Lc 99.6, no glare) */
+  --color-text-muted: #475569; /* Slate-600 meta, line numbers, captions (WCAG 7.24:1) */
+  --color-heading: #020617; /* authoritative deep midnight ink */
+  --color-h1: #020617;
+  --color-h2: #090d16;
+  --color-h3: #0f172a;
+  --color-h4: #1e293b;
+  --color-h5: #334155;
+  --color-strong: #020617; /* deep punch ink — typographic weight, not link color */
   --strong-font-weight: 600;
 
   /* ─────────────────────────────────────────
 	   3. BRAND & ACCENT
 	───────────────────────────────────────────── */
-  --color-accent: #107a40;
-  --color-accent-hover: #006532;
-  --color-accent-subtle: #edf5f1;
+  --color-accent: #0a7840; /* botanical emerald (L=48.5%, C=0.136, h=153.5°) */
+  --color-accent-hover: #065f32; /* deep spruce shade (L=40.5%, C=0.125) */
+  --color-accent-subtle: #edf7f1; /* soft sage wash (L=96.8%, C=0.016, h=153.5°) */
 
   /* ─────────────────────────────────────────
 	   4. CODEBLOCKS & INLINE CODE
 	───────────────────────────────────────────── */
-  --color-code-bg: #f1f5f9;
-  --color-code-text: #0f172a;
+  --color-code-bg: #f0f4f8; /* calibrated cool inset well (L=96.3%) */
+  --color-code-text: #0f172a; /* deep slate monospace text */
   --color-code-border: rgba(15, 23, 42, 0.08);
-  --color-code-chrome-bg: #e8edf3;
-  --color-code-chrome-text: #5d6c83;
+  --color-code-chrome-bg: #e4eaf1; /* structured chrome bar (L=93.2%) */
+  --color-code-chrome-text: #475569; /* Slate-600 chrome text (WCAG 6.26:1) */
   --color-inline-code-bg: rgba(15, 23, 42, 0.055);
   --color-inline-code-text: #0f172a;
 
   /* ─────────────────────────────────────────
 	   5. SYNTAX HIGHLIGHTING TOKENS
+	   Calibrated in OKLCH: uniform lightness L≈48–50%,
+	   chroma C≈0.10–0.16, WCAG ≥ 5.1:1 on code well.
 	───────────────────────────────────────────── */
-  --code-keyword: #3963ba; /* clean blue */
-  --code-string: #0b7b38; /* forest green */
-  --code-function: #6c53b2; /* violet/indigo */
-  --code-number: #a94316; /* amber/orange */
-  --code-comment: #606b7c; /* Slate-600 high-contrast comment */
-  --code-operator: #00738e; /* cyan */
-  --code-variable: #4c5768;
+  --code-keyword: #275ec6; /* sapphire blue (h=265°) */
+  --code-string: #09773b; /* forest emerald (h=152°) */
+  --code-function: #6549aa; /* royal amethyst (h=291°) */
+  --code-number: #a84414; /* terracotta amber (h=42°) */
+  --code-comment: #546377; /* slate-500 comment (h=255°) */
+  --code-operator: #00708a; /* deep cerulean teal (h=218°) */
+  --code-variable: #374353; /* deep charcoal variable (h=255°) */
 
   /* ─────────────────────────────────────────
 	   6. TABLES & HR
 	───────────────────────────────────────────── */
   --color-table-row-alt: rgba(15, 23, 42, 0.02);
-  --color-table-row-hover: rgba(21, 128, 61, 0.04);
+  --color-table-row-hover: rgba(10, 120, 64, 0.05);
   --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.12), transparent);
 
   /* ─────────────────────────────────────────
-	   7. SHADOWS
+	   7. SHADOWS & GLASS
 	───────────────────────────────────────────── */
   --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.03), 0 1px 2px rgba(15, 23, 42, 0.06);
   --shadow-elevated: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 10px 15px -3px rgba(15, 23, 42, 0.08);
@@ -67,15 +69,15 @@
   --glass-border: rgba(255, 255, 255, 0.7);
   --glass-highlight: rgba(255, 255, 255, 0.9);
   color-scheme: light;
-  --selection-background: #edf5f1;
-  --selection-color: #000000;
-  --focused-line-background: #edf5f1;
-  --focused-line-border: #107a40;
-  --mermaid-note-fill: #edf5f1;
-  --mermaid-note-stroke: #107a40;
-  --mermaid-note-text: #000000;
-  --color-success-subtle: #ebf3f2;
-  --color-success: #147443;
-  --color-danger-subtle: #f4f0f2;
-  --color-danger: #b33e44;
+  --selection-background: #edf7f1;
+  --selection-color: #020617;
+  --focused-line-background: #edf7f1;
+  --focused-line-border: #0a7840;
+  --mermaid-note-fill: #edf7f1;
+  --mermaid-note-stroke: #0a7840;
+  --mermaid-note-text: #020617;
+  --color-success-subtle: #ebf7f1;
+  --color-success: #0f763e;
+  --color-danger-subtle: #fdf2f2;
+  --color-danger: #b91c1c;
 }
