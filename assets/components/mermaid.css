@@ -239,6 +239,7 @@
 .mermaid-viewport svg .actorText,
 .mermaid-viewport svg tspan {
   font-family: var(--font-mono), "Geist Mono", monospace !important;
+  letter-spacing: var(--letter-spacing-mono, -0.02em);
 }
 
 @media (max-width: 768px) {

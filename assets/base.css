@@ -22,6 +22,7 @@
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-sinhala: "Noto Sans Sinhala", sans-serif;
   --font-mono: "Geist Mono", monospace;
+  --letter-spacing-mono: -0.02em;
   --font-optical-sizing: auto;
   --font-variation-settings: normal;
 

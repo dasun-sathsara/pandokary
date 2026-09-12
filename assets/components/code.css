@@ -4,6 +4,7 @@
 
 code {
   font-family: var(--font-mono);
+  letter-spacing: var(--letter-spacing-mono, -0.02em);
   font-size: 0.88em;
   font-weight: 400;
   padding: var(--inline-code-padding);
@@ -43,6 +44,7 @@ pre code.hljs {
   display: block;
   font-family: var(--font-mono);
   font-weight: 400;
+  letter-spacing: var(--letter-spacing-mono, -0.02em);
   overflow-wrap: normal;
   word-break: normal;
 }
