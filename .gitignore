@@ -7,6 +7,9 @@ node_modules/
 *.tmp
 *.log
 *.out
+*.test
+coverage.out
+coverage.html
 *.html
 !assets/template.html
 
@@ -16,5 +19,3 @@ node_modules/
 Thumbs.db
 *.png
 handoff_notes.md
-test_files/transaction-portal-architecture.md
-test_files/transaction-portal-architecture.html

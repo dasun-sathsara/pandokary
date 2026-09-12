@@ -4,13 +4,23 @@
 
 - **CLI entry point**: `cmd/pdy/main.go` parses flags, resolves assets, and shells out to Pandoc.
 - **Assets**: `assets/` contains the HTML template, CSS, and Lua filter embedded into the binary.
-- **Samples**: `test_files/` stores example Markdown inputs for manual and automated checks.
+- **Samples**: `testdata/` stores example Markdown inputs for manual and automated checks.
 
 ## Requirements
 
 - Go 1.21 or newer
 - Pandoc available on `PATH`
 - [dprint](https://dprint.dev/) available on `PATH` (used to auto-format Markdown before conversion; pass `--no-fmt` to skip)
+
+## Unix Installation
+
+```sh
+git clone https://github.com/dasun-sathsara/pandokary.git
+cd pandokary
+./scripts/install.sh
+```
+
+The script checks for `Git`, `Go >= 1.21`, `Pandoc`, and `dprint`, then builds `pdy` into `~/.local/bin` (override with `./scripts/install.sh <repo-dir> <install-dir>`).
 
 ## Windows Installation
 
@@ -19,7 +29,7 @@ Run these commands in PowerShell:
 ```powershell
 git clone https://github.com/dasun-sathsara/pandokary.git
 cd pandokary
-.\install_windows.ps1
+.\scripts\install_windows.ps1
 ```
 
 The installer will:
@@ -33,9 +43,9 @@ The installer will:
 Optional flags:
 
 ```powershell
-.\install_windows.ps1 -ForcePull
-.\install_windows.ps1 -SkipDependencyInstall
-.\install_windows.ps1 -RepoDir "D:\dev\pandokary" -InstallDir "D:\tools\pdy"
+.\scripts\install_windows.ps1 -ForcePull
+.\scripts\install_windows.ps1 -SkipDependencyInstall
+.\scripts\install_windows.ps1 -RepoDir "D:\dev\pandokary" -InstallDir "D:\tools\pdy"
 ```
 
 ## Build & Run
@@ -85,17 +95,16 @@ The four themes are **Lumina** (cool light, green accent), **Parchment** (warm l
 terracotta accent), **Obsidian** (neutral dark, violet accent), and **Midnight Fjord**
 (blue dark, cyan accent). Old saved choices migrate to a supported theme automatically.
 
-Floating controls and the appearance panel use a restrained glass finish. Reduced-transparency
-and increased-contrast preferences use solid surfaces. Typography and document layout stay the same.
+Floating controls and the appearance panel use solid, contrast-optimized surfaces. Reduced-transparency
+and increased-contrast preferences use reinforced borders. Typography and document layout stay the same.
 Code, math, and diagram libraries load only when the Markdown needs them. Plain documents make
 no requests for those libraries; diagram controls and diagram palettes are omitted from those exports.
 
-Use `test_files/reader-audit.md` to check all reader components together. See
-[the UI audit](docs/ui-audit.md) for research, implementation details, and browser validation.
+Use `testdata/reader-audit.md` to check all reader components together.
 
 Regenerate existing HTML exports to pick up style changes, since exports include their CSS.
 
-Consider adding samples under `test_files/` when covering new scenarios.
+Consider adding samples under `testdata/` when covering new scenarios.
 
 ## Development Notes
 

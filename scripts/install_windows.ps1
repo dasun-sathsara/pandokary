@@ -147,6 +147,9 @@ if ($env:OS -ne "Windows_NT") {
 if ([string]::IsNullOrWhiteSpace($RepoDir)) {
     if ($PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot "go.mod"))) {
         $RepoDir = $PSScriptRoot
+    } elseif ($PSScriptRoot -and (Test-Path (Join-Path (Split-Path -Parent $PSScriptRoot) "go.mod"))) {
+        # Installer lives in scripts/; the repo root is its parent.
+        $RepoDir = Split-Path -Parent $PSScriptRoot
     } else {
         $RepoDir = Join-Path $HOME "src\pandokary"
     }

@@ -1,4 +1,4 @@
-.PHONY: build test lint format install clean
+.PHONY: build test lint vet format install clean
 
 build:
 	mkdir -p bin
@@ -6,10 +6,14 @@ build:
 
 test:
 	go test ./...
+	npm test
 
 lint:
 	golangci-lint run
 	npm run check
+
+vet:
+	go vet ./...
 
 format:
 	go fmt ./...
