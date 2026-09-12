@@ -32,10 +32,6 @@
   border-color: var(--color-success);
 }
 
-.theme-option.active {
-  box-shadow: inset 0 0 0 1px var(--color-accent);
-}
-
 .close-settings,
 .mermaid-btn,
 .table-btn {
