@@ -8,13 +8,12 @@
   top: 0;
   left: 0;
   height: 3px;
-  width: 0%;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
   background-color: var(--color-accent);
   z-index: 10000;
-  transition: width 0.1s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  transition: transform 0.1s linear;
 }
 
 .code-toggle-btn svg {
@@ -44,7 +43,9 @@
     box-shadow: none;
     padding-right: 1.5rem;
     user-select: none;
-    transition: transform 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      visibility 0.3s ease;
     z-index: 100;
   }
 
@@ -57,6 +58,7 @@
   }
 
   html:not(.toc-open) .toc-sidebar {
+    visibility: hidden;
     transform: translateX(-310px);
   }
 
@@ -79,15 +81,15 @@
     bottom: 0;
     width: 280px;
     max-width: 80vw;
-    height: 100vh;
-    max-height: 100vh;
+    height: var(--viewport-height);
+    max-height: var(--viewport-height);
     background: var(--color-surface);
     border-right: 1px solid var(--color-border);
     border-top: none;
     border-left: none;
     border-radius: 0;
     margin: 0;
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-elevated);
     z-index: 10000;
     padding: 24px 20px;
     overflow-y: auto;
@@ -107,9 +109,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: var(--modal-backdrop-background);
     z-index: 9999;
     opacity: 0;
     pointer-events: none;
@@ -161,6 +161,7 @@
 .toc-link {
   color: var(--color-text-muted);
   text-decoration: none;
+  border-bottom: none;
   transition:
     color 0.2s ease,
     border-left-color 0.2s ease;
@@ -185,8 +186,6 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -264,7 +263,11 @@
   border-radius: 20px;
   font-weight: 600;
   box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
+  transition:
+    color 0.16s ease,
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.16s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -288,7 +291,7 @@
 }
 
 /* Code block Line Numbers & Focus Highlight */
-pre code.hljs {
+pre code {
   counter-reset: line-counter;
 }
 
@@ -314,12 +317,12 @@ pre code.hljs {
   transition: color 0.2s ease;
 }
 
-.code-line::before:hover {
+.code-line:hover::before {
   color: var(--color-text);
 }
 
 .code-line:hover {
-  background-color: rgba(128, 128, 128, 0.05);
+  background-color: var(--color-accent-subtle);
 }
 
 .code-line.focused-line {

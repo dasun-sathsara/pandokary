@@ -60,7 +60,7 @@ You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a director
 
 `pandokary` now supports two asset strategies via `--asset-mode`:
 
-- `cdn` (default) leaves third-party bundles (MathJax, highlight.js, Google Fonts) on their CDNs and does **not** request `--embed-resources`, keeping exports slim. Core CSS/JS remains inline so previews work from the temp directory, but your local images/attachments stay as file references. Pass `--embed` to explicitly produce a self-contained CDN-mode export.
+- `cdn` (default) leaves third-party bundles (MathJax, highlight.js) on their CDNs and does **not** request `--embed-resources`, keeping exports slim. Core CSS/JS remains inline so previews work from the temp directory, but your local images/attachments stay as file references. Pass `--embed` to explicitly produce a self-contained CDN-mode export.
 - `offline` inlines everything (including CDN bundles) for fully offline viewing; expect a much larger HTML because fonts and math assets are embedded. Use `--no-embed` to leave resources external instead.
 
 ### Markdown formatting
@@ -71,7 +71,29 @@ By default, `pdy` runs `dprint fmt` on the input Markdown file before passing it
 
 ```sh
 go test ./...
+npm test
 ```
+
+`npm test` checks browser assets and all four theme palettes, including text contrast,
+selected controls, translucent surfaces, syntax highlighting, and agreement with the Mermaid colors.
+It also checks saved-theme migration, restricted storage, heading IDs, and bounded code-line ranges.
+Theme colors live in `assets/themes/css/`; their accents and diagram colors are mirrored
+in `assets/themes/manifest.json` and `assets/themes/mermaid/`. The appearance swatches use
+the CSS theme colors directly.
+
+The four themes are **Lumina** (cool light, green accent), **Parchment** (warm light,
+terracotta accent), **Obsidian** (neutral dark, violet accent), and **Midnight Fjord**
+(blue dark, cyan accent). Old saved choices migrate to a supported theme automatically.
+
+Floating controls and the appearance panel use a restrained glass finish. Reduced-transparency
+and increased-contrast preferences use solid surfaces. Typography and document layout stay the same.
+Code, math, and diagram libraries load only when the Markdown needs them. Plain documents make
+no requests for those libraries; diagram controls and diagram palettes are omitted from those exports.
+
+Use `test_files/reader-audit.md` to check all reader components together. See
+[the UI audit](docs/ui-audit.md) for research, implementation details, and browser validation.
+
+Regenerate existing HTML exports to pick up style changes, since exports include their CSS.
 
 Consider adding samples under `test_files/` when covering new scenarios.
 

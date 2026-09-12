@@ -14,13 +14,13 @@
   --color-h3: #8cd8f7;
   --color-h4: #afcde2;
   --color-h5: #b4c2d4;
-  --color-strong: #ffffff;
+  --color-strong: #68d1fc;
   --strong-font-weight: 500;
 
   /* 3. BRAND & ACCENT */
-  --color-accent: #7dd3fc;
-  --color-accent-hover: #bae6fd;
-  --color-accent-subtle: rgba(125, 211, 252, 0.12);
+  --color-accent: #68d1fc;
+  --color-accent-hover: #9de1ff;
+  --color-accent-subtle: #21354b;
 
   /* 4. CODEBLOCKS & INLINE CODE */
   --color-code-bg: #0b1220;
@@ -36,7 +36,7 @@
   --code-string: #8dd9a2; /* mint green */
   --code-function: #7bd1f9; /* sky cyan (accent) */
   --code-number: #eeba70; /* warm amber */
-  --code-comment: #768395; /* muted slate */
+  --code-comment: #94a2b5; /* muted slate */
   --code-operator: #83d6cd; /* soft teal */
   --code-variable: #cedbe7; /* cool off-white */
 
@@ -51,9 +51,19 @@
 
   --scroll-shadow-color: rgba(0, 0, 0, 0.3);
   --modal-backdrop-background: rgba(0, 0, 0, 0.6);
-  --focused-line-background: rgba(125, 211, 252, 0.12);
-  --focused-line-border: #7dd3fc;
-  --mermaid-note-fill: #1e2838;
-  --mermaid-note-stroke: #7dd3fc;
-  --mermaid-note-text: #f3f8ff;
+  --focused-line-background: #21354b;
+  --focused-line-border: #68d1fc;
+  --mermaid-note-fill: #21354b;
+  --mermaid-note-stroke: #68d1fc;
+  --mermaid-note-text: #e6edf7;
+  --color-on-accent: #111827;
+  --glass-background: rgba(23, 32, 51, 0.94);
+  --glass-highlight: rgba(255, 255, 255, 0.07);
+  color-scheme: dark;
+  --selection-background: #21354b;
+  --selection-color: #e6edf7;
+  --color-success-subtle: #14242c;
+  --color-success: #73d9aa;
+  --color-danger-subtle: #211e2d;
+  --color-danger: #ff9aab;
 }
