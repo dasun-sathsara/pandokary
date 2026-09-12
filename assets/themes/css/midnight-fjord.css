@@ -25,11 +25,11 @@
   /* 4. CODEBLOCKS & INLINE CODE */
   --color-code-bg: #0b1220;
   --color-code-text: #e5edf7;
-  --color-code-border: rgba(125, 211, 252, 0.16);
+  --color-code-border: rgba(125, 211, 252, 0.18);
   --color-code-chrome-bg: #080e19;
   --color-code-chrome-text: #9fb0c6;
-  --color-inline-code-bg: rgba(0, 0, 0, 0);
-  --color-inline-code-text: #68d1fc;
+  --color-inline-code-bg: rgba(125, 211, 252, 0.09);
+  --color-inline-code-text: #8cd8f7;
 
   /* 5. SYNTAX HIGHLIGHTING TOKENS */
   --code-keyword: #cdb5ff; /* soft periwinkle */
