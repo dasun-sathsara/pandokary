@@ -24,7 +24,7 @@ pre {
   border-radius: var(--pre-border-radius);
   overflow: hidden;
   padding: var(--pre-padding);
-  margin: 1.5rem 0 1.75rem;
+  margin: 1.25rem 0 1.45rem;
   max-width: 100%;
   overflow-x: auto;
   position: relative;
@@ -36,21 +36,22 @@ pre {
 pre[data-lang]::before {
   content: attr(data-lang);
   position: absolute;
-  top: 0.65rem;
-  right: 5rem;
+  top: 0.55rem;
+  right: 0.75rem;
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   color: var(--color-text-muted);
-  opacity: 0.65;
+  opacity: 0.6;
   pointer-events: none;
   transition: opacity 0.16s ease;
   z-index: 1;
 }
 
-pre:hover[data-lang]::before {
-  opacity: 0.9;
+pre:hover[data-lang]::before,
+pre:focus-within[data-lang]::before {
+  opacity: 0;
 }
 
 pre code,
@@ -72,13 +73,13 @@ pre code.hljs {
 /* Copy button */
 .copy-btn {
   position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  background: transparent;
-  border: 1px solid transparent;
+  top: 0.45rem;
+  right: 0.55rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   color: var(--color-text-muted);
   border-radius: 4px;
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   cursor: pointer;
   display: inline-flex;
@@ -90,6 +91,8 @@ pre code.hljs {
     border-color 0.16s ease,
     background-color 0.16s ease;
   opacity: 0;
+  box-shadow: var(--shadow-card);
+  z-index: 2;
 }
 
 .copy-btn svg {
