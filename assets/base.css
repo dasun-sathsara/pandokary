@@ -392,26 +392,69 @@ main li > p:last-child {
   margin-bottom: 0;
 }
 
+/* =========================================
+   3b. Definition Lists (<dl>, <dt>, <dd>) & Abbreviations
+   ========================================= */
+dl {
+  margin: 0.85rem 0 1.25rem;
+}
+
+dt {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-heading);
+  margin-top: 1rem;
+  line-height: 1.45;
+}
+
+dt:first-child {
+  margin-top: 0;
+}
+
+dd {
+  margin-left: 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--color-border);
+  margin-top: 0.25rem;
+  margin-bottom: 0.65rem;
+  line-height: 1.56;
+  color: var(--color-text);
+}
+
+dd p {
+  margin: 0 0 0.35rem;
+}
+
+dd p:last-child {
+  margin-bottom: 0;
+}
+
+abbr[title] {
+  text-decoration: underline dotted var(--color-text-muted);
+  text-underline-offset: 3px;
+  cursor: help;
+}
+
 /* Task List */
 .task-list {
   list-style: none;
-  padding-left: 0;
-  margin: 1.25rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
+  padding-left: 1.45rem;
+  margin: 0.85rem 0;
 }
 
 .task-list .task-list {
-  padding-left: 1.75rem;
-  margin: 0.4rem 0 0 0;
+  padding-left: 1.45rem;
+  margin: 0.25rem 0 0 0;
 }
 
-.task-list li {
-  display: block;
-  padding-left: 0;
-  line-height: 1.5;
+.task-list li,
+li.task-item {
+  list-style: none !important;
+  padding-left: 0 !important;
+  line-height: 1.56;
   color: var(--color-text);
+  margin-bottom: 0.35rem;
   transition:
     color 0.2s ease,
     opacity 0.2s ease;
@@ -420,9 +463,18 @@ main li > p:last-child {
 .task-item > label,
 .task-list li > label,
 .task-list li:not(:has(> label)) {
-  display: block;
-  padding-left: 1.85rem;
-  text-indent: -1.85rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin-left: -1.35rem;
+  cursor: pointer;
+  line-height: 1.56;
+}
+
+.task-item > label .task-text,
+.inline-task-item > span {
+  flex: 1;
+  min-width: 0;
 }
 
 .task-list li > p {
@@ -471,9 +523,9 @@ main li > p:last-child {
 }
 
 .task-item input[type="checkbox"] {
-  display: inline-grid;
-  vertical-align: -0.15em;
-  margin-right: 0.65rem;
+  display: grid;
+  margin-top: 0.18em;
+  margin-right: 0;
 }
 
 .inline-task-checkbox {
@@ -582,8 +634,4 @@ mjx-container {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.5rem 0;
-}
-
-.task-item {
-  list-style: none;
 }
