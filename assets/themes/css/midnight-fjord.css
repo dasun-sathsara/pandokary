@@ -57,8 +57,9 @@
   --mermaid-note-stroke: #68d1fc;
   --mermaid-note-text: #e6edf7;
   --color-on-accent: #111827;
-  --glass-background: rgba(23, 32, 51, 0.94);
-  --glass-highlight: rgba(255, 255, 255, 0.07);
+  --glass-background: rgba(19, 28, 46, 0.78);
+  --glass-border: rgba(125, 211, 252, 0.2);
+  --glass-highlight: rgba(255, 255, 255, 0.18);
   color-scheme: dark;
   --selection-background: #21354b;
   --selection-color: #e6edf7;

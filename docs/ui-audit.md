@@ -14,7 +14,7 @@ Apple describes glass as a layer for controls and navigation above content, with
 
 CSS `backdrop-filter` affects pixels behind an element and needs a partially transparent background. Nested filtered ancestors also change what a child can sample. The implementation uses a single bounded filter per floating panel, without nested button filters or full-screen backdrop blur. [MDN: backdrop-filter](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/backdrop-filter)
 
-Blur has a rendering cost. The reader uses a fixed 12px blur, 94% opaque theme surfaces, a small highlight, and the existing theme shadow. It does not animate blur or keep diagram layers permanently promoted with `will-change`. Opaque backgrounds remain the default when filtering is unsupported. [web.dev: backdrop-filter](https://web.dev/articles/backdrop-filter)
+Blur and translucency provide visual depth when content scrolls underneath elevated controls. Effective glassmorphism requires clear translucency (76%–80% opacity), strong background diffusion (`backdrop-filter: blur(18px) saturate(180%)`), a specular rim highlight (`inset 0 1px 1px 0 var(--glass-highlight)`), and a semi-transparent border (`var(--glass-border)`). Opaque backgrounds remain the default when filtering is unsupported or when reduced transparency is requested. [web.dev: backdrop-filter](https://web.dev/articles/backdrop-filter)
 
 Reduced transparency and increased contrast switch the glass controls back to solid theme surfaces. Reduced-motion behavior remains in place. Forced colors use native checkboxes and explicit selected-state outlines. [MDN: prefers-reduced-transparency](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-transparency)
 
