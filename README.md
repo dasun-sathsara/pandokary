@@ -17,7 +17,7 @@
 Run these commands in PowerShell:
 
 ```powershell
-git clone https://gitlab.com/dasun-sathsara/pandokary.git
+git clone https://github.com/dasun-sathsara/pandokary.git
 cd pandokary
 .\install_windows.ps1
 ```

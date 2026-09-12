@@ -6,7 +6,7 @@
   "description": "Lint/format tooling for pandokary's browser assets (JS/CSS).",
   "repository": {
     "type": "git",
-    "url": "https://github.com/appledore_labs/pandokary"
+    "url": "https://github.com/dasun-sathsara/pandokary"
   },
   "author": "Dasun Sathsara",
   "license": "MIT",

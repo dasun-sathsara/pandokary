@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$RepoUrl = "https://gitlab.com/dasun-sathsara/pandokary.git",
+    [string]$RepoUrl = "https://github.com/dasun-sathsara/pandokary.git",
     [string]$RepoDir = "",
     [string]$InstallDir = "",
     [switch]$SkipDependencyInstall,
