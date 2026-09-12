@@ -461,7 +461,10 @@ const CodeBlockModule = (() => {
     const language =
       classes.find((name) => name.startsWith("language-"))?.slice(9) ||
       classes.find((name) => window.hljs?.getLanguage(name));
-    if (language) code.classList.add(`language-${language.toLowerCase()}`);
+    if (language) {
+      code.classList.add(`language-${language.toLowerCase()}`);
+      pre.dataset.lang = language.toUpperCase();
+    }
     code.classList.add("hljs");
     // Pandoc places fence languages on <pre>. Unlabelled fences remain plain text.
     if (language && window.hljs?.getLanguage(language)) window.hljs.highlightElement(code);

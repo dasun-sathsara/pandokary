@@ -20,17 +20,37 @@ code {
 pre {
   background: var(--pre-background);
   border: var(--pre-border);
-  border-left: var(--pre-border-left);
+  border-top: var(--pre-border-top, 2px solid var(--color-accent));
   border-radius: var(--pre-border-radius);
   overflow: hidden;
   padding: var(--pre-padding);
-  margin: 1.35rem 0 1.55rem;
+  margin: 1.5rem 0 1.75rem;
   max-width: 100%;
   overflow-x: auto;
   position: relative;
   box-shadow: var(--pre-box-shadow);
   font-size: 14px;
   tab-size: 2;
+}
+
+pre[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0.65rem;
+  right: 5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  opacity: 0.65;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+  z-index: 1;
+}
+
+pre:hover[data-lang]::before {
+  opacity: 0.9;
 }
 
 pre code,
