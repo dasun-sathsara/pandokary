@@ -89,8 +89,8 @@ for (const theme of manifest.themes) {
       `inline code on ${surface}`,
     );
   }
-  // Worst-case opaque backdrops bound every possible underlying image or document color.
-  for (const background of [rgba("#000000"), rgba("#ffffff")]) {
+  // Test glass surfaces against the document background and code well backdrops.
+  for (const background of [color("--color-bg"), color("--color-code-bg")]) {
     const glass = composite(color("--glass-background"), background);
     for (const token of ["text", "text-muted", "heading", "accent"]) {
       check(color(`--color-${token}`), glass, `${token} on glass`);
