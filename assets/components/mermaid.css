@@ -238,7 +238,7 @@
 .mermaid-viewport svg .cluster-label,
 .mermaid-viewport svg .actorText,
 .mermaid-viewport svg tspan {
-  font-family: var(--font-mono), "Maple Mono NF", "Maple Mono", monospace !important;
+  font-family: var(--font-mono), "Geist Mono", monospace !important;
 }
 
 @media (max-width: 768px) {

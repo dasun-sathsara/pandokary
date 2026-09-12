@@ -631,7 +631,7 @@ const SettingsModule = (() => {
     if (!document.fonts?.load) return;
     const fontLoads = Promise.all([
       document.fonts.load("12px 'Studio Feixen Sans'"),
-      document.fonts.load("12px 'Maple Mono NF'"),
+      document.fonts.load("12px 'Geist Mono'"),
     ]).catch((error) => {
       console.warn("Font loading failed; CSS fallbacks remain active", error);
     });
