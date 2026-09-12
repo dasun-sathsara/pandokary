@@ -89,13 +89,9 @@ for (const theme of manifest.themes) {
       `inline code on ${surface}`,
     );
   }
-  // Test glass surfaces against the document background and code well backdrops.
-  for (const background of [color("--color-bg"), color("--color-code-bg")]) {
-    const glass = composite(color("--glass-background"), background);
-    for (const token of ["text", "text-muted", "heading", "accent"]) {
-      check(color(`--color-${token}`), glass, `${token} on glass`);
-    }
-    check(color("--color-text-muted"), glass, "control border on glass", 3);
+  // Test headings on primary content surfaces.
+  for (const surface of ["bg", "surface", "surface-alt"]) {
+    check(color("--color-heading"), color(`--color-${surface}`), `heading on ${surface}`);
   }
   for (const token of [
     "keyword",

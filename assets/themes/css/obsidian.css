@@ -5,33 +5,33 @@
 	   ~3–5% lighter than the one below it, so depth
 	   reads through lightness, not heavy borders.
 	───────────────────────────────────────────── */
-  --color-bg: #0b0d12; /* obsidian canvas */
-  --color-surface: #14171f; /* cards, asides, modals */
-  --color-surface-alt: #1a1e27; /* subtle distinct fill */
+  --color-bg: #0b0d12; /* obsidian deep canvas (L=8.5%) */
+  --color-surface: #14171f; /* elevated dark card surface (L=13.5%) */
+  --color-surface-alt: #1a1e27; /* distinct structural panel & table header (L=17.2%) */
   --color-border: rgba(255, 255, 255, 0.08); /* hairline, hue-neutral */
 
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
-	   Soft neutral body text, brighter headings,
-	   and violet emphasis establish the hierarchy.
+	   Soft neutral body text, crisp white headings,
+	   and authoritative typographic weight.
 	───────────────────────────────────────────── */
-  --color-text: #e4e7ec; /* soft neutral body text */
-  --color-text-muted: #8a92a6; /* captions, table headers, metadata */
+  --color-text: #e4e7ec; /* soft neutral body text (WCAG 14.9:1) */
+  --color-text-muted: #8893a6; /* captions, table headers, metadata (WCAG 5.8:1) */
   --color-heading: #f5f7fa; /* near-white base for headings */
   --color-h1: #ffffff; /* full punch for the page title */
   --color-h2: #f5f7fa;
   --color-h3: #eaedf2;
   --color-h4: #dde2ea;
   --color-h5: #c9d0dc;
-  --color-strong: #a08aff; /* bold pops cleanly above body text */
+  --color-strong: #ffffff; /* crisp punch white — typographic weight, not link violet */
   --strong-font-weight: 600;
 
   /* ─────────────────────────────────────────
 	   3. BRAND & ACCENT (violet)
 	───────────────────────────────────────────── */
-  --color-accent: #a08aff; /* luminous violet */
+  --color-accent: #a08aff; /* luminous violet (WCAG > 6:1 on all surfaces) */
   --color-accent-hover: #b1a3ff; /* lighter on hover for clear feedback */
-  --color-accent-subtle: #25253a; /* tint for backgrounds */
+  --color-accent-subtle: #25253a; /* deep violet tint for backgrounds */
 
   /* ─────────────────────────────────────────
 	   4. CODEBLOCKS & INLINE CODE
@@ -42,8 +42,8 @@
   --color-code-text: #c9d1d9; /* neutral default glyph color */
   --color-code-border: rgba(255, 255, 255, 0.06);
   --color-code-chrome-bg: #12151c; /* header/action bar, sits above well */
-  --color-code-chrome-text: #8a92a6; /* lang label & copy icon (muted) */
-  --color-inline-code-bg: rgba(139, 125, 255, 0.09); /* subtle accent-tinted */
+  --color-code-chrome-text: #8893a6; /* lang label & copy icon (muted) */
+  --color-inline-code-bg: rgba(160, 138, 255, 0.12); /* subtle accent-tinted */
   --color-inline-code-text: #b8afff; /* violet-leaning, ties to accent */
 
   /* ─────────────────────────────────────────
@@ -55,7 +55,7 @@
   --code-string: #9ece6a; /* calm green — the warm counterweight */
   --code-function: #7aa2f7; /* azure blue — distinct from keywords */
   --code-number: #ff9e64; /* warm amber — numerics jump out */
-  --code-comment: #8394a6; /* muted, readable comments */
+  --code-comment: #8492a6; /* muted, readable comments (WCAG > 5:1 on focused line) */
   --code-operator: #89ddff; /* bright cyan — punctuation & operators */
   --code-variable: #e4e7ec; /* identifiers = body text (quiet by default) */
 
@@ -63,30 +63,26 @@
 	   6. TABLES & HR
 	───────────────────────────────────────────── */
   --color-table-row-alt: rgba(255, 255, 255, 0.025); /* whisper-quiet zebra */
-  --color-table-row-hover: rgba(139, 125, 255, 0.08); /* accent-tinted hover */
-
+  --color-table-row-hover: rgba(160, 138, 255, 0.08); /* accent-tinted hover */
   --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
 
   /* ─────────────────────────────────────────
-	   7. SHADOWS
+	   7. SHADOWS & FINISHES
 	───────────────────────────────────────────── */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
   --shadow-elevated: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
 
   --scroll-shadow-color: rgba(0, 0, 0, 0.25);
   --modal-backdrop-background: rgba(0, 0, 0, 0.6);
+  --color-on-accent: #0b0d12;
+  color-scheme: dark;
+  --selection-background: #25253a;
+  --selection-color: #e4e7ec;
   --focused-line-background: #25253a;
   --focused-line-border: #a08aff;
   --mermaid-note-fill: #25253a;
   --mermaid-note-stroke: #a08aff;
   --mermaid-note-text: #e4e7ec;
-  --color-on-accent: #0b0d12;
-  --glass-background: rgba(18, 22, 31, 0.76);
-  --glass-border: rgba(255, 255, 255, 0.14);
-  --glass-highlight: rgba(255, 255, 255, 0.2);
-  color-scheme: dark;
-  --selection-background: #25253a;
-  --selection-color: #e4e7ec;
   --color-success-subtle: #111c1b;
   --color-success: #73d9aa;
   --color-danger-subtle: #1d161b;
