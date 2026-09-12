@@ -67,7 +67,6 @@
     linear-gradient(180deg, rgba(157, 70, 39, 0.035), rgba(157, 70, 39, 0.012)),
     var(--color-surface);
   --aside-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.035) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
-  --pre-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.025) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
   --color-on-accent: #ffffff;
   color-scheme: light;
   --selection-background: #f7ede4;

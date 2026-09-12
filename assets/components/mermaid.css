@@ -118,20 +118,7 @@
   user-select: none;
 }
 
-.table-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  padding: 0.35rem 0.75rem;
-  background-color: var(--color-surface-alt);
-  border-bottom: 1px solid var(--color-border);
-  user-select: none;
-}
-
-.mermaid-title,
-.table-title {
+.mermaid-title {
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -141,16 +128,14 @@
   color: var(--color-code-chrome-text);
 }
 
-.mermaid-title svg,
-.table-title svg {
+.mermaid-title svg {
   flex-shrink: 0;
   stroke: currentColor;
   color: currentColor;
   width: 15px;
   height: 15px;
 }
-.mermaid-actions,
-.table-actions {
+.mermaid-actions {
   display: flex;
   gap: 0.25rem;
 }

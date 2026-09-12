@@ -20,7 +20,6 @@ code {
 pre {
   background: var(--pre-background);
   border: var(--pre-border);
-  border-top: var(--pre-border-top, 2px solid var(--color-accent));
   border-radius: var(--pre-border-radius);
   overflow: hidden;
   padding: var(--pre-padding);
@@ -35,27 +34,6 @@ pre {
 
 pre:has(.code-line) {
   padding-left: 0;
-}
-
-pre[data-lang]::before {
-  content: attr(data-lang);
-  position: absolute;
-  top: 0.55rem;
-  right: 0.75rem;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
-  opacity: 0.6;
-  pointer-events: none;
-  transition: opacity 0.16s ease;
-  z-index: 1;
-}
-
-pre:hover[data-lang]::before,
-pre:focus-within[data-lang]::before {
-  opacity: 0;
 }
 
 pre code,
