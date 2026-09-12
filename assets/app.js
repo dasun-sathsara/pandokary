@@ -125,6 +125,8 @@ const UIComponentFactory = (() => {
     link: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-link anchor-icon"><path d="M136,176a8,8,0,0,1-5.66-2.34l-40-40a8,8,0,0,1,11.32-11.32l40,40A8,8,0,0,1,136,176Zm76.69-124.69a48,48,0,0,0-67.89,0L112,84.69a8,8,0,0,0,11.31,11.31l32.8-32.8a32,32,0,0,1,45.26,45.25L168.57,141.26a8,8,0,1,0,11.31,11.31l32.8-32.8A48,48,0,0,0,212.69,51.31ZM132.12,187.58a8,8,0,0,0-11.31-11.31L88,209.07a32,32,0,0,1-45.25-45.26L75.54,131a8,8,0,0,0-11.31-11.31L31.43,152.51a48,48,0,0,0,67.88,67.88Z"/></svg>',
     clock:
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-clock reading-time-icon"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>',
+    image:
+      '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="ph ph-image"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.07a16,16,0,0,0-22.63,0L128,172,99.31,143.31a16,16,0,0,0-22.62,0L40,179.31V56ZM40,200l48-48,39.31,39.31a16,16,0,0,0,22.63,0L192,149.31,216,173.31V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></svg>',
   });
 
   function setButtonContent(button, content) {
@@ -526,8 +528,52 @@ const TableModule = (() => {
     );
   }
 
+  function isNumericText(text) {
+    const trimmed = text.trim();
+    if (!trimmed) return false;
+    return (
+      /^[+-]?[$\u20AC\u00A3\u00A5]?\s*[\d,]+(?:\.\d+)?\s*(?:%|[a-z]{1,4})?$/i.test(trimmed) ||
+      /^\d{1,5}$/.test(trimmed) ||
+      /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(?::\d+)?$/.test(trimmed)
+    );
+  }
+
+  function isColumnNumeric(rows, colIndex) {
+    let numericCount = 0;
+    let totalCount = 0;
+    for (const row of rows) {
+      const text = row.children[colIndex]?.textContent.trim();
+      if (text) {
+        totalCount += 1;
+        if (isNumericText(text)) numericCount += 1;
+      }
+    }
+    return totalCount > 0 && numericCount / totalCount >= 0.75;
+  }
+
+  function applyColumnNumeric(header, rows, colIndex) {
+    header?.classList.add("col-numeric");
+    for (const row of rows) {
+      row.children[colIndex]?.classList.add("col-numeric");
+    }
+  }
+
+  function autoAlignColumns(table) {
+    const rows = [...table.querySelectorAll("tbody tr")];
+    if (!rows.length) return;
+    const headerCells = [...table.querySelectorAll("thead th")];
+    const colCount = Math.max(headerCells.length, ...rows.map((r) => r.children.length));
+
+    for (let c = 0; c < colCount; c++) {
+      const header = headerCells[c];
+      if (header?.getAttribute("align") || header?.style.textAlign) continue;
+      if (isColumnNumeric(rows, c)) applyColumnNumeric(header, rows, c);
+    }
+  }
+
   function initTable(table) {
     if (table.closest(".table-scroll-container")) return;
+    autoAlignColumns(table);
     const container = document.createElement("div");
     container.className = "table-scroll-container";
     const actions = document.createElement("div");
@@ -547,6 +593,8 @@ const TableModule = (() => {
         shadowUpdaters.delete(updateShadows);
         return;
       }
+      const canScroll = wrapper.scrollWidth > wrapper.clientWidth;
+      container.classList.toggle("is-scrollable", canScroll);
       left.style.opacity = wrapper.scrollLeft > 2 ? "1" : "0";
       right.style.opacity =
         wrapper.scrollLeft < wrapper.scrollWidth - wrapper.clientWidth - 2 ? "1" : "0";
@@ -1343,9 +1391,24 @@ const ReaderExtrasModule = (() => {
     );
   }
 
+  function handleImageError(image) {
+    const fallback = document.createElement("div");
+    fallback.className = "image-fallback-card";
+    fallback.setAttribute("role", "img");
+    const label = image.alt || image.src.split("/").pop() || "Image unavailable";
+    fallback.setAttribute("aria-label", label);
+    fallback.innerHTML = `<span class="image-fallback-icon">${ICONS.image}</span><span class="image-fallback-text">${label}</span>`;
+    image.replaceWith(fallback);
+  }
+
   function initLightbox() {
     document.querySelectorAll("main img").forEach((image) => {
       if (image.closest(".mermaid-container,a,button")) return;
+      if (image.complete && image.naturalWidth === 0 && image.src) {
+        handleImageError(image);
+        return;
+      }
+      image.addEventListener("error", () => handleImageError(image), { once: true });
       image.tabIndex = 0;
       image.setAttribute("role", "button");
       image.setAttribute("aria-label", `Enlarge image${image.alt ? `: ${image.alt}` : ""}`);
@@ -1401,16 +1464,79 @@ const ReaderExtrasModule = (() => {
     });
   }
 
+  function handleEscapeKey() {
+    document
+      .querySelectorAll(".table-scroll-container.maximized,.mermaid-container.maximized")
+      .forEach((container) => {
+        container.querySelector(".btn-maximize")?.click();
+      });
+    document.querySelector(".lightbox-close")?.click();
+  }
+
+  function cycleTheme() {
+    const themes = ["lumina", "parchment", "obsidian", "midnight-fjord"];
+    const current = document.documentElement.dataset.theme || "lumina";
+    const index = themes.indexOf(current);
+    const next = themes[(index + 1) % themes.length];
+    const panel = document.getElementById("appearance-panel");
+    const btn = panel?.querySelector(`.theme-option[data-theme-key="${next}"]`);
+    if (btn) {
+      btn.click();
+    } else {
+      document.documentElement.dataset.theme = next;
+      StorageManager.setPreference("theme", next);
+      if (typeof window.updateMermaidTheme === "function") window.updateMermaidTheme();
+    }
+  }
+
+  function jumpToHeading(direction) {
+    const headings = [...document.querySelectorAll("main :is(h2, h3, h4, h5, h6)")];
+    const target =
+      direction > 0
+        ? headings.find((h) => h.getBoundingClientRect().top > 80)
+        : headings.filter((h) => h.getBoundingClientRect().top < -20).at(-1);
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function isInputActive(target) {
+    return (
+      Boolean(target) &&
+      (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) || target.isContentEditable)
+    );
+  }
+
+  function handleReaderShortcuts(event) {
+    if (event.key === "Escape") {
+      handleEscapeKey();
+      return;
+    }
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (isInputActive(event.target)) return;
+    if (document.querySelector(".modal-backdrop.visible, .lightbox-backdrop.active")) return;
+
+    switch (event.key.toLowerCase()) {
+      case "t":
+        event.preventDefault();
+        cycleTheme();
+        break;
+      case "[":
+      case "m":
+        event.preventDefault();
+        document.querySelector(".toc-toggle")?.click();
+        break;
+      case "j":
+        event.preventDefault();
+        jumpToHeading(1);
+        break;
+      case "k":
+        event.preventDefault();
+        jumpToHeading(-1);
+        break;
+    }
+  }
+
   function initKeyboardShortcuts() {
-    window.addEventListener("keydown", (event) => {
-      if (event.key !== "Escape") return;
-      document
-        .querySelectorAll(".table-scroll-container.maximized,.mermaid-container.maximized")
-        .forEach((container) => {
-          container.querySelector(".btn-maximize")?.click();
-        });
-      document.querySelector(".lightbox-close")?.click();
-    });
+    window.addEventListener("keydown", handleReaderShortcuts);
     window.addEventListener("resize", debounce(updateScrollLock, 100), { passive: true });
   }
 

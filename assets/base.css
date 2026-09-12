@@ -512,8 +512,26 @@ main li > p:last-child {
 }
 
 /* =========================================
-   8. Images & Media
+   8. Images, Figures & Media
    ========================================= */
+figure {
+  margin: 2.25rem 0;
+  text-align: center;
+}
+
+figure img {
+  margin: 0 auto;
+}
+
+figcaption {
+  margin-top: 0.65rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
 img {
   max-width: 100%;
   height: auto;
@@ -521,6 +539,40 @@ img {
   display: block;
   margin: 2rem auto;
   box-shadow: var(--shadow-elevated);
+}
+
+.image-fallback-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem 1.5rem;
+  margin: 2rem auto;
+  max-width: 480px;
+  background-color: var(--color-surface-alt);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.image-fallback-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.65;
+}
+
+.image-fallback-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.image-fallback-text {
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 /* =========================================

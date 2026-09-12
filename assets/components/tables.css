@@ -188,3 +188,12 @@ main tbody tr:hover {
   font-weight: 600;
   background-color: var(--color-surface-alt);
 }
+
+.col-numeric,
+th[align="right"],
+td[align="right"],
+.table-wrapper th.col-numeric,
+.table-wrapper td.col-numeric {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
