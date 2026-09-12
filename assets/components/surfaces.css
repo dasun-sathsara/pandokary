@@ -51,8 +51,7 @@
 
 .toc-link.active {
   background: var(--color-accent-subtle);
-  border-radius: 4px;
-  box-shadow: -3px 0 0 var(--color-accent);
+  border-left-color: var(--color-accent);
 }
 
 .table-scroll-container.maximized .table-wrapper {
@@ -169,6 +168,7 @@
   .lightbox-backdrop,
   .reading-progress,
   .copy-btn,
+  .code-actions,
   .code-toggle-container,
   .mermaid-actions,
   .table-actions,

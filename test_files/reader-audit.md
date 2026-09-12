@@ -8,7 +8,7 @@ date: September 2026
 
 Pandokary turns Markdown into a portable document. This specimen exercises the reader's typography, navigation, code, tables, images, and diagrams in each appearance.
 
-Keep **important details** easy to find. Ordinary paragraphs, *emphasis*, [section links](#working-with-code), and `inline code` should remain readable together.
+Keep **important details** easy to find. Ordinary paragraphs, _emphasis_, [section links](#working-with-code), and `inline code` should remain readable together.
 
 > A useful document gives its reader room to think. The controls stay close without competing with the content.
 
@@ -63,13 +63,13 @@ for (const [project, entries] of groupNotes(notes)) {
 
 ### Comparing results
 
-| Area | What to check | Expected result | Status |
-|:-----|:--------------|:----------------|:-------|
-| Reading | Fonts and scale | Original typography | Ready |
-| Appearance | Four palettes | Two light and two dark | Ready |
-| Navigation | Keyboard and touch | Visible focus and section state | Review |
-| Tables | Horizontal scrolling | Header stays visible in the viewer | Review |
-| Export | Printed pages | Complete code without floating controls | Review |
+| Area       | What to check        | Expected result                         | Status |
+| :--------- | :------------------- | :-------------------------------------- | :----- |
+| Reading    | Fonts and scale      | Original typography                     | Ready  |
+| Appearance | Four palettes        | Two light and two dark                  | Ready  |
+| Navigation | Keyboard and touch   | Visible focus and section state         | Review |
+| Tables     | Horizontal scrolling | Header stays visible in the viewer      | Review |
+| Export     | Printed pages        | Complete code without floating controls | Review |
 
 ## Following a process
 
