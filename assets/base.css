@@ -40,7 +40,7 @@
   --scale-h6: 0.95;
 
   /* Spacing */
-  --line-height-body: 1.68;
+  --line-height-body: 1.56;
   --spacing-paragraph: 1em;
   --radius-std: 0;
 }
@@ -89,7 +89,7 @@
   --focused-line-border: #eab308;
   --inline-code-border: 1px solid var(--color-code-border);
   --inline-code-border-radius: 4px;
-  --inline-code-padding: 0.1em 0.32em;
+  --inline-code-padding: 0.08em 0.32em;
   --table-width: max-content;
   --table-border-collapse: separate;
   --table-border-radius: 0;
@@ -147,7 +147,7 @@ body {
   font-variation-settings: var(--font-variation-settings);
   background: var(--body-background);
   color: var(--color-text);
-  line-height: var(--line-height-body, 1.68);
+  line-height: var(--line-height-body, 1.56);
   font-size: calc(var(--font-size-body) + var(--font-size-adjust, 0px));
   min-width: 0;
   max-width: var(--content-max-width, 1040px);
@@ -364,9 +364,9 @@ ol {
 }
 
 li {
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.35rem;
   padding-left: 0.4rem;
-  line-height: 1.68;
+  line-height: 1.56;
 }
 
 li::marker {
@@ -400,7 +400,7 @@ main li > p {
 .task-list li {
   display: block;
   padding-left: 0;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--color-text);
   transition:
     color 0.2s ease,
@@ -433,7 +433,7 @@ main li > p {
   align-items: flex-start;
   gap: 0.65rem;
   margin: 0.4rem 0;
-  line-height: 1.6;
+  line-height: 1.5;
   color: var(--color-text);
   transition: color 0.2s ease;
 }
