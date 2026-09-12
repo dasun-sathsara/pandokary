@@ -5,12 +5,7 @@
   --viewport-height: 100vh;
   --radius-control: 6px;
   --radius-panel: 12px;
-  --glass-blur: 18px;
-  --glass-saturate: 180%;
-  --glass-background: rgba(255, 255, 255, 0.78);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --glass-highlight: rgba(255, 255, 255, 0.85);
-  --control-border: var(--color-text-muted);
+  --control-border: var(--color-border);
   --surface-border: var(--color-border);
   --shadow-sm: var(--shadow-card, 0 1px 2px rgba(0, 0, 0, 0.05));
   --shadow-lg: var(--shadow-elevated, 0 10px 15px -3px rgba(0, 0, 0, 0.1));

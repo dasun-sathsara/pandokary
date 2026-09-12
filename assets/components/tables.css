@@ -63,14 +63,14 @@ main tbody tr:hover {
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg);
+  background-color: var(--color-surface);
 }
 
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
   margin: 0;
-  background-color: var(--color-bg);
+  background-color: var(--color-surface);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;

@@ -8,15 +8,13 @@ Pandokary wraps Pandoc to turn Markdown into portable HTML documents. The Go CLI
 
 This pass builds on the edits already present in the working directory. It preserves Studio Feixen Sans, Geist Mono, the Sinhala fallback, heading scales, document widths, spacing, and the existing sidebar and floating-control arrangement. Changes concern visual treatment, reader behavior, and unnecessary work during export and loading.
 
-## Glass research
+## Surface and performance architecture
 
-Apple describes glass as a layer for controls and navigation above content, with more opacity for larger panels to preserve legibility. This fits the appearance popover, floating buttons, image close control, and mobile contents drawer. It does not call for making paragraphs or code translucent. [Apple: Materials](https://developer.apple.com/design/human-interface-guidelines/materials)
+Controls and panels use solid, contrast-optimized theme surfaces (`--color-surface` and `--color-surface-alt`) with crisp hairline borders and tailored ambient shadows. Glassmorphism and `backdrop-filter` effects were retired to eliminate GPU compositing overhead, prevent browser render lag during scrolling, and ensure visual consistency across all environments.
 
-CSS `backdrop-filter` affects pixels behind an element and needs a partially transparent background. Nested filtered ancestors also change what a child can sample. The implementation uses a single bounded filter per floating panel, without nested button filters or full-screen backdrop blur. [MDN: backdrop-filter](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/backdrop-filter)
+Tables use an integrated, solid card architecture (`--color-surface`) where container toolbars and column headers share the same `--color-surface-alt` finish, eliminating mismatched headers while keeping sticky column headers performant.
 
-Blur and translucency provide visual depth when content scrolls underneath elevated controls. Effective glassmorphism requires clear translucency (76%–80% opacity), strong background diffusion (`backdrop-filter: blur(18px) saturate(180%)`), a specular rim highlight (`inset 0 1px 1px 0 var(--glass-highlight)`), and a semi-transparent border (`var(--glass-border)`). Opaque backgrounds remain the default when filtering is unsupported or when reduced transparency is requested. [web.dev: backdrop-filter](https://web.dev/articles/backdrop-filter)
-
-Reduced transparency and increased contrast switch the glass controls back to solid theme surfaces. Reduced-motion behavior remains in place. Forced colors use native checkboxes and explicit selected-state outlines. [MDN: prefers-reduced-transparency](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-transparency)
+Forced colors use native controls and explicit selected-state outlines. High-contrast preferences use reinforced borders.
 
 ## Theme selection
 

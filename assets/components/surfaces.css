@@ -2,17 +2,23 @@
 .floating-toggle,
 .settings-popover,
 .lightbox-close {
-  border-color: var(--glass-border);
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-elevated);
+}
+
+.floating-toggle:hover {
+  border-color: var(--color-accent);
   box-shadow:
-    inset 0 1px 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--color-accent),
     var(--shadow-elevated);
 }
 
 .mermaid-btn,
 .table-btn,
 .code-toggle-btn {
-  border-color: var(--control-border);
-  box-shadow: inset 0 1px 0 var(--glass-highlight);
+  border-color: var(--color-border);
+  background: var(--color-surface);
 }
 
 .copy-btn {
@@ -91,74 +97,6 @@
     position: absolute;
     top: 12px;
     right: 12px;
-  }
-}
-
-/* Blur only bounded controls; avoid stacking full-screen filters behind viewers. */
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .floating-toggle,
-  .settings-popover,
-  .lightbox-close {
-    background: var(--glass-background);
-    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-    border: 1px solid var(--glass-border);
-    box-shadow:
-      inset 0 1px 1px 0 var(--glass-highlight),
-      var(--shadow-elevated);
-  }
-
-  .floating-toggle:hover {
-    border-color: var(--color-accent);
-    box-shadow:
-      inset 0 1px 1px 0 var(--glass-highlight),
-      0 0 0 1px var(--color-accent),
-      var(--shadow-elevated);
-  }
-
-  .copy-btn {
-    background: var(--glass-background);
-    backdrop-filter: blur(8px) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(8px) saturate(var(--glass-saturate));
-    border: 1px solid var(--glass-border);
-    box-shadow: inset 0 1px 0 var(--glass-highlight);
-  }
-
-  .code-toggle-btn {
-    background: var(--glass-background);
-    backdrop-filter: blur(8px) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(8px) saturate(var(--glass-saturate));
-  }
-
-  @media (max-width: 1199px) {
-    .toc-sidebar {
-      background: var(--glass-background);
-      backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-      border-right: 1px solid var(--glass-border);
-      box-shadow:
-        inset 0 1px 1px 0 var(--glass-highlight),
-        var(--shadow-elevated);
-    }
-  }
-
-  .mermaid-toolbar,
-  .table-toolbar {
-    background: var(--glass-background);
-    backdrop-filter: blur(8px) saturate(var(--glass-saturate));
-    -webkit-backdrop-filter: blur(8px) saturate(var(--glass-saturate));
-    border-bottom: 1px solid var(--glass-border);
-  }
-}
-
-@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .floating-toggle,
-  .settings-popover,
-  .toc-sidebar,
-  .lightbox-close {
-    background: var(--color-surface);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
   }
 }
 

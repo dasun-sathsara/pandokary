@@ -2,86 +2,83 @@
   /* ─────────────────────────────────────────
 	   1. CORE CANVAS & SURFACES
 	───────────────────────────────────────────── */
-  --color-bg: #faf5ec; /* warm paper canvas */
-  --color-surface: #fffdf8; /* cards, asides, modals */
-  --color-surface-alt: #f2eadd; /* subtle alternate fill */
-  --color-border: rgba(61, 50, 38, 0.12); /* warm hairline border */
+  --color-bg: #faf5ec; /* warm paper canvas (L=96.8%) */
+  --color-surface: #fffdfa; /* elevated warm card surface (L=99.2%) */
+  --color-surface-alt: #f2eadd; /* structured warm linen panel & table header (L=93.2%) */
+  --color-border: rgba(61, 50, 38, 0.12); /* warm bistre hairline */
 
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
 	───────────────────────────────────────────── */
-  --color-text: #000000; /* primary body text */
-  --color-text-muted: #695e52; /* muted sand/stone */
-  --color-heading: #000000; /* deep reader headings */
-  --color-h1: #000000;
-  --color-h2: #000000;
-  --color-h3: #000000;
-  --color-h4: #000000;
-  --color-h5: #000000;
-  --color-strong: #9d4627; /* bold text contrast color */
+  --color-text: #231c16; /* deep warm carbon ink (L=19.5%, APCA Lc 95.8, WCAG 15.2:1) */
+  --color-text-muted: #5a4e42; /* warm raw umber meta & secondary (WCAG 7.31:1, APCA Lc 78.4) */
+  --color-heading: #15100c; /* deep bistre black (L=12%, WCAG 18.2:1) */
+  --color-h1: #15100c;
+  --color-h2: #1c1612;
+  --color-h3: #231c16;
+  --color-h4: #332920;
+  --color-h5: #45382c;
+  --color-strong: #15100c; /* deep punch ink — typographic weight, not link color */
+  --strong-font-weight: 600;
 
   /* ─────────────────────────────────────────
 	   3. BRAND & ACCENT (terracotta)
 	───────────────────────────────────────────── */
-  --color-accent: #9d4627; /* warm terracotta */
-  --color-accent-hover: #883312; /* darker version for hover */
-  --color-accent-subtle: #f8f0e9; /* accent-tinted background */
+  --color-accent: #9d4627; /* warm terracotta (WCAG 5.79:1 on canvas) */
+  --color-accent-hover: #783116; /* deeper burnt sienna on hover */
+  --color-accent-subtle: #f7ede4; /* soft terracotta tint wash */
 
   /* ─────────────────────────────────────────
 	   4. CODEBLOCKS & INLINE CODE
 	───────────────────────────────────────────── */
-  --color-code-bg: #f3ecdf; /* inset well background */
-  --color-code-text: #000000; /* default code text */
+  --color-code-bg: #f2ebde; /* inset warm vellum well */
+  --color-code-text: #231c16; /* deep carbon ink */
   --color-code-border: rgba(61, 50, 38, 0.12);
-  --color-code-chrome-bg: #eae0cf; /* header/action bar */
-  --color-code-chrome-text: #695e51; /* label and copy icon */
-  --color-inline-code-bg: rgba(182, 93, 60, 0.07);
-  --color-inline-code-text: #8e3f24;
+  --color-code-chrome-bg: #e7ded0; /* warm linen header bar */
+  --color-code-chrome-text: #5a4e42;
+  --color-inline-code-bg: rgba(61, 50, 38, 0.06);
+  --color-inline-code-text: #231c16;
 
   /* ─────────────────────────────────────────
-	   5. SYNTAX HIGHLIGHTING TOKENS (Editorial Light)
+	   5. SYNTAX HIGHLIGHTING TOKENS (Editorial Warm)
 	───────────────────────────────────────────── */
-  --code-keyword: #af442d; /* rust red */
-  --code-string: #4e6b2c; /* olive/forest green */
-  --code-function: #1f6b8c; /* muted slate-blue */
-  --code-number: #975718; /* warm ochre */
-  --code-comment: #6f6456; /* slate warm gray */
-  --code-operator: #6f6456; /* warm gray-brown */
-  --code-variable: #433b31; /* near body text */
+  --code-keyword: #a33b24; /* rust terracotta (h=36°) */
+  --code-string: #3c6e26; /* warm olive grove (h=135°) */
+  --code-function: #1b678a; /* deep slate cerulean (h=230°) */
+  --code-number: #8f5214; /* raw sienna ochre (h=55°) */
+  --code-comment: #6b5e4f; /* warm umber (h=65°) */
+  --code-operator: #5f5344; /* bistre charcoal (h=65°) */
+  --code-variable: #382f25; /* deep espresso (h=55°) */
 
   /* ─────────────────────────────────────────
 	   6. TABLES & HR
  	───────────────────────────────────────────── */
   --color-table-row-alt: rgba(61, 50, 38, 0.035);
-  --color-table-row-hover: rgba(182, 93, 60, 0.07);
+  --color-table-row-hover: rgba(157, 70, 39, 0.06);
   --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(61, 50, 38, 0.18), transparent);
 
   /* ─────────────────────────────────────────
-	   7. SHADOWS
+	   7. SHADOWS & FINISHES
 	───────────────────────────────────────────── */
   --shadow-card: 0 1px 2px rgba(60, 45, 30, 0.04), 0 2px 8px rgba(60, 45, 30, 0.06);
   --shadow-elevated: 0 4px 12px rgba(60, 45, 30, 0.08), 0 12px 32px rgba(60, 45, 30, 0.1);
 
   --aside-background:
-    linear-gradient(180deg, rgba(182, 93, 60, 0.035), rgba(182, 93, 60, 0.012)),
+    linear-gradient(180deg, rgba(157, 70, 39, 0.035), rgba(157, 70, 39, 0.012)),
     var(--color-surface);
   --aside-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.035) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
   --pre-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.025) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
-  --strong-font-weight: 600;
   --color-on-accent: #ffffff;
-  --glass-background: rgba(255, 252, 246, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.7);
-  --glass-highlight: rgba(255, 255, 255, 0.9);
   color-scheme: light;
-  --selection-background: #f8f0e9;
-  --selection-color: #000000;
-  --focused-line-background: #f8f0e9;
+  --selection-background: #f7ede4;
+  --selection-color: #15100c;
+  --focused-line-background: #f7ede4;
   --focused-line-border: #9d4627;
-  --mermaid-note-fill: #f8f0e9;
+  --mermaid-note-fill: #f7ede4;
   --mermaid-note-stroke: #9d4627;
-  --mermaid-note-text: #000000;
-  --color-success-subtle: #e7e5d6;
-  --color-success: #076e3e;
-  --color-danger-subtle: #efe2d6;
-  --color-danger: #ab363d;
+  --mermaid-note-text: #15100c;
+  --color-success-subtle: #e8f3ea;
+  --color-success: #136c38;
+  --color-danger-subtle: #fbebe9;
+  --color-danger: #b02824;
 }

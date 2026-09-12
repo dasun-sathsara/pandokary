@@ -1,68 +1,65 @@
 [data-theme="midnight-fjord"] {
   /* 1. CORE CANVAS & SURFACES */
-  --color-bg: #111827;
-  --color-surface: #172033;
-  --color-surface-alt: #1e2a40;
-  --color-border: rgba(183, 207, 230, 0.2);
+  --color-bg: #111827; /* deep marine navy canvas */
+  --color-surface: #172033; /* elevated fjord navy card surface */
+  --color-surface-alt: #1e2a40; /* distinct arctic panel & table header */
+  --color-border: rgba(183, 207, 230, 0.2); /* glacial hairline */
 
   /* 2. TEXT HIERARCHY */
-  --color-text: #e6edf7;
-  --color-text-muted: #a9b6c9;
-  --color-heading: #f5f9ff;
-  --color-h1: #f3f8ff;
-  --color-h2: #bce7fa;
-  --color-h3: #8cd8f7;
-  --color-h4: #afcde2;
-  --color-h5: #b4c2d4;
-  --color-strong: #68d1fc;
+  --color-text: #e6edf7; /* nordic snow body text (WCAG 13.5:1) */
+  --color-text-muted: #9fb0c6; /* subtle ice slate meta (WCAG 6.5:1) */
+  --color-heading: #ffffff; /* pure glacial white headings */
+  --color-h1: #ffffff;
+  --color-h2: #f0f7ff;
+  --color-h3: #e6edf7;
+  --color-h4: #c9d7ec;
+  --color-h5: #a8bcda;
+  --color-strong: #ffffff; /* pure punch white — typographic weight, not link cyan */
   --strong-font-weight: 600;
 
   /* 3. BRAND & ACCENT */
-  --color-accent: #68d1fc;
-  --color-accent-hover: #9de1ff;
-  --color-accent-subtle: #21354b;
+  --color-accent: #68d1fc; /* glacial sky cyan (WCAG > 8:1 on all surfaces) */
+  --color-accent-hover: #9de1ff; /* brighter ice cyan on hover */
+  --color-accent-subtle: #21354b; /* marine cyan wash */
 
   /* 4. CODEBLOCKS & INLINE CODE */
-  --color-code-bg: #0b1220;
+  --color-code-bg: #0b1220; /* deep marine abyss well */
   --color-code-text: #e5edf7;
   --color-code-border: rgba(125, 211, 252, 0.18);
-  --color-code-chrome-bg: #080e19;
+  --color-code-chrome-bg: #080e19; /* fjord header bar */
   --color-code-chrome-text: #9fb0c6;
-  --color-inline-code-bg: rgba(125, 211, 252, 0.09);
-  --color-inline-code-text: #8cd8f7;
+  --color-inline-code-bg: rgba(104, 209, 252, 0.1);
+  --color-inline-code-text: #7dd5f9;
 
   /* 5. SYNTAX HIGHLIGHTING TOKENS */
   --code-keyword: #cdb5ff; /* soft periwinkle */
   --code-string: #8dd9a2; /* mint green */
-  --code-function: #7bd1f9; /* sky cyan (accent) */
-  --code-number: #eeba70; /* warm amber */
-  --code-comment: #94a2b5; /* muted slate */
-  --code-operator: #83d6cd; /* soft teal */
-  --code-variable: #cedbe7; /* cool off-white */
+  --code-function: #68d1fc; /* sky cyan (accent) */
+  --code-number: #f5b667; /* amber hearth */
+  --code-comment: #8fa1b8; /* muted fjord slate */
+  --code-operator: #72e5d9; /* bioluminescent teal */
+  --code-variable: #e6edf7; /* cool off-white */
 
   /* 6. TABLES & HR */
-  --color-table-row-alt: rgba(125, 211, 252, 0.035);
-  --color-table-row-hover: rgba(125, 211, 252, 0.09);
-  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.42), transparent);
+  --color-table-row-alt: rgba(104, 209, 252, 0.035);
+  --color-table-row-hover: rgba(104, 209, 252, 0.09);
+  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(104, 209, 252, 0.35), transparent);
 
-  /* 7. SHADOWS */
+  /* 7. SHADOWS & FINISHES */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.18);
   --shadow-elevated: 0 5px 14px rgba(0, 0, 0, 0.34), 0 22px 48px rgba(0, 0, 0, 0.28);
 
   --scroll-shadow-color: rgba(0, 0, 0, 0.3);
   --modal-backdrop-background: rgba(0, 0, 0, 0.6);
+  --color-on-accent: #111827;
+  color-scheme: dark;
+  --selection-background: #21354b;
+  --selection-color: #e6edf7;
   --focused-line-background: #21354b;
   --focused-line-border: #68d1fc;
   --mermaid-note-fill: #21354b;
   --mermaid-note-stroke: #68d1fc;
   --mermaid-note-text: #e6edf7;
-  --color-on-accent: #111827;
-  --glass-background: rgba(19, 28, 46, 0.78);
-  --glass-border: rgba(125, 211, 252, 0.2);
-  --glass-highlight: rgba(255, 255, 255, 0.18);
-  color-scheme: dark;
-  --selection-background: #21354b;
-  --selection-color: #e6edf7;
   --color-success-subtle: #14242c;
   --color-success: #73d9aa;
   --color-danger-subtle: #211e2d;
