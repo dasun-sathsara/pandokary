@@ -61,12 +61,12 @@
   --aside-padding: 1.25rem 1.5rem;
   --aside-color: var(--color-text);
   --pre-background: var(--color-code-bg);
-  --pre-border: 1.5px solid var(--color-code-border);
-  --pre-border-left: 4px solid var(--color-accent);
+  --pre-border: 1px solid var(--color-code-border);
+  --pre-border-left: 1px solid var(--color-code-border);
   --pre-border-radius: 8px;
   --pre-box-shadow: none;
-  --pre-padding: 0.55rem 0.75rem;
-  --pre-line-height: 1.35;
+  --pre-padding: 0.65rem 0.85rem;
+  --pre-line-height: 1.42;
   --link-color: var(--color-accent);
   --link-decoration: none;
   --link-border-bottom: 1px solid var(--color-accent);
@@ -90,8 +90,8 @@
   --focused-line-background: rgba(253, 224, 71, 0.12);
   --focused-line-border: #eab308;
   --inline-code-border: 1px solid var(--color-code-border);
-  --inline-code-border-radius: 0;
-  --inline-code-padding: 0.07rem 0.2rem;
+  --inline-code-border-radius: 4px;
+  --inline-code-padding: 0.1em 0.32em;
   --table-width: max-content;
   --table-border-collapse: separate;
   --table-border-radius: 0;

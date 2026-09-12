@@ -5,7 +5,7 @@
 code {
   font-family: var(--font-mono);
   letter-spacing: var(--letter-spacing-mono, -0.02em);
-  font-size: 0.88em;
+  font-size: 0.86em;
   font-weight: 400;
   padding: var(--inline-code-padding);
   border: var(--inline-code-border);
@@ -39,7 +39,7 @@ pre code.hljs {
   padding: 0;
   color: var(--color-code-text);
   border: none;
-  font-size: 14.5px;
+  font-size: 14px;
   line-height: var(--pre-line-height);
   display: block;
   font-family: var(--font-mono);
