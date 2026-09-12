@@ -5,7 +5,7 @@
 code {
   font-family: var(--font-mono);
   font-size: 0.88em;
-  font-weight: 600;
+  font-weight: 500;
   padding: var(--inline-code-padding);
   border: var(--inline-code-border);
   border-radius: var(--inline-code-border-radius);
@@ -91,7 +91,7 @@ pre:focus-within .copy-btn {
 .hljs-type,
 .hljs-literal {
   color: var(--code-keyword);
-  font-weight: 600;
+  font-weight: 500;
 }
 .token.string,
 .hljs-string,
@@ -180,5 +180,5 @@ pre:focus-within .copy-btn {
 }
 
 .hljs-strong {
-  font-weight: 600;
+  font-weight: 500;
 }

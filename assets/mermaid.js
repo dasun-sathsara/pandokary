@@ -12,7 +12,7 @@ if (initialMermaid) {
 }
 
 (() => {
-  const FONT_FAMILY = '"Maple Mono NF", "Maple Mono", monospace';
+  const FONT_FAMILY = '"Geist Mono", monospace';
   const MIN_SCALE = 0.05;
   const MAX_SCALE = 15;
   const NOTE_PADDING = 50;

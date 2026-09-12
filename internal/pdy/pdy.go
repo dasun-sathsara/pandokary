@@ -231,7 +231,8 @@ func writeBundledFontCSS(path string) ([]string, error) {
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium", "PDY_BODY_FONT_MEDIUM", "500", "normal"},
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Italic", "PDY_BODY_FONT_ITALIC", "400", "italic"},
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium Italic", "PDY_BODY_FONT_MEDIUM_ITALIC", "500", "italic"},
-		{"Maple Mono NF", "Maple Mono NF", "PDY_MONO_FONT_MEDIUM", "500", "normal"},
+		{"Geist Mono", "Geist Mono:style=Regular", "PDY_MONO_FONT_REGULAR", "400", "normal"},
+		{"Geist Mono", "Geist Mono:style=Medium", "PDY_MONO_FONT_MEDIUM", "500", "normal"},
 	}
 	var css strings.Builder
 	var warnings []string
@@ -257,6 +258,15 @@ func resolveFont(env, spec string) (string, error) {
 			return override, nil
 		}
 		return "", fmt.Errorf("%s points to an invalid file: %s", env, override)
+	}
+	if strings.HasPrefix(env, "PDY_MONO_FONT_") {
+		for _, fallbackEnv := range []string{"PDY_MONO_FONT", "PDY_MONO_FONT_MEDIUM", "PDY_MONO_FONT_REGULAR"} {
+			if override := strings.TrimSpace(os.Getenv(fallbackEnv)); override != "" {
+				if info, err := os.Stat(override); err == nil && !info.IsDir() {
+					return override, nil
+				}
+			}
+		}
 	}
 	matcher, err := exec.LookPath("fc-match")
 	if err != nil {

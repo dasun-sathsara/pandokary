@@ -6,7 +6,7 @@ September 12, 2026
 
 Pandokary wraps Pandoc to turn Markdown into portable HTML documents. The Go CLI resolves and bundles assets, a Lua filter prepares the document, and the browser scripts add reading controls. Its main job is reading technical notes, including code, diagrams, math, tables, and images.
 
-This pass builds on the edits already present in the working directory. It preserves Studio Feixen Sans, Maple Mono NF, the Sinhala fallback, font sizes and weights, heading scales, document widths, spacing, and the existing sidebar and floating-control arrangement. Changes concern visual treatment, reader behavior, and unnecessary work during export and loading.
+This pass builds on the edits already present in the working directory. It preserves Studio Feixen Sans, Geist Mono, the Sinhala fallback, heading scales, document widths, spacing, and the existing sidebar and floating-control arrangement. Changes concern visual treatment, reader behavior, and unnecessary work during export and loading.
 
 ## Glass research
 

@@ -11,12 +11,12 @@
 @media (max-width: 1199px) {
   :root {
     --font-size-body: var(--font-size-body-mobile);
-    --scale-h1: 1.65;
-    --scale-h2: 1.4;
-    --scale-h3: 1.24;
-    --scale-h4: 1.12;
-    --scale-h5: 1.04;
-    --scale-h6: 1;
+    --scale-h1: 1.52;
+    --scale-h2: 1.32;
+    --scale-h3: 1.18;
+    --scale-h4: 1.08;
+    --scale-h5: 1.02;
+    --scale-h6: 0.95;
     --toggle-size: 2.25rem;
   }
 

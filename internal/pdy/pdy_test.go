@@ -123,6 +123,7 @@ func TestWriteBundledFontCSS(t *testing.T) {
 	t.Setenv("PDY_BODY_FONT_MEDIUM", fontFile)
 	t.Setenv("PDY_BODY_FONT_ITALIC", fontFile)
 	t.Setenv("PDY_BODY_FONT_MEDIUM_ITALIC", fontFile)
+	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
 	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
 
 	cssPath := filepath.Join(tempDir, "font-assets.css")
@@ -143,6 +144,9 @@ func TestWriteBundledFontCSS(t *testing.T) {
 	if !strings.Contains(cssStr, "Studio Feixen Sans") {
 		t.Errorf("font-assets.css does not contain Studio Feixen Sans, got: %s", cssStr)
 	}
+	if !strings.Contains(cssStr, "Geist Mono") {
+		t.Errorf("font-assets.css does not contain Geist Mono, got: %s", cssStr)
+	}
 	if !strings.Contains(cssStr, "@font-face") {
 		t.Errorf("font-assets.css does not contain @font-face, got: %s", cssStr)
 	}
@@ -157,6 +161,7 @@ func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 		t.Fatalf("failed to write mock font: %v", err)
 	}
 	t.Setenv("PDY_BODY_FONT_REGULAR", fontFile)
+	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
 
 	// Create a sample markdown file
 	mdFile := filepath.Join(tempDir, "sample.md")
@@ -186,9 +191,12 @@ func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 			}
 			html := string(htmlBytes)
 
-			// Studio Feixen Sans @font-face must be present in the inline style of both modes
+			// Studio Feixen Sans and Geist Mono @font-face must be present in the inline style of both modes
 			if !strings.Contains(html, "Studio Feixen Sans") {
 				t.Errorf("Mode %s: output HTML missing 'Studio Feixen Sans'", mode)
+			}
+			if !strings.Contains(html, "Geist Mono") {
+				t.Errorf("Mode %s: output HTML missing 'Geist Mono'", mode)
 			}
 		})
 	}
