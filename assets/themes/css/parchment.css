@@ -3,8 +3,8 @@
 	   1. CORE CANVAS & SURFACES
 	───────────────────────────────────────────── */
   --color-bg: #faf5ec; /* warm paper canvas (L=96.8%) */
-  --color-surface: #fffdfa; /* elevated warm card surface (L=99.2%) */
-  --color-surface-alt: #f2eadd; /* structured warm linen panel & table header (L=93.2%) */
+  --color-surface: #f6efe5; /* elevated warm card surface (L=94.8%) */
+  --color-surface-alt: #ede4d4; /* structured warm linen panel & table header (L=91.5%) */
   --color-border: rgba(61, 50, 38, 0.12); /* warm bistre hairline */
 
   /* ─────────────────────────────────────────
