@@ -59,10 +59,8 @@
   --aside-color: var(--color-text);
   --pre-background: var(--color-code-bg);
   --pre-border: 1px solid var(--color-code-border);
-  --pre-border-top: 2px solid var(--color-accent);
-  --pre-border-left: 1px solid var(--color-code-border);
-  --pre-border-radius: 8px;
-  --pre-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --pre-border-radius: 6px;
+  --pre-box-shadow: none;
   --pre-padding: 0.65rem 0.85rem;
   --pre-line-height: 1.35;
   --link-color: var(--color-accent);
@@ -359,14 +357,18 @@ main :where(aside, .aside) > p.callout-icon {
    ========================================= */
 ul,
 ol {
-  margin: 1rem 0;
-  padding-left: 1.5rem;
+  margin: 0.85rem 0;
+  padding-left: 1.45rem;
 }
 
 li {
-  margin-bottom: 0.35rem;
-  padding-left: 0.4rem;
+  margin-bottom: 0.22rem;
+  padding-left: 0.35rem;
   line-height: 1.56;
+}
+
+li:last-child {
+  margin-bottom: 0;
 }
 
 li::marker {
@@ -375,11 +377,19 @@ li::marker {
 }
 
 main li > :where(ul, ol) {
-  margin-block: 0.5rem;
+  margin-block: 0.25rem;
 }
 
 main li > p {
-  margin-block: 0.5rem;
+  margin-block: 0.25rem;
+}
+
+main li > p:first-child {
+  margin-top: 0;
+}
+
+main li > p:last-child {
+  margin-bottom: 0;
 }
 
 /* Task List */

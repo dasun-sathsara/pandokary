@@ -461,10 +461,7 @@ const CodeBlockModule = (() => {
     const language =
       classes.find((name) => name.startsWith("language-"))?.slice(9) ||
       classes.find((name) => window.hljs?.getLanguage(name));
-    if (language) {
-      code.classList.add(`language-${language.toLowerCase()}`);
-      pre.dataset.lang = language.toUpperCase();
-    }
+    if (language) code.classList.add(`language-${language.toLowerCase()}`);
     code.classList.add("hljs");
     // Pandoc places fence languages on <pre>. Unlabelled fences remain plain text.
     if (language && window.hljs?.getLanguage(language)) window.hljs.highlightElement(code);
@@ -533,9 +530,6 @@ const TableModule = (() => {
     if (table.closest(".table-scroll-container")) return;
     const container = document.createElement("div");
     container.className = "table-scroll-container";
-    const toolbar = document.createElement("div");
-    toolbar.className = "table-toolbar";
-    toolbar.innerHTML = `<span class="table-title">${ICONS.table} <span>Data Table</span></span>`;
     const actions = document.createElement("div");
     actions.className = "table-actions";
     const wrapper = document.createElement("div");
@@ -589,10 +583,9 @@ const TableModule = (() => {
     );
 
     actions.append(maximize, rotate);
-    toolbar.append(actions);
     table.before(container);
     wrapper.append(table);
-    container.append(toolbar, wrapper, left, right);
+    container.append(actions, wrapper, left, right);
     wrapper.addEventListener("scroll", updateShadows, { passive: true });
     if (typeof window.ResizeObserver === "function") {
       const observer = new window.ResizeObserver(updateShadows);
