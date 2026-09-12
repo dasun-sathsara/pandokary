@@ -33,6 +33,10 @@ pre {
   tab-size: 2;
 }
 
+pre:has(.code-line) {
+  padding-left: 0;
+}
+
 pre[data-lang]::before {
   content: attr(data-lang);
   position: absolute;
