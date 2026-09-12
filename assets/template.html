@@ -1,20 +1,28 @@
 <!doctype html>
-<html lang="en" data-theme="lumina">
+<html lang="en" data-theme="lumina" data-font="studio-feixen">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
-  $if(assetModeCdn)$
-  <link rel="preconnect" href="https://fonts.googleapis.com" data-external="true">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-external="true">
-  $endif$
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet" $if(assetModeCdn)$data-external="true"$endif$>
-  <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" $if(assetModeCdn)$data-external="true"$endif$>
   <script>
+    document.documentElement.classList.add("js");
     try {
+      var legacy = { primer: "lumina", "verdant-paper": "lumina", "lilac-frost": "lumina",
+        "studio-dark": "obsidian", "ayu-mirage": "obsidian", boreal: "midnight-fjord" };
       var t = localStorage.getItem("theme");
-      if (t) document.documentElement.dataset.theme = t;
+      t = legacy[t] || t;
+      document.documentElement.dataset.theme =
+        ["lumina", "parchment", "obsidian", "midnight-fjord"].includes(t) ? t : "lumina";
+      var size = Math.max(-4, Math.min(8, parseInt(localStorage.getItem("font-size-adjust"), 10) || 0));
+      document.documentElement.style.setProperty("--font-size-adjust", size + "px");
+      var width = parseInt(localStorage.getItem("layout-max-width"), 10);
+      if ([800, 920, 1040, 1160, 1280, 1400].includes(width))
+        document.documentElement.style.setProperty("--content-max-width", width + "px");
+      if (innerWidth >= 1200 && localStorage.getItem("tocCollapsed") !== "true")
+        document.documentElement.classList.add("toc-open");
     } catch (e) {}
+    // A failed CDN or enhancement must never leave the document behind an overlay.
+    setTimeout(function () { document.getElementById("loading-overlay")?.remove(); }, 5000);
   </script>
   $if(inline-css)$
   <style>$inline-css$</style>
@@ -30,28 +38,29 @@
   <link rel="stylesheet" href="components/lightbox.css">
   <link rel="stylesheet" href="components/footer.css">
   <link rel="stylesheet" href="themes/css/lumina.css">
-  <link rel="stylesheet" href="themes/css/primer.css">
   <link rel="stylesheet" href="themes/css/parchment.css">
-  <link rel="stylesheet" href="themes/css/verdant-paper.css">
-  <link rel="stylesheet" href="themes/css/lilac-frost.css">
   <link rel="stylesheet" href="themes/css/obsidian.css">
-  <link rel="stylesheet" href="themes/css/studio-dark.css">
-  <link rel="stylesheet" href="themes/css/ayu-mirage.css">
   <link rel="stylesheet" href="themes/css/midnight-fjord.css">
-  <link rel="stylesheet" href="themes/css/boreal.css">
   <link rel="stylesheet" href="components/responsive.css">
+  <link rel="stylesheet" href="components/surfaces.css">
   $endif$
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
+  $if(has-code)$
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
+  $endif$
+  $if(has-math)$
   $if(inline-mathjax-config)$
   <script>$inline-mathjax-config$</script>
   $else$
   <script src="mathjax-config.js"></script>
   $endif$
   <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/@mathjax/mathjax-stix2-font@4.0.0/tex-mml-svg-mathjax-stix2.js" $if(assetModeCdn)$data-external="true"$endif$></script>
+  $endif$
+  $if(has-mermaid)$
   <script>
     window.mermaid = { startOnLoad: false };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
+  $endif$
   $if(inline-js)$
   <script>$inline-js$</script>
   $else$
@@ -64,6 +73,7 @@
   $endfor$
 </head>
 <body>
+  <a class="skip-link" href="#document-content">Skip to document</a>
   <div id="loading-overlay" role="status" aria-live="polite">
     <div class="loading-spinner"></div>
     <p class="loading-text">Preparing document...</p>
@@ -79,7 +89,7 @@
     <p class="date">$date$</p>
     $endif$
   </header>
-  <main>$body$</main>
+  <main id="document-content" tabindex="-1">$body$</main>
   <footer>
     <hr>
    <p class="footer-credits">Generated with <span class="heart-beat"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256" class="heart-icon"><path d="M240,102c0,70-112,126-112,126S16,172,16,102A62,62,0,0,1,120,58.33,62,62,0,0,1,224,102Z"/></svg></span> by <span class="footer-name">Dasun Sathsara</span></p>

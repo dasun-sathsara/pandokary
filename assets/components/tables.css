@@ -57,7 +57,7 @@ main tbody tr:hover {
   position: relative;
   width: 100%;
   margin: 1.75rem 0 2rem;
-  border: 1.5px solid var(--color-border);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -73,7 +73,7 @@ main tbody tr:hover {
   background-color: var(--color-bg);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 .table-scroll-container.maximized .table-wrapper {
@@ -102,7 +102,7 @@ main tbody tr:hover {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 .scroll-shadow {

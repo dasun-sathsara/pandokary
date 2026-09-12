@@ -29,8 +29,9 @@
   height: 0.9em;
   flex-shrink: 0;
 }
-.heading-with-anchor:hover .heading-anchor {
-  opacity: 0.6;
+.heading-with-anchor:hover .heading-anchor,
+.heading-with-anchor:focus-within .heading-anchor {
+  opacity: 1;
 }
 
 .heading-anchor:hover {

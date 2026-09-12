@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" role="img" aria-label="Hills beneath a setting sun">
+  <rect width="960" height="320" fill="#e9eee8"/>
+  <circle cx="690" cy="100" r="45" fill="#c49762"/>
+  <path d="M0 230 230 110 510 255 720 165 960 250V320H0Z" fill="#a4b5a1"/>
+  <path d="M0 280 280 200 510 290 770 220 960 260V320H0Z" fill="#5f796c"/>
+</svg>

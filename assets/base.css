@@ -2,13 +2,24 @@
    1. System Tokens & Layout Variables
    ========================================= */
 :root {
-  --white-100: #ffffff;
+  --viewport-height: 100vh;
+  --radius-control: 6px;
+  --radius-panel: 12px;
+  --glass-blur: 12px;
+  --glass-background: var(--color-surface);
+  --glass-highlight: transparent;
+  --control-border: var(--color-text-muted);
+  --surface-border: var(--color-border);
   --shadow-sm: var(--shadow-card, 0 1px 2px rgba(0, 0, 0, 0.05));
   --shadow-lg: var(--shadow-elevated, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
 
   /* Fonts */
-  --font-body: "Studio Feixen Sans TRIAL", "Studio Feixen Sans", sans-serif;
-  --font-heading: "Studio Feixen Sans TRIAL", "Studio Feixen Sans", sans-serif;
+  --font-body:
+    "Studio Feixen Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Inter",
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading:
+    "Studio Feixen Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Inter",
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-sinhala: "Noto Sans Sinhala", sans-serif;
   --font-mono: "Maple Mono NF", monospace;
   --font-optical-sizing: auto;
@@ -32,7 +43,7 @@
 
   /* Spacing */
   --line-height-body: 25px;
-  --spacing-paragraph: 14px;
+  --spacing-paragraph: 1em;
   --radius-std: 0;
 }
 
@@ -56,7 +67,7 @@
   --pre-line-height: 1.35;
   --link-color: var(--color-accent);
   --link-decoration: none;
-  --link-border-bottom: 1px solid transparent;
+  --link-border-bottom: 1px solid var(--color-accent);
   --link-transition: border-color 0.2s ease, color 0.2s ease;
   --link-hover-color: var(--color-accent-hover);
   --link-hover-decoration: none;
@@ -92,7 +103,7 @@
   --table-cell-padding: 0.7rem 0.85rem;
   --mermaid-text-color: var(--color-text);
   --mermaid-actor-fill: var(--color-surface);
-  --mermaid-border-color: var(--color-border);
+  --mermaid-border-color: var(--color-accent);
   --mermaid-note-fill: #fff8c5;
   --mermaid-note-stroke: #d4a72c;
   --mermaid-note-text: var(--color-text);
@@ -116,7 +127,7 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  scroll-padding-top: 1.5rem;
 }
 
 body.scroll-locked {
@@ -136,9 +147,9 @@ body {
   font-variation-settings: var(--font-variation-settings);
   background: var(--body-background);
   color: var(--color-text);
-  line-height: var(--line-height-body);
+  line-height: max(var(--line-height-body), 1.5em);
   font-size: calc(var(--font-size-body) + var(--font-size-adjust, 0px));
-  min-width: 760px;
+  min-width: 0;
   max-width: var(--content-max-width, 1040px);
   margin: 0 auto;
   padding: 3.5rem 1.75rem;
@@ -148,7 +159,18 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   overflow-wrap: break-word;
-  overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
 }
 
 body:lang(si) {
@@ -226,7 +248,7 @@ h6 {
 
 p {
   max-width: 100%;
-  margin-bottom: var(--spacing-paragraph);
+  margin: 0 0 var(--spacing-paragraph);
   text-align: left;
 }
 
@@ -273,8 +295,8 @@ blockquote {
 }
 
 blockquote p {
-  padding: 0rem;
-  margin: 0.15rem;
+  padding: 0;
+  margin: 0 0 var(--spacing-paragraph);
   min-width: 0;
   max-width: 100%;
   text-align: left;
@@ -287,7 +309,8 @@ blockquote p:last-child {
 /* =========================================
    4b. Aside / Callout Blocks
    ========================================= */
-aside {
+main aside,
+main .aside {
   margin: 1.6rem 0;
   padding: var(--aside-padding);
   background: var(--aside-background);
@@ -298,23 +321,34 @@ aside {
   color: var(--aside-color);
 }
 
-aside p {
+main aside p,
+main .aside p {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   line-height: 1.55;
 }
 
-aside p:first-child {
+main aside p:first-child,
+main .aside p:first-child {
   margin-top: 0;
 }
 
-aside p:last-child {
+main aside p:last-child,
+main .aside p:last-child {
+  margin-bottom: 0;
+}
+
+main :where(blockquote, aside, .aside) > :first-child {
+  margin-top: 0;
+}
+
+main :where(blockquote, aside, .aside) > :last-child {
   margin-bottom: 0;
 }
 
 /* Style for aside block starting with a dedicated emoji/icon paragraph */
-aside > p.aside-icon,
-aside > p.callout-icon {
+main :where(aside, .aside) > p.aside-icon,
+main :where(aside, .aside) > p.callout-icon {
   font-size: 1.45rem;
   line-height: 1;
   margin-bottom: 0.6rem;
@@ -330,7 +364,7 @@ ol {
 }
 
 li {
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.4rem;
   padding-left: 0.4rem;
   line-height: 1.5;
 }
@@ -338,6 +372,14 @@ li {
 li::marker {
   color: var(--color-accent);
   font-weight: 600;
+}
+
+main li > :where(ul, ol) {
+  margin-block: 0.5rem;
+}
+
+main li > p {
+  margin-block: 0.5rem;
 }
 
 /* Task List */
@@ -365,6 +407,7 @@ li::marker {
     opacity 0.2s ease;
 }
 
+.task-item > label,
 .task-list li > label,
 .task-list li:not(:has(> label)) {
   display: block;
@@ -376,8 +419,9 @@ li::marker {
   margin: 0 !important;
 }
 
+.task-item.task-completed,
 .task-list li.task-completed,
-.task-list li:has(input:checked),
+.task-list li:has(> label > input:checked),
 .inline-task-item.task-completed {
   color: var(--color-text-muted);
   text-decoration: line-through;
@@ -394,7 +438,7 @@ li::marker {
   transition: color 0.2s ease;
 }
 
-.task-list input[type="checkbox"],
+.task-item input[type="checkbox"],
 .inline-task-checkbox {
   appearance: none;
   -webkit-appearance: none;
@@ -404,16 +448,19 @@ li::marker {
   min-width: 1.2em;
   min-height: 1.2em;
   border-radius: 5px;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--color-text-muted);
   flex-shrink: 0;
   place-content: center;
   cursor: pointer;
   opacity: 1 !important;
   box-shadow: var(--shadow-sm);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    transform 0.16s ease;
 }
 
-.task-list input[type="checkbox"] {
+.task-item input[type="checkbox"] {
   display: inline-grid;
   vertical-align: -0.15em;
   margin-right: 0.65rem;
@@ -424,32 +471,32 @@ li::marker {
   margin-top: 0.18em;
 }
 
-.task-list input[type="checkbox"]:hover,
+.task-item input[type="checkbox"]:hover,
 .inline-task-checkbox:hover {
   border-color: var(--color-accent);
   background-color: var(--color-surface-alt);
   transform: scale(1.05);
 }
 
-.task-list input[type="checkbox"]::before,
+.task-item input[type="checkbox"]::before,
 .inline-task-checkbox::before {
   content: "";
   width: 0.65em;
   height: 0.65em;
   transform: scale(0);
   transition: 150ms transform cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: inset 1em 1em var(--white-100);
+  box-shadow: inset 1em 1em var(--color-on-accent);
   transform-origin: center;
   clip-path: polygon(14% 44%, 0 65%, 45% 100%, 100% 16%, 82% 0%, 41% 65%);
 }
 
-.task-list input[type="checkbox"]:checked,
+.task-item input[type="checkbox"]:checked,
 .inline-task-checkbox:checked {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
 }
 
-.task-list input[type="checkbox"]:checked::before,
+.task-item input[type="checkbox"]:checked::before,
 .inline-task-checkbox:checked::before {
   transform: scale(1);
 }
@@ -473,4 +520,8 @@ mjx-container {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.5rem 0;
+}
+
+.task-item {
+  list-style: none;
 }

@@ -10,41 +10,41 @@
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
 	───────────────────────────────────────────── */
-  --color-text: #1c1814; /* primary charcoal body text */
-  --color-text-muted: #8a7f72; /* muted sand/stone */
-  --color-heading: #14100c; /* deep reader headings */
-  --color-h1: #100c0a;
-  --color-h2: #14100c;
-  --color-h3: #181410;
-  --color-h4: #1c1814;
-  --color-h5: #201c18;
-  --color-strong: #000000; /* bold text contrast color */
+  --color-text: #000000; /* primary body text */
+  --color-text-muted: #695e52; /* muted sand/stone */
+  --color-heading: #000000; /* deep reader headings */
+  --color-h1: #000000;
+  --color-h2: #000000;
+  --color-h3: #000000;
+  --color-h4: #000000;
+  --color-h5: #000000;
+  --color-strong: #9d4627; /* bold text contrast color */
 
   /* ─────────────────────────────────────────
 	   3. BRAND & ACCENT (terracotta)
 	───────────────────────────────────────────── */
-  --color-accent: #b65d3c; /* warm terracotta */
-  --color-accent-hover: #97492d; /* darker version for hover */
-  --color-accent-subtle: rgba(182, 93, 60, 0.1); /* accent-tinted background */
+  --color-accent: #9d4627; /* warm terracotta */
+  --color-accent-hover: #883312; /* darker version for hover */
+  --color-accent-subtle: #f8f0e9; /* accent-tinted background */
 
   /* ─────────────────────────────────────────
 	   4. CODEBLOCKS & INLINE CODE
 	───────────────────────────────────────────── */
   --color-code-bg: #f3ecdf; /* inset well background */
-  --color-code-text: #1c1814; /* default code text */
+  --color-code-text: #000000; /* default code text */
   --color-code-border: rgba(61, 50, 38, 0.12);
   --color-code-chrome-bg: #eae0cf; /* header/action bar */
-  --color-code-chrome-text: #6b6053; /* label and copy icon */
+  --color-code-chrome-text: #695e51; /* label and copy icon */
   --color-inline-code-bg: rgba(182, 93, 60, 0.1);
-  --color-inline-code-text: #97492d;
+  --color-inline-code-text: #8f4226;
 
   /* ─────────────────────────────────────────
 	   5. SYNTAX HIGHLIGHTING TOKENS (Editorial Light)
 	───────────────────────────────────────────── */
-  --code-keyword: #b0452e; /* rust red */
+  --code-keyword: #af442d; /* rust red */
   --code-string: #4e6b2c; /* olive/forest green */
   --code-function: #1f6b8c; /* muted slate-blue */
-  --code-number: #99591a; /* warm ochre */
+  --code-number: #975718; /* warm ochre */
   --code-comment: #6f6456; /* slate warm gray */
   --code-operator: #6f6456; /* warm gray-brown */
   --code-variable: #433b31; /* near body text */
@@ -67,7 +67,20 @@
     var(--color-surface);
   --aside-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.035) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
   --pre-box-shadow: 0 1px 0 rgba(255, 244, 214, 0.025) inset, 0 4px 12px rgba(60, 45, 30, 0.04);
-  --link-border-bottom: 1px solid rgba(182, 93, 60, 0.35);
-  --link-hover-border-color: rgba(182, 93, 60, 0.7);
   --strong-font-weight: 500;
+  --color-on-accent: #ffffff;
+  --glass-background: rgba(255, 253, 248, 0.94);
+  --glass-highlight: rgba(255, 255, 255, 0.65);
+  color-scheme: light;
+  --selection-background: #f8f0e9;
+  --selection-color: #000000;
+  --focused-line-background: #f8f0e9;
+  --focused-line-border: #9d4627;
+  --mermaid-note-fill: #f8f0e9;
+  --mermaid-note-stroke: #9d4627;
+  --mermaid-note-text: #000000;
+  --color-success-subtle: #e7e5d6;
+  --color-success: #076e3e;
+  --color-danger-subtle: #efe2d6;
+  --color-danger: #ab363d;
 }

@@ -12,11 +12,10 @@
 
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
-	   Body text deliberately sits at ~88% white,
-	   not 100% — pure #FFF on dark causes halation
-	   and eye fatigue in long docs.
+	   Soft neutral body text, brighter headings,
+	   and violet emphasis establish the hierarchy.
 	───────────────────────────────────────────── */
-  --color-text: #e4e7ec; /* body — soft, ~88% luminance */
+  --color-text: #e4e7ec; /* soft neutral body text */
   --color-text-muted: #8a92a6; /* captions, table headers, metadata */
   --color-heading: #f5f7fa; /* near-white base for headings */
   --color-h1: #ffffff; /* full punch for the page title */
@@ -24,15 +23,15 @@
   --color-h3: #eaedf2;
   --color-h4: #dde2ea;
   --color-h5: #c9d0dc;
-  --color-strong: #ffffff; /* bold pops cleanly above body text */
+  --color-strong: #a08aff; /* bold pops cleanly above body text */
   --strong-font-weight: 500;
 
   /* ─────────────────────────────────────────
 	   3. BRAND & ACCENT (violet)
 	───────────────────────────────────────────── */
-  --color-accent: #8b7dff; /* luminous violet */
-  --color-accent-hover: #a99eff; /* lighter on hover for clear feedback */
-  --color-accent-subtle: rgba(139, 125, 255, 0.12); /* tint for backgrounds */
+  --color-accent: #a08aff; /* luminous violet */
+  --color-accent-hover: #b1a3ff; /* lighter on hover for clear feedback */
+  --color-accent-subtle: #25253a; /* tint for backgrounds */
 
   /* ─────────────────────────────────────────
 	   4. CODEBLOCKS & INLINE CODE
@@ -56,7 +55,7 @@
   --code-string: #9ece6a; /* calm green — the warm counterweight */
   --code-function: #7aa2f7; /* azure blue — distinct from keywords */
   --code-number: #ff9e64; /* warm amber — numerics jump out */
-  --code-comment: #5c6c7d; /* low-contrast on purpose; italic in CSS */
+  --code-comment: #8394a6; /* muted, readable comments */
   --code-operator: #89ddff; /* bright cyan — punctuation & operators */
   --code-variable: #e4e7ec; /* identifiers = body text (quiet by default) */
 
@@ -76,9 +75,19 @@
 
   --scroll-shadow-color: rgba(0, 0, 0, 0.25);
   --modal-backdrop-background: rgba(0, 0, 0, 0.6);
-  --focused-line-background: rgba(253, 224, 71, 0.08);
-  --focused-line-border: #ca8a04;
-  --mermaid-note-fill: #2d2a1e;
-  --mermaid-note-stroke: #8a7330;
-  --mermaid-note-text: #ffeb99;
+  --focused-line-background: #25253a;
+  --focused-line-border: #a08aff;
+  --mermaid-note-fill: #25253a;
+  --mermaid-note-stroke: #a08aff;
+  --mermaid-note-text: #e4e7ec;
+  --color-on-accent: #0b0d12;
+  --glass-background: rgba(20, 23, 31, 0.94);
+  --glass-highlight: rgba(255, 255, 255, 0.07);
+  color-scheme: dark;
+  --selection-background: #25253a;
+  --selection-color: #e4e7ec;
+  --color-success-subtle: #111c1b;
+  --color-success: #73d9aa;
+  --color-danger-subtle: #1d161b;
+  --color-danger: #ff9aab;
 }

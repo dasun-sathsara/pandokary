@@ -39,9 +39,20 @@ local function has_class(classes, class_name)
   return false
 end
 
+local has_code = false
+local has_math = false
+local has_mermaid = false
+
+function Math()
+  has_math = true
+end
+
 function CodeBlock(block)
   if has_class(block.classes, "mermaid") then
+    has_mermaid = true
     block.attributes["data-mermaid-code"] = block.text
+  else
+    has_code = true
   end
   return block
 end
@@ -58,35 +69,24 @@ local stylesheet_files = {
   "components/lightbox.css",
   "components/footer.css",
   "themes/css/lumina.css",
-  "themes/css/primer.css",
   "themes/css/parchment.css",
-  "themes/css/verdant-paper.css",
-  "themes/css/lilac-frost.css",
   "themes/css/obsidian.css",
-  "themes/css/studio-dark.css",
-  "themes/css/ayu-mirage.css",
   "themes/css/midnight-fjord.css",
-  "themes/css/boreal.css",
   "components/responsive.css",
+  "components/surfaces.css",
 }
 
 local mermaid_files = {
   { id = "lumina", path = "themes/mermaid/lumina.json" },
-  { id = "primer", path = "themes/mermaid/primer.json" },
   { id = "parchment", path = "themes/mermaid/parchment.json" },
- { id = "verdant-paper", path = "themes/mermaid/verdant-paper.json" },
- { id = "lilac-frost", path = "themes/mermaid/lilac-frost.json" },
   { id = "obsidian", path = "themes/mermaid/obsidian.json" },
-  { id = "studio-dark", path = "themes/mermaid/studio-dark.json" },
-  { id = "ayu-mirage", path = "themes/mermaid/ayu-mirage.json" },
  { id = "midnight-fjord", path = "themes/mermaid/midnight-fjord.json" },
- { id = "boreal", path = "themes/mermaid/boreal.json" },
 }
 
 local function build_theme_js()
   local manifest = read_asset("themes/manifest.json") or "[]"
   local m_parts = {}
-  for _, item in ipairs(mermaid_files) do
+  for _, item in ipairs(has_mermaid and mermaid_files or {}) do
     local json_str = read_asset(item.path)
     if json_str then
       table.insert(m_parts, string.format("%q:%s", item.id, json_str))
@@ -97,6 +97,19 @@ local function build_theme_js()
 end
 
 function Pandoc(doc)
+  -- Exports and temporary previews may live outside the Markdown source folder.
+  local source_base = pandoc.utils.stringify(doc.meta.pdyResourceBase or "")
+  if source_base ~= "" then
+    doc = doc:walk({ Image = function(image)
+      if not image.src:match("^[%a][%w+.-]*:") and not image.src:match("^[/#]") then
+        image.src = source_base .. image.src
+      end
+      return image
+    end })
+  end
+  doc.meta["has-code"] = pandoc.MetaBool(has_code)
+  doc.meta["has-math"] = pandoc.MetaBool(has_math)
+  doc.meta["has-mermaid"] = pandoc.MetaBool(has_mermaid)
   local css = concatenate(stylesheet_files)
   local theme_js = build_theme_js()
 
@@ -105,7 +118,7 @@ function Pandoc(doc)
 
   doc.meta["theme-js"] = raw_html(theme_js)
   doc.meta["inline-css"] = raw_html(css)
-  doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate({ "mermaid.js", "app.js" }))
+  doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate(has_mermaid and { "mermaid.js", "app.js" } or { "app.js" }))
   doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
   return doc
 end

@@ -1,0 +1,305 @@
+/* Shared finishes. Reading content keeps its opaque canvas and existing geometry. */
+.floating-toggle,
+.settings-popover,
+.lightbox-close {
+  border-color: var(--control-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--shadow-elevated);
+}
+
+.mermaid-btn,
+.table-btn,
+.code-toggle-btn {
+  border-color: var(--control-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+.copy-btn {
+  border-radius: var(--radius-control);
+  background: var(--color-code-bg);
+}
+
+.copy-btn.success {
+  opacity: 1;
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.theme-option.active {
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.close-settings,
+.mermaid-btn,
+.table-btn {
+  border-radius: var(--radius-control);
+}
+
+.stepper-btn:disabled {
+  opacity: 1;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  cursor: default;
+}
+
+.toc-link.active {
+  background: var(--color-accent-subtle);
+  border-radius: 4px;
+  box-shadow: -3px 0 0 var(--color-accent);
+}
+
+.table-scroll-container.maximized .table-wrapper {
+  flex: 1;
+  min-height: 0;
+  height: auto !important;
+}
+
+.table-wrapper th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.scroll-shadow {
+  bottom: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-control);
+  z-index: 10003;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.toc-close {
+  display: none;
+}
+
+@media (max-width: 1199px) {
+  .toc-close {
+    display: flex;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+/* Blur only bounded controls; avoid stacking full-screen filters behind viewers. */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .floating-toggle,
+  .settings-popover,
+  .lightbox-close {
+    background: var(--glass-background);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+  }
+
+  @media (max-width: 1199px) {
+    .toc-sidebar {
+      background: var(--glass-background);
+      backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.15);
+    }
+  }
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .floating-toggle,
+  .settings-popover,
+  .toc-sidebar,
+  .lightbox-close {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --surface-border: var(--color-text-muted);
+    --color-border: var(--color-text-muted);
+  }
+}
+
+@media (forced-colors: active) {
+  .theme-option.active,
+  .toc-link.active {
+    outline: 2px solid Highlight;
+  }
+
+  .task-item input[type="checkbox"],
+  .inline-task-checkbox {
+    appearance: auto;
+  }
+
+  .task-item input[type="checkbox"]::before,
+  .inline-task-checkbox::before {
+    display: none;
+  }
+}
+
+@media print {
+  html body {
+    max-width: none;
+    width: auto;
+    padding: 0;
+    overflow: visible !important;
+    background: white;
+    color: black;
+  }
+
+  :root {
+    --color-bg: white;
+    --color-surface: white;
+    --color-code-bg: white;
+    --color-code-text: black;
+    --color-inline-code-bg: white;
+    --color-inline-code-text: black;
+    --color-surface-alt: #f1f1f1;
+    --mermaid-text-color: black;
+    --mermaid-actor-fill: white;
+    --mermaid-border-color: #333333;
+    --mermaid-note-fill: #f1f1f1;
+    --mermaid-note-text: black;
+    --mermaid-note-stroke: #333333;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .floating-toggle,
+  .settings-popover,
+  .toc-sidebar,
+  .toc-backdrop,
+  .modal-backdrop,
+  .lightbox-backdrop,
+  .reading-progress,
+  .copy-btn,
+  .code-toggle-container,
+  .mermaid-actions,
+  .table-actions,
+  .heading-anchor,
+  .scroll-shadow,
+  .skip-link,
+  #loading-overlay {
+    display: none !important;
+  }
+
+  main *,
+  header *,
+  footer * {
+    color: black !important;
+    background-color: transparent !important;
+    border-color: #999999 !important;
+  }
+
+  .collapsible-code-block,
+  .table-wrapper {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .collapsible-code-block::after {
+    display: none;
+  }
+
+  pre code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .table-wrapper table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .table-wrapper th,
+  .table-wrapper td {
+    min-width: 0;
+  }
+
+  .mermaid-container.maximized,
+  .table-scroll-container.maximized {
+    position: relative;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    opacity: 1;
+  }
+
+  .mermaid-viewport svg :is(text, tspan, .label, .labelText, .nodeLabel) {
+    fill: black !important;
+    color: black !important;
+  }
+
+  .mermaid-viewport {
+    min-height: 0;
+    height: auto !important;
+    overflow: visible;
+    background-image: none;
+  }
+
+  .mermaid-content {
+    position: static;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+  }
+
+  .mermaid-content svg {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 100mm;
+  }
+
+  .task-item input[type="checkbox"],
+  .inline-task-checkbox {
+    appearance: auto;
+  }
+
+  .task-item input[type="checkbox"]::before,
+  .inline-task-checkbox::before {
+    display: none;
+  }
+
+  .mermaid-viewport svg .node :is(rect, circle, ellipse, polygon, path) {
+    fill: white !important;
+    stroke: #333333 !important;
+  }
+
+  .mermaid-viewport svg :is(.flowchart-link, .messageLine0, .messageLine1) {
+    stroke: #333333 !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+  }
+
+  tr,
+  img,
+  .mermaid-container {
+    break-inside: avoid;
+  }
+}

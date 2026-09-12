@@ -5,61 +5,25 @@
       "id": "lumina",
       "name": "Lumina",
       "mode": "light",
-      "accent": "#15803d"
-    },
-    {
-      "id": "primer",
-      "name": "Primer",
-      "mode": "light",
-      "accent": "#0969da"
+      "accent": "#107a40"
     },
     {
       "id": "parchment",
       "name": "Parchment",
       "mode": "light",
-      "accent": "#b65d3c"
-    },
-    {
-      "id": "verdant-paper",
-      "name": "Verdant Paper",
-      "mode": "light",
-      "accent": "#0B6B53"
-    },
-    {
-      "id": "lilac-frost",
-      "name": "Lilac Frost",
-      "mode": "light",
-      "accent": "#5B3FB8"
+      "accent": "#9d4627"
     },
     {
       "id": "obsidian",
       "name": "Obsidian",
       "mode": "dark",
-      "accent": "#8b7dff"
-    },
-    {
-      "id": "studio-dark",
-      "name": "Studio Dark",
-      "mode": "dark",
-      "accent": "#0078d4"
-    },
-    {
-      "id": "ayu-mirage",
-      "name": "Ayu Mirage",
-      "mode": "dark",
-      "accent": "#FFCC66"
+      "accent": "#a08aff"
     },
     {
       "id": "midnight-fjord",
       "name": "Midnight Fjord",
       "mode": "dark",
-      "accent": "#7DD3FC"
-    },
-    {
-      "id": "boreal",
-      "name": "Boreal",
-      "mode": "dark",
-      "accent": "#34D399"
+      "accent": "#68d1fc"
     }
   ]
 }

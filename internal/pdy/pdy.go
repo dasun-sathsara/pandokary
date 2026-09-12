@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -222,10 +223,16 @@ func copyDir(source, target string) error {
 	})
 }
 
-type font struct{ family, spec, env, weight string }
+type font struct{ family, spec, env, weight, style string }
 
 func writeBundledFontCSS(path string) ([]string, error) {
-	fonts := []font{{"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Regular", "PDY_BODY_FONT_REGULAR", "400"}, {"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Medium", "PDY_BODY_FONT_MEDIUM", "500"}, {"Studio Feixen Sans TRIAL", "Studio Feixen Sans TRIAL:style=Semibold", "PDY_BODY_FONT_SEMIBOLD", "600"}, {"Maple Mono NF", "Maple Mono NF", "PDY_MONO_FONT_MEDIUM", "500"}}
+	fonts := []font{
+		{"Studio Feixen Sans", "Studio Feixen Sans:style=Regular", "PDY_BODY_FONT_REGULAR", "400", "normal"},
+		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium", "PDY_BODY_FONT_MEDIUM", "500", "normal"},
+		{"Studio Feixen Sans", "Studio Feixen Sans:style=Italic", "PDY_BODY_FONT_ITALIC", "400", "italic"},
+		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium Italic", "PDY_BODY_FONT_MEDIUM_ITALIC", "500", "italic"},
+		{"Maple Mono NF", "Maple Mono NF", "PDY_MONO_FONT_MEDIUM", "500", "normal"},
+	}
 	var css strings.Builder
 	var warnings []string
 	for _, item := range fonts {
@@ -239,7 +246,7 @@ func writeBundledFontCSS(path string) ([]string, error) {
 			warnings = append(warnings, fmt.Sprintf("font %q could not be read: %v; using CSS fallback", fontPath, err))
 			continue
 		}
-		fmt.Fprintf(&css, "@font-face{font-family:%q;font-style:normal;font-weight:%s;font-display:swap;src:url(\"data:%s;base64,%s\") format(\"%s\");}\n", item.family, item.weight, fontMIME(fontPath), base64.StdEncoding.EncodeToString(data), fontFormat(fontPath))
+		fmt.Fprintf(&css, "@font-face{font-family:%q;font-style:%s;font-weight:%s;font-display:swap;src:url(\"data:%s;base64,%s\") format(\"%s\");}\n", item.family, item.style, item.weight, fontMIME(fontPath), base64.StdEncoding.EncodeToString(data), fontFormat(fontPath))
 	}
 	return warnings, os.WriteFile(path, []byte(css.String()), 0o644)
 }
@@ -390,6 +397,22 @@ func determineOutput(options Options) (string, string, error) {
 func pandocArgs(options Options, assets, output string) []string {
 	resourcePath := filepath.Dir(options.InputPath) + string(os.PathListSeparator) + assets
 	args := []string{"--from", "markdown+tex_math_dollars+tex_math_single_backslash", options.InputPath, "--template", filepath.Join(assets, "template.html"), "--standalone", "--resource-path", resourcePath, "--syntax-highlighting=none", "--mathjax", "--lua-filter", filepath.Join(assets, "inline-assets.lua"), "--metadata=assetMode:" + options.AssetMode}
+	if sourceDir, err := filepath.Abs(filepath.Dir(options.InputPath)); err == nil && !options.EmbedResources {
+		sourcePath := filepath.ToSlash(sourceDir)
+		base := url.URL{Scheme: "file"}
+		if strings.HasPrefix(sourcePath, "//") {
+			parts := strings.SplitN(strings.TrimPrefix(sourcePath, "//"), "/", 2)
+			base.Host = parts[0]
+			sourcePath = "/"
+			if len(parts) > 1 {
+				sourcePath += parts[1]
+			}
+		} else if !strings.HasPrefix(sourcePath, "/") {
+			sourcePath = "/" + sourcePath
+		}
+		base.Path = strings.TrimSuffix(sourcePath, "/") + "/"
+		args = append(args, "--metadata=pdyResourceBase:"+base.String())
+	}
 	if options.AssetMode == "cdn" {
 		args = append(args, "--metadata=assetModeCdn:true")
 	} else {

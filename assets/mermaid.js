@@ -18,7 +18,7 @@ if (initialMermaid) {
   const NOTE_PADDING = 50;
   const MODAL_TRANSITION_MS = 350;
   const WHEEL_SETTLE_MS = 180;
-  const DARK_THEME_IDS = new Set(["obsidian", "studio-dark", "ayu-mirage"]);
+  const DARK_THEME_IDS = new Set(["obsidian", "midnight-fjord"]);
   const controllers = new Set();
   const controllerByContainer = new WeakMap();
   let activeModalController = null;
@@ -26,6 +26,7 @@ if (initialMermaid) {
   let lifecycleFrame = 0;
   let mermaidIdCounter = 0;
   let renderQueue = Promise.resolve();
+  let renderVersion = 0;
 
   const MERMAID_DEFAULTS = {
     startOnLoad: false,
@@ -74,6 +75,7 @@ if (initialMermaid) {
     if (manifestEntry?.mode) {
       return manifestEntry.mode === "dark";
     }
+    if (["lumina", "parchment"].includes(theme)) return false;
     if (DARK_THEME_IDS.has(theme) || theme.toLowerCase().includes("dark")) {
       return true;
     }
@@ -255,10 +257,10 @@ if (initialMermaid) {
   function createRenderError(error) {
     const box = document.createElement("div");
     box.style.cssText = [
-      "color: #ef4444",
+      "color: var(--color-danger)",
       "padding: 1.5rem",
       "font-family: var(--font-mono), monospace",
-      "border-left: 4px solid #ef4444",
+      "border-left: 4px solid var(--color-danger)",
       "background: var(--color-code-bg)",
       "text-align: left",
       "width: 100%",
@@ -272,7 +274,7 @@ if (initialMermaid) {
       "border: none",
       "margin: 0",
       "padding: 0.5rem 0",
-      "color: #ef4444",
+      "color: var(--color-danger)",
       "background: transparent",
       "font-size: 14px",
       "text-align: left",
@@ -745,6 +747,7 @@ if (initialMermaid) {
       this.viewport.style.touchAction = "none";
       document.body.append(backdrop);
       this.setMaximizeButtonState(true);
+      window.pdyFocusDialog?.(this.container, "Expanded diagram");
       updateScrollLockFallback();
       this.modalFrame = requestFrame(() => {
         this.modalFrame = 0;
@@ -765,6 +768,7 @@ if (initialMermaid) {
       }
       cancelFrame(this.modalFrame);
       this.modalFrame = 0;
+      window.pdyReleaseDialog?.(this.container);
       this.container.classList.remove("visible");
       backdrop?.classList.remove("visible");
       this.setMaximizeButtonState(false);
@@ -908,29 +912,35 @@ if (initialMermaid) {
     return controller;
   }
 
-  async function renderControllers(theme, diagramControllers) {
+  function showRenderErrors(diagramControllers, error) {
+    console.error("Failed to initialize Mermaid", error);
+    for (const controller of diagramControllers) controller.showRenderError(error);
+  }
+
+  async function renderControllers(theme, diagramControllers, version) {
     const mermaid = getMermaidAPI();
     if (!mermaid) return;
 
     try {
       mermaid.initialize(getMermaidConfig(theme));
     } catch (error) {
-      console.error("Failed to initialize Mermaid", error);
-      for (const controller of diagramControllers) {
-        controller.showRenderError(error);
-      }
+      showRenderErrors(diagramControllers, error);
       return;
     }
 
     for (const controller of diagramControllers) {
-      if (controller.container.isConnected) {
-        await controller.render(mermaid, controller.container.dataset.mermaidCode || "");
-      }
+      if (version !== renderVersion) return;
+      if (!controller.container.isConnected) continue;
+      await controller.render(mermaid, controller.container.dataset.mermaidCode || "");
     }
   }
 
   function enqueueRender(theme, diagramControllers) {
-    const operation = () => renderControllers(theme, diagramControllers);
+    const version = ++renderVersion;
+    const operation = () => {
+      if (version !== renderVersion || !diagramControllers.length) return;
+      return renderControllers(theme, diagramControllers, version);
+    };
     const result = renderQueue.then(operation, operation);
     renderQueue = result.catch(() => {});
     return result;

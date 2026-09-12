@@ -2,6 +2,12 @@
    Mobile Responsiveness & Media Queries
    ========================================= */
 
+@supports (height: 100dvh) {
+  :root {
+    --viewport-height: 100dvh;
+  }
+}
+
 @media (max-width: 1199px) {
   :root {
     --font-size-body: var(--font-size-body-mobile);
@@ -19,7 +25,7 @@
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    line-height: 23px;
+    line-height: max(23px, 1.5em);
   }
 
   header,
@@ -84,13 +90,15 @@
   }
 
   blockquote,
-  aside {
+  main aside,
+  main .aside {
     padding: 0.75rem 1rem;
-    font-size: 0.9em;
     border-left-width: 3px !important;
   }
 
-  .code-line {
+  .code-line,
+  .code-line.focused-line,
+  .code-line.highlighted-line {
     padding-left: 0 !important;
   }
 
@@ -108,7 +116,12 @@
   }
 
   .copy-btn {
-    display: none !important;
+    position: sticky;
+    left: calc(100% - 4.5rem);
+    top: 0;
+    margin-bottom: 0.4rem;
+    opacity: 1;
+    background: var(--color-code-bg);
   }
 
   .mermaid-btn,
@@ -283,18 +296,6 @@
     height: 4px;
   }
 
-  .font-selector {
-    border-radius: 5px;
-    padding: 2px;
-    border-width: 1px !important;
-  }
-
-  .font-option {
-    padding: 4px 8px;
-    font-size: 0.72rem;
-    border-radius: 3px;
-  }
-
   .control-row {
     margin-top: 8px;
   }
@@ -364,5 +365,48 @@
   .mermaid-container.maximized.rotated-landscape .mermaid-viewport,
   .table-scroll-container.maximized.rotated-landscape .table-wrapper {
     height: calc(95vw - 30px) !important;
+  }
+}
+
+@media (pointer: coarse) {
+  .floating-toggle {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .stepper-btn,
+  .close-settings,
+  .copy-btn,
+  .mermaid-btn,
+  .table-btn,
+  .lightbox-close {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .theme-option,
+  .toc-link {
+    min-height: 44px;
+  }
+
+  .copy-btn {
+    opacity: 1;
+  }
+
+  .mermaid-actions,
+  .table-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* Keep scrolling and all component transitions quiet when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

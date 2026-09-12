@@ -62,14 +62,19 @@ pre code.hljs {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  transition: all 0.2s;
+  transition:
+    opacity 0.16s ease,
+    color 0.16s ease,
+    border-color 0.16s ease,
+    background-color 0.16s ease;
   opacity: 0;
 }
 
 .copy-btn svg {
   flex-shrink: 0;
 }
-pre:hover .copy-btn {
+pre:hover .copy-btn,
+pre:focus-within .copy-btn {
   opacity: 1;
 }
 
@@ -131,14 +136,14 @@ pre:hover .copy-btn {
 /* Diff Block Formatting */
 .hljs-addition,
 .code-line.diff-addition {
-  color: #16a34a !important;
-  background-color: rgba(22, 163, 74, 0.12) !important;
+  color: var(--color-success) !important;
+  background-color: var(--color-success-subtle) !important;
 }
 
 .hljs-deletion,
 .code-line.diff-deletion {
-  color: #dc2626 !important;
-  background-color: rgba(220, 38, 38, 0.12) !important;
+  color: var(--color-danger) !important;
+  background-color: var(--color-danger-subtle) !important;
 }
 
 .code-line.diff-meta,
@@ -152,4 +157,28 @@ pre:hover .copy-btn {
   background-color: var(--focused-line-background, rgba(253, 224, 71, 0.12)) !important;
   border-left: 3px solid var(--color-accent) !important;
   padding-left: calc(3.8em - 3px) !important;
+}
+
+.hljs-subst {
+  color: var(--color-code-text);
+}
+
+.hljs-doctag,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-pseudo {
+  color: var(--code-keyword);
+}
+
+.hljs-link {
+  color: var(--code-function);
+  text-decoration: underline;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 600;
 }
