@@ -35,8 +35,8 @@
   --color-code-border: rgba(61, 50, 38, 0.12);
   --color-code-chrome-bg: #eae0cf; /* header/action bar */
   --color-code-chrome-text: #695e51; /* label and copy icon */
-  --color-inline-code-bg: rgba(0, 0, 0, 0);
-  --color-inline-code-text: #9d4627;
+  --color-inline-code-bg: rgba(182, 93, 60, 0.07);
+  --color-inline-code-text: #8e3f24;
 
   /* ─────────────────────────────────────────
 	   5. SYNTAX HIGHLIGHTING TOKENS (Editorial Light)
