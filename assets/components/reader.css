@@ -299,6 +299,8 @@ pre code {
   display: block !important;
   padding-left: 3.8em !important;
   position: relative !important;
+  line-height: var(--pre-line-height, 1.35) !important;
+  min-height: 1.35em;
   transition: background-color 0.2s ease;
 }
 
