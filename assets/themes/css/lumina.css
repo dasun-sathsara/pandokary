@@ -36,8 +36,8 @@
   --color-code-border: rgba(15, 23, 42, 0.06);
   --color-code-chrome-bg: #f1f5f9;
   --color-code-chrome-text: #5d6c83;
-  --color-inline-code-bg: rgba(21, 128, 61, 0.04);
-  --color-inline-code-text: #106634;
+  --color-inline-code-bg: rgba(0, 0, 0, 0);
+  --color-inline-code-text: #107a40;
 
   /* ─────────────────────────────────────────
 	   5. SYNTAX HIGHLIGHTING TOKENS

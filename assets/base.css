@@ -65,8 +65,8 @@
   --pre-border-left: 1px solid var(--color-code-border);
   --pre-border-radius: 8px;
   --pre-box-shadow: none;
-  --pre-padding: 0.65rem 0.85rem;
-  --pre-line-height: 1.42;
+  --pre-padding: 0.75rem 1rem;
+  --pre-line-height: 1.45;
   --link-color: var(--color-accent);
   --link-decoration: none;
   --link-border-bottom: 1px solid var(--color-accent);
@@ -89,9 +89,9 @@
   --modal-backdrop-background: rgba(0, 0, 0, 0.4);
   --focused-line-background: rgba(253, 224, 71, 0.12);
   --focused-line-border: #eab308;
-  --inline-code-border: 1px solid var(--color-code-border);
-  --inline-code-border-radius: 4px;
-  --inline-code-padding: 0.1em 0.32em;
+  --inline-code-border: none;
+  --inline-code-border-radius: 0;
+  --inline-code-padding: 0 0.15em;
   --table-width: max-content;
   --table-border-collapse: separate;
   --table-border-radius: 0;
