@@ -127,8 +127,6 @@ const UIComponentFactory = (() => {
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-clock reading-time-icon"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>',
     image:
       '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="ph ph-image"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.07a16,16,0,0,0-22.63,0L128,172,99.31,143.31a16,16,0,0,0-22.62,0L40,179.31V56ZM40,200l48-48,39.31,39.31a16,16,0,0,0,22.63,0L192,149.31,216,173.31V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></svg>',
-    textWrap:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256" class="ph ph-text-wrap"><path d="M224,64a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,64ZM40,136H184a24,24,0,0,1,0,48H139.31l18.35,18.34a8,8,0,0,1-11.32,11.32l-32-32a8,8,0,0,1,0-11.32l32-32a8,8,0,0,1,11.32,11.32L139.31,168H184a8,8,0,0,0,0-16H40a8,8,0,0,1,0-16Zm176,56H192a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg>',
   });
 
   function setButtonContent(button, content) {
@@ -395,48 +393,27 @@ const CodeBlockModule = (() => {
     pre.after(holder);
   }
 
-  function addCodeControls(pre, plainCode) {
-    const actions = document.createElement("div");
-    actions.className = "code-actions";
-
-    const wrapBtn = createButton(
-      "code-action-btn btn-wrap",
-      ICONS.textWrap,
-      "Toggle line wrap",
-      () => {
-        const wrapped = pre.classList.toggle("code-wrapped");
-        wrapBtn.classList.toggle("active", wrapped);
-        wrapBtn.setAttribute("aria-pressed", String(wrapped));
-        setButtonTitle(wrapBtn, wrapped ? "Unwrap lines" : "Wrap lines");
-      },
-    );
-    wrapBtn.setAttribute("aria-pressed", "false");
-
-    const copyBtn = createButton(
-      "code-action-btn copy-btn",
-      `${ICONS.copy}<span>Copy</span>`,
-      "Copy code",
-      async () => {
+  function addCopyControl(pre, plainCode) {
+    pre.append(
+      createButton("copy-btn", `${ICONS.copy}<span>Copy</span>`, "Copy code", async (event) => {
+        const button = event.currentTarget;
         try {
           await copyText(plainCode);
-          copyBtn.innerHTML = `${ICONS.check}<span>Copied!</span>`;
-          copyBtn.classList.add("success");
-          setButtonTitle(copyBtn, "Code copied");
+          button.innerHTML = `${ICONS.check}<span>Copied!</span>`;
+          button.classList.add("success");
+          setButtonTitle(button, "Code copied");
         } catch (error) {
           console.error("Copy failed", error);
-          copyBtn.textContent = "Copy failed";
-          setButtonTitle(copyBtn, "Could not copy code");
+          button.textContent = "Copy failed";
+          setButtonTitle(button, "Could not copy code");
         }
         window.setTimeout(() => {
-          copyBtn.innerHTML = `${ICONS.copy}<span>Copy</span>`;
-          copyBtn.classList.remove("success");
-          setButtonTitle(copyBtn, "Copy code");
+          button.innerHTML = `${ICONS.copy}<span>Copy</span>`;
+          button.classList.remove("success");
+          setButtonTitle(button, "Copy code");
         }, 2000);
-      },
+      }),
     );
-
-    actions.append(wrapBtn, copyBtn);
-    pre.append(actions);
   }
 
   function updateTagStack(line, openTags) {
@@ -512,7 +489,7 @@ const CodeBlockModule = (() => {
       }
     });
     addCollapseControl(pre, lines.length);
-    addCodeControls(pre, plainCode);
+    addCopyControl(pre, plainCode);
   }
 
   function init() {

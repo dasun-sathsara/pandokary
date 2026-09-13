@@ -41,6 +41,8 @@
 
   /* Spacing */
   --line-height-body: 1.56;
+  --line-height-para: 1.62;
+  --line-height-paragraph: var(--line-height-para);
   --spacing-paragraph: 1em;
   --radius-std: 0;
 }
@@ -87,7 +89,7 @@
   --focused-line-border: #eab308;
   --inline-code-border: 1px solid var(--color-code-border);
   --inline-code-border-radius: 4px;
-  --inline-code-padding: 0.08em 0.32em;
+  --inline-code-padding: 0.05em 0.32em;
   --table-width: max-content;
   --table-border-collapse: separate;
   --table-border-radius: 0;
@@ -174,6 +176,7 @@ textarea {
 body:lang(si) {
   font-family: var(--font-sinhala);
   line-height: 1.7;
+  --line-height-para: 1.75;
 }
 
 /* =========================================
@@ -244,10 +247,15 @@ h6 {
   letter-spacing: 0.04em;
 }
 
+header p {
+  text-align: left;
+}
+
 p {
   max-width: 100%;
   margin: 0 0 var(--spacing-paragraph);
-  text-align: left;
+  line-height: var(--line-height-paragraph, var(--line-height-para, 1.62));
+  text-align: justify;
 }
 
 a {
@@ -297,7 +305,7 @@ blockquote p {
   margin: 0 0 var(--spacing-paragraph);
   min-width: 0;
   max-width: 100%;
-  text-align: left;
+  text-align: justify;
 }
 
 blockquote p:last-child {

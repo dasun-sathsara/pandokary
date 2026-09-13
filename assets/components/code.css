@@ -52,87 +52,44 @@ pre code.hljs {
   word-break: normal;
 }
 
-/* Code action toolbar & copy button */
-.code-actions {
+/* Copy button */
+.copy-btn {
   position: absolute;
   top: 0.45rem;
   right: 0.55rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  opacity: 0;
-  transition: opacity 0.16s ease;
-  z-index: 2;
-}
-
-pre:hover .code-actions,
-pre:focus-within .code-actions {
-  opacity: 1;
-}
-
-.code-action-btn,
-.copy-btn {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-text-muted);
   border-radius: 4px;
-  padding: 0.2rem 0.45rem;
+  padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  box-shadow: var(--shadow-card);
+  gap: 0.35rem;
   transition:
     opacity 0.16s ease,
     color 0.16s ease,
     border-color 0.16s ease,
     background-color 0.16s ease;
+  opacity: 0;
+  box-shadow: var(--shadow-card);
   z-index: 2;
 }
 
-pre:not(:has(.code-actions)) .copy-btn {
-  position: absolute;
-  top: 0.45rem;
-  right: 0.55rem;
-  opacity: 0;
-}
-
-pre:not(:has(.code-actions)):hover .copy-btn,
-pre:not(:has(.code-actions)):focus-within .copy-btn {
-  opacity: 1;
-}
-
-.code-action-btn:hover,
-.copy-btn:hover {
-  color: var(--color-accent);
-  border-color: var(--color-border);
-  background: var(--color-bg);
-}
-
-.code-action-btn.active {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-  background: var(--color-accent-subtle);
-}
-
-.code-action-btn svg,
 .copy-btn svg {
   flex-shrink: 0;
 }
 
-/* Soft line wrapping */
-pre.code-wrapped code,
-pre.code-wrapped code.hljs {
-  white-space: pre-wrap !important;
-  word-break: break-word !important;
-  overflow-wrap: anywhere !important;
+pre:hover .copy-btn,
+pre:focus-within .copy-btn {
+  opacity: 1;
 }
 
-pre.code-wrapped .code-line {
-  white-space: pre-wrap !important;
-  word-break: break-word !important;
-  overflow-wrap: anywhere !important;
+.copy-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-border);
+  background: var(--color-bg);
 }
 
 /* Syntax token classes */
