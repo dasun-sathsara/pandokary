@@ -64,7 +64,7 @@ if (initialMermaid) {
   }
 
   function getCurrentTheme() {
-    return document.documentElement.getAttribute("data-theme") || "lumina";
+    return document.documentElement.getAttribute("data-theme") || "porcelain";
   }
 
   function isDarkTheme(theme) {
@@ -75,7 +75,7 @@ if (initialMermaid) {
     if (manifestEntry?.mode) {
       return manifestEntry.mode === "dark";
     }
-    if (["lumina", "parchment"].includes(theme)) return false;
+    if (["lumina", "porcelain", "parchment"].includes(theme)) return false;
     if (DARK_THEME_IDS.has(theme) || theme.toLowerCase().includes("dark")) {
       return true;
     }
@@ -84,7 +84,7 @@ if (initialMermaid) {
 
   function getMermaidConfig(theme) {
     const themesMap = window.PDY_MERMAID_THEMES || {};
-    const fallbackTheme = isDarkTheme(theme) ? "obsidian" : "lumina";
+    const fallbackTheme = isDarkTheme(theme) ? "obsidian" : "porcelain";
     const selectedConfig = themesMap[theme] ||
       themesMap[fallbackTheme] || {
         theme: isDarkTheme(theme) ? "dark" : "default",
@@ -227,6 +227,7 @@ if (initialMermaid) {
   }
 
   function adjustSequenceNotePadding(svg) {
+    const updates = [];
     for (const rectangle of svg.querySelectorAll("rect.note")) {
       const parent = rectangle.parentElement;
       const texts = parent ? parent.querySelectorAll("text.noteText") : [];
@@ -242,8 +243,12 @@ if (initialMermaid) {
         continue;
       }
 
-      rectangle.setAttribute("width", String(neededWidth));
-      rectangle.setAttribute("x", String(currentX - (neededWidth - currentWidth) / 2));
+      updates.push({ rectangle, neededWidth, x: currentX - (neededWidth - currentWidth) / 2 });
+    }
+
+    for (const update of updates) {
+      update.rectangle.setAttribute("width", String(update.neededWidth));
+      update.rectangle.setAttribute("x", String(update.x));
     }
   }
 
@@ -403,8 +408,6 @@ if (initialMermaid) {
     }
 
     applyTransform() {
-      this.content.style.width = `${this.diagramWidth}px`;
-      this.content.style.height = `${this.diagramHeight}px`;
       this.content.style.transform = `translate3d(${this.x}px, ${this.y}px, 0) scale(${this.scale})`;
     }
 
@@ -823,6 +826,8 @@ if (initialMermaid) {
         this.diagramWidth = dimensions.width;
         this.diagramHeight = dimensions.height;
         this.hasDiagram = true;
+        this.content.style.width = `${this.diagramWidth}px`;
+        this.content.style.height = `${this.diagramHeight}px`;
         renderedSvg.setAttribute("width", "100%");
         renderedSvg.setAttribute("height", "100%");
         renderedSvg.style.maxWidth = "none";
@@ -892,8 +897,9 @@ if (initialMermaid) {
     if (lifecycleObserver || !document.body || !("MutationObserver" in window)) {
       return;
     }
+    const target = document.querySelector("main") || document.body;
     lifecycleObserver = new MutationObserver(scheduleControllerCleanup);
-    lifecycleObserver.observe(document.body, { childList: true, subtree: true });
+    lifecycleObserver.observe(target, { childList: true });
   }
 
   function registerController(container) {

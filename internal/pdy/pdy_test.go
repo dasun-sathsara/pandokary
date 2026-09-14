@@ -97,9 +97,12 @@ func TestReaderLoadsOnlyRequiredLibraries(t *testing.T) {
 				if strings.Contains(html, "const MIN_SCALE") != tc.diagram {
 					t.Error("diagram controller must be bundled only for diagrams")
 				}
-				for _, theme := range []string{"lumina", "parchment", "obsidian", "midnight-fjord"} {
+				for _, theme := range []string{"lumina", "porcelain", "parchment", "obsidian", "midnight-fjord"} {
 					if !strings.Contains(html, `[data-theme="`+theme+`"]`) {
 						t.Errorf("missing theme %s", theme)
+					}
+					if strings.Contains(html, `"`+theme+`":{`) != tc.diagram {
+						t.Errorf("diagram palette %s must be bundled only for diagrams", theme)
 					}
 				}
 				for _, removed := range []string{"primer", "verdant-paper", "lilac-frost", "studio-dark", "ayu-mirage", "boreal"} {
@@ -126,6 +129,7 @@ func TestWriteBundledFontCSS(t *testing.T) {
 	t.Setenv("PDY_BODY_FONT_MEDIUM_ITALIC", fontFile)
 	t.Setenv("PDY_BODY_FONT_SEMIBOLD_ITALIC", fontFile)
 	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
+	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
 
 	cssPath := filepath.Join(tempDir, "font-assets.css")
 	warnings, err := writeBundledFontCSS(cssPath)
@@ -163,6 +167,7 @@ func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 	}
 	t.Setenv("PDY_BODY_FONT_REGULAR", fontFile)
 	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
+	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
 
 	// Create a sample markdown file
 	mdFile := filepath.Join(tempDir, "sample.md")

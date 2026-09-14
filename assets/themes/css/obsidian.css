@@ -1,89 +1,71 @@
 [data-theme="obsidian"] {
-  /* ─────────────────────────────────────────
-	   1. CORE CANVAS & SURFACES
-	   A 3-step elevation ladder. Each surface is
-	   ~3–5% lighter than the one below it, so depth
-	   reads through lightness, not heavy borders.
-	───────────────────────────────────────────── */
-  --color-bg: #0b0d12; /* obsidian deep canvas (L=8.5%) */
-  --color-surface: #14171f; /* elevated dark card surface (L=13.5%) */
-  --color-surface-alt: #1a1e27; /* distinct structural panel & table header (L=17.2%) */
-  --color-border: rgba(255, 255, 255, 0.08); /* hairline, hue-neutral */
+  /* Apricot light and warm charcoal.
+     OKLCH hue 50; neutral chroma 0.008, accent chroma at most 0.105.
+     sRGB values below are converted from the annotated OKLCH anchors.
+     Chroma is reduced at fixed L/H to fit sRGB.
+     Roles: https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale
+     Color space: https://www.w3.org/TR/css-color-4/#ok-lab
+     Contrast: https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html */
 
-  /* ─────────────────────────────────────────
-	   2. TEXT HIERARCHY
-     Body is the reference. Headings and strong use body ink.
-	───────────────────────────────────────────── */
-  --color-text: #e4e7ec; /* soft neutral body text (WCAG 14.9:1) */
-  --color-text-muted: #8893a6; /* captions, table headers, metadata (WCAG 5.8:1) */
-  --color-heading: #e4e7ec; /* same as body — size carries hierarchy */
-  --color-h1: #e4e7ec;
-  --color-h2: #e4e7ec;
-  --color-h3: #e4e7ec;
-  --color-h4: #e4e7ec;
-  --color-h5: #e4e7ec;
-  --color-strong: #e4e7ec; /* body ink — weight carries emphasis, not white */
+  --color-bg: #171311; /* OKLCH 0.19 0.008 50 */
+  --color-surface: #1f1a18; /* OKLCH 0.224 0.008 50 */
+  --color-surface-alt: #27221f; /* OKLCH 0.255 0.0096 50 */
+  --color-border: #4d4440; /* OKLCH 0.395 0.0144 50 */
+
+  --color-text: #d9d3d0; /* OKLCH 0.87 0.008 50 */
+  --color-text-muted: #aca4a0; /* OKLCH 0.725 0.0112 50 */
+  --color-heading: #f1e5df; /* OKLCH 0.93 0.016 50 */
+  --color-h1: #fad6c2; /* OKLCH 0.9 0.0483 50 */
+  --color-h2: #f9c2a3; /* OKLCH 0.855 0.0756 50 */
+  --color-h3: #f0b392; /* OKLCH 0.815 0.084 50 */
+  --color-h4: #dfac90; /* OKLCH 0.785 0.0714 50 */
+  --color-h5: #d0a994; /* OKLCH 0.765 0.0546 50 */
+  --color-strong: #f2e9e4; /* OKLCH 0.94 0.012 50 */
   --strong-font-weight: 600;
 
-  /* ─────────────────────────────────────────
-	   3. BRAND & ACCENT (violet)
-	───────────────────────────────────────────── */
-  --color-accent: #a08aff; /* luminous violet (WCAG > 6:1 on all surfaces) */
-  --color-accent-hover: #b1a3ff; /* lighter on hover for clear feedback */
-  --color-accent-subtle: #25253a; /* deep violet tint for backgrounds */
+  --color-accent: #f0a57b; /* OKLCH 0.785 0.105 50 */
+  --color-accent-hover: #ffc4a3; /* OKLCH 0.865 0.080774 50 */
+  --color-accent-subtle: #332720; /* OKLCH 0.285 0.02205 50 */
 
-  /* ─────────────────────────────────────────
-	   4. CODEBLOCKS & INLINE CODE
-	   Code surface goes DARKER than the canvas, so a
-	   code block reads as an inset "well", not a card.
-	───────────────────────────────────────────── */
-  --color-code-bg: #07090d; /* deepest layer — inset well */
-  --color-code-text: #c9d1d9; /* neutral default glyph color */
-  --color-code-border: rgba(255, 255, 255, 0.06);
-  --color-code-chrome-bg: #12151c; /* header/action bar, sits above well */
-  --color-code-chrome-text: #8893a6; /* lang label & copy icon (muted) */
-  --color-inline-code-bg: rgba(160, 138, 255, 0.12); /* subtle accent-tinted */
-  --color-inline-code-text: #b8afff; /* violet-leaning, ties to accent */
+  --color-code-bg: #1d1714; /* OKLCH 0.211 0.012 50 */
+  --color-code-text: #ddd4cf; /* OKLCH 0.875 0.012 50 */
+  --color-code-border: #483f3a; /* OKLCH 0.375 0.016 50 */
+  --color-code-chrome-bg: #271f1b; /* OKLCH 0.248 0.0144 50 */
+  --color-code-chrome-text: #aca4a0; /* OKLCH 0.725 0.0112 50 */
+  --color-inline-code-bg: #372c26; /* OKLCH 0.304 0.01995 50 */
+  --color-inline-code-text: #ffc2a0; /* OKLCH 0.86 0.084 50 */
 
-  /* ─────────────────────────────────────────
-	   5. SYNTAX HIGHLIGHTING TOKENS
-	   Cool base (violet/blue/cyan) + 2 warm anchors
-	   (string-green, number-amber) for legibility.
-	───────────────────────────────────────────── */
-  --code-keyword: #c792ea; /* soft magenta-violet — echoes accent */
-  --code-string: #9ece6a; /* calm green — the warm counterweight */
-  --code-function: #7aa2f7; /* azure blue — distinct from keywords */
-  --code-number: #ff9e64; /* warm amber — numerics jump out */
-  --code-comment: #8492a6; /* muted, readable comments (WCAG > 5:1 on focused line) */
-  --code-operator: #89ddff; /* bright cyan — punctuation & operators */
-  --code-variable: #e4e7ec; /* identifiers = body text (quiet by default) */
+  --code-keyword: #f1a77d; /* OKLCH 0.79 0.105 50 */
+  --code-string: #e9c1ab; /* OKLCH 0.84 0.0546 50 */
+  --code-function: #ffcfb5; /* OKLCH 0.89 0.064456 50 */
+  --code-number: #ebae8d; /* OKLCH 0.8 0.084 50 */
+  --code-comment: #a39d9a; /* OKLCH 0.7 0.0084 50 */
+  --code-operator: #c3b4ac; /* OKLCH 0.78 0.01995 50 */
+  --code-variable: #e6cfc3; /* OKLCH 0.87 0.03045 50 */
 
-  /* ─────────────────────────────────────────
-	   6. TABLES & HR
-	───────────────────────────────────────────── */
-  --color-table-row-alt: rgba(255, 255, 255, 0.025); /* whisper-quiet zebra */
-  --color-table-row-hover: rgba(160, 138, 255, 0.08); /* accent-tinted hover */
-  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  --color-table-row-alt: #221c19; /* OKLCH 0.232 0.0104 50 */
+  --color-table-row-hover: #342923; /* OKLCH 0.291 0.01995 50 */
+  /* OKLCH 0.44 0.016 50 */
+  --bg-hr-gradient: linear-gradient(90deg, transparent, #5a504b, transparent);
 
-  /* ─────────────────────────────────────────
-	   7. SHADOWS & FINISHES
-	───────────────────────────────────────────── */
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.03);
-  --shadow-elevated: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  /* OKLCH 0.12 0.007 50 / 0.28; 0.85 0.008 50 / 0.06 */
+  --shadow-card: 0 1px 2px rgba(8, 5, 4, 0.28), 0 0 0 1px rgba(210, 204, 201, 0.06);
+  /* OKLCH 0.12 0.007 50 / 0.38; 0.85 0.008 50 / 0.06 */
+  --shadow-elevated: 0 12px 30px rgba(8, 5, 4, 0.38), 0 0 0 1px rgba(210, 204, 201, 0.06);
 
-  --scroll-shadow-color: rgba(0, 0, 0, 0.25);
-  --modal-backdrop-background: rgba(0, 0, 0, 0.6);
-  --color-on-accent: #0b0d12;
+  --scroll-shadow-color: rgba(8, 5, 4, 0.4); /* OKLCH 0.12 0.007 50 / 0.4 */
+  --modal-backdrop-background: rgba(8, 5, 4, 0.78); /* OKLCH 0.12 0.007 50 / 0.78 */
+  --color-on-accent: #171413; /* OKLCH 0.195 0.0048 50 */
   color-scheme: dark;
-  --selection-background: #5c4f96;
-  --selection-color: #e4e7ec;
-  --focused-line-background: #25253a;
-  --focused-line-border: #a08aff;
-  --mermaid-note-fill: #25253a;
-  --mermaid-note-stroke: #a08aff;
-  --mermaid-note-text: #e4e7ec;
-  --color-success-subtle: #111c1b;
-  --color-success: #73d9aa;
-  --color-danger-subtle: #1d161b;
-  --color-danger: #ff9aab;
+  --selection-background: #583a2a; /* OKLCH 0.38 0.0504 50 */
+  --selection-color: #faf1ec; /* OKLCH 0.963 0.012 50 */
+  --focused-line-background: #372a23; /* OKLCH 0.296 0.0231 50 */
+  --focused-line-border: #f0a57b; /* OKLCH 0.785 0.105 50 */
+  --mermaid-note-fill: #362820; /* OKLCH 0.29 0.0252 50 */
+  --mermaid-note-stroke: #f0a57b; /* OKLCH 0.785 0.105 50 */
+  --mermaid-note-text: #d9d3d0; /* OKLCH 0.87 0.008 50 */
+  --color-success-subtle: #1f2c23; /* OKLCH 0.279 0.025 155 */
+  --color-success: #85d2a0; /* OKLCH 0.8 0.105 155 */
+  --color-danger-subtle: #342321; /* OKLCH 0.276 0.026 25 */
+  --color-danger: #ffa59e; /* OKLCH 0.81 0.1074 25 */
 }

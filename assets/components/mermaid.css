@@ -62,6 +62,10 @@
   position: relative;
 }
 
+.mermaid-container:not(.maximized) {
+  contain: layout paint;
+}
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -208,6 +212,7 @@
   align-items: center;
   justify-content: center;
   transform-origin: 0 0;
+  will-change: transform;
 }
 
 .mermaid-content svg {
@@ -239,6 +244,7 @@
 .mermaid-viewport svg .actorText,
 .mermaid-viewport svg tspan {
   font-family: var(--font-mono), "Geist Mono", monospace !important;
+  font-weight: 500;
   letter-spacing: var(--letter-spacing-mono, -0.02em);
 }
 

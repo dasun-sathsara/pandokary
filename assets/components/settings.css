@@ -63,6 +63,37 @@
   transform: rotate(90deg);
 }
 
+/* Settings Backdrop */
+.settings-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--modal-backdrop-background);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition:
+    opacity var(--dur-modal) var(--ease-out),
+    visibility var(--dur-modal);
+}
+
+.settings-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+@media (min-width: 769px) {
+  .settings-backdrop {
+    display: none;
+  }
+}
+
 /* Settings Popover */
 .settings-popover {
   position: fixed;

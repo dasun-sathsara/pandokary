@@ -12,10 +12,13 @@
   :root {
     --font-size-body: var(--font-size-body-mobile);
     --toggle-size: 2.25rem;
+    /* Shared gutter: body padding and full-bleed bands (code) derive from
+       the same token so edges always agree across rotations and zooms. */
+    --page-gutter: clamp(1rem, 2vw + 0.5rem, 1.5rem);
   }
 
   body {
-    padding: 1.75rem 1.1rem;
+    padding: 1.75rem var(--page-gutter);
     width: 100%;
     min-width: 0;
     max-width: 100%;
@@ -33,9 +36,61 @@
     max-width: 100%;
   }
 
+  /* Compact reading column: main has comfortable bottom clearance */
+  main {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Compact reading column: justified prose with hyphenation on mobile,
+     matching desktop editorial aesthetic. */
   p,
   blockquote p {
+    text-align: justify;
+    text-justify: inter-word;
+  }
+
+  /* Natural spacing for paragraphs with inline formulas (prevent stretching) */
+  p:has(mjx-container),
+  blockquote p:has(mjx-container) {
     text-align: left;
+  }
+
+  li,
+  dd {
+    text-align: left;
+  }
+
+  p,
+  blockquote p,
+  li,
+  dd,
+  aside p,
+  .aside p {
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphenate-limit-chars: 6 3 2;
+  }
+
+  /* Never hyphenate code, links, tables, or math: dictionaries mangle
+     identifiers, URLs, and versions. (hyphens inherits, so opt out.) */
+  code,
+  pre,
+  kbd,
+  samp,
+  a[href],
+  table,
+  .table-wrapper,
+  mjx-container {
+    hyphens: none;
+    -webkit-hyphens: none;
+  }
+
+  body:lang(si) p,
+  body:lang(si) li,
+  body:lang(si) dd,
+  body:lang(si) blockquote p,
+  body:lang(si) aside p {
+    hyphens: manual;
   }
 
   h1,
@@ -45,7 +100,27 @@
   h5,
   h6,
   li {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    hyphens: none;
+    -webkit-hyphens: none;
+  }
+
+  /* Cheaper indents: reclaims ~6px per nesting level for 360–412px screens. */
+  ul,
+  ol {
+    padding-left: 1.25rem;
+  }
+
+  li {
+    padding-left: 0.25rem;
   }
 
   h1 {
@@ -80,11 +155,9 @@
 
   pre {
     margin: 1.25rem 0;
-    padding: 0.5rem 0 !important;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    border-width: 1px !important;
+    border-radius: var(--pre-border-radius);
+    border: 1px solid var(--color-border);
+    max-width: 100%;
   }
 
   blockquote,
@@ -94,39 +167,44 @@
     border-left-width: 3px !important;
   }
 
+  /* Folding is a desktop affordance: compact layouts keep every section open
+     with no fold chrome. Equal specificity wins here (later stylesheet). */
+  .fold-btn,
+  .toc-fold-actions {
+    display: none !important;
+  }
+
+  .fold-group.collapsed {
+    grid-template-rows: 1fr;
+  }
+
+  .fold-group-inner {
+    overflow: visible;
+  }
+
+  .foldable {
+    cursor: default;
+  }
+
   .code-line,
   .code-line.focused-line,
   .code-line.highlighted-line {
-    padding-left: 0 !important;
+    padding-left: 0;
   }
 
-  .code-line::before {
-    position: sticky !important;
-    left: 0 !important;
-    display: inline-block !important;
-    width: 2.25em !important;
-    padding-left: 0.8rem !important;
-    padding-right: 0.5em !important;
-    border-right: 1px solid var(--color-code-border) !important;
-    background-color: var(--color-code-bg) !important;
-    z-index: 2;
-    margin-right: 0.5em !important;
-  }
-
+  /* No copy affordance on compact layouts: tap-to-copy is fiddly and the
+     button crowds narrow code blocks. Copy remains desktop-only. */
   .copy-btn {
-    position: sticky;
-    left: calc(100% - 4.5rem);
-    top: 0;
-    margin-bottom: 0.4rem;
-    opacity: 1;
-    background: var(--color-code-bg);
+    display: none !important;
   }
 
   .mermaid-btn,
   .table-btn {
-    padding: 0.3rem 0.5rem !important;
-    min-height: 1.85rem !important;
-    min-width: 1.85rem !important;
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    padding: 0 !important;
     border-radius: 5px !important;
     border-width: 1px !important;
   }
@@ -214,9 +292,17 @@
     width: 100%;
   }
 
+  .floating-toggle {
+    bottom: max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)));
+  }
+
+  .toc-toggle {
+    left: max(1.25rem, calc(0.75rem + env(safe-area-inset-left, 0px)));
+  }
+
   .settings-toggle {
-    bottom: 1.5rem;
-    right: 1.5rem;
+    bottom: max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)));
+    right: max(1.25rem, calc(0.75rem + env(safe-area-inset-right, 0px)));
     border-width: 1px !important;
   }
 
@@ -227,23 +313,33 @@
   }
 
   .settings-popover {
-    bottom: calc(1.5rem + var(--toggle-size) + 8px);
-    right: 1.5rem;
-    left: 1.5rem;
-    width: auto;
+    bottom: calc(
+      max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px))) +
+      var(--toggle-size) +
+      8px
+    );
+    right: max(1.25rem, calc(0.75rem + env(safe-area-inset-right, 0px)));
+    /* Dock right at a capped width instead of stretching edge to edge: the
+       full-bleed panel reads as a second page on phones. */
+    left: auto;
+    width: min(300px, calc(100vw - 3rem));
     max-width: none;
     transform-origin: bottom center;
     padding: 10px;
     border-width: 1px !important;
+    /* Slightly smaller on compact layouts: every inner label, option, and
+       stepper row sizes in em, so one knob scales the whole panel while the
+       44px coarse-pointer touch targets stay intact. */
+    font-size: 0.9em;
   }
 
   .settings-header {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     padding-bottom: 4px;
   }
 
   .settings-section {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   .settings-label {
@@ -272,7 +368,7 @@
   }
 
   .control-row {
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   .stepper-control {
@@ -336,11 +432,7 @@
     min-height: 44px;
   }
 
-  .stepper-btn,
-  .close-settings,
   .copy-btn,
-  .mermaid-btn,
-  .table-btn,
   .lightbox-close {
     min-width: 44px !important;
     min-height: 44px !important;
@@ -351,13 +443,161 @@
     min-height: 44px;
   }
 
+  /* Compact controls stay proportional: 44px blanket blows up toolbar rows.
+     26px-34px comfortably exceeds the WCAG 2.5.8 target size exception for inline/clustered controls. */
+  .mermaid-btn,
+  .table-btn {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    padding: 0 !important;
+  }
+
+  .settings-popover .stepper-btn {
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }
+
+  .settings-popover .close-settings,
+  .toc-header-bar .toc-close {
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }
+
+  .settings-popover .theme-option {
+    min-height: 34px;
+  }
+
   .copy-btn {
     opacity: 1;
   }
 
   .mermaid-actions,
   .table-actions {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+}
+
+/* =========================================
+   Phone (Pixel-class widths and below)
+   Contained code blocks, bottom sheet settings, edge-aligned footer.
+   The compact (≤1199px) rules above still apply; these refine ≤768px.
+   ========================================= */
+@media (max-width: 768px) {
+  pre {
+    margin: 1.25rem 0;
+    max-width: 100%;
+    border-radius: var(--pre-border-radius);
+    border: 1px solid var(--color-border);
+  }
+
+  .code-scroll-area {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+
+  /* Horizontal-scroll affordances on the scroll area (consistent with tables) */
+  .code-scroll-area.is-scrollable,
+  pre.is-scrollable {
+    background-image:
+      linear-gradient(to right, var(--scroll-shadow-color), transparent),
+      linear-gradient(to left, var(--scroll-shadow-color), transparent);
+    background-size:
+      15px 100%,
+      15px 100%;
+    background-position:
+      left center,
+      right center;
+    background-repeat: no-repeat;
+  }
+
+  .code-scroll-area.is-scrollable.at-left,
+  pre.is-scrollable.at-left {
+    background-image: linear-gradient(to left, var(--scroll-shadow-color), transparent);
+    background-size: 15px 100%;
+    background-position: right center;
+  }
+
+  .code-scroll-area.is-scrollable.at-right,
+  pre.is-scrollable.at-right {
+    background-image: linear-gradient(to right, var(--scroll-shadow-color), transparent);
+    background-size: 15px 100%;
+    background-position: left center;
+  }
+
+  /* Bottom sheet Appearance modal on phone viewports */
+  .settings-popover {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    padding: 16px 20px max(20px, env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+    transform-origin: bottom center;
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform var(--dur-panel) var(--ease-spring),
+      opacity var(--dur-ui) var(--ease-out),
+      visibility var(--dur-ui);
+    z-index: 101;
+  }
+
+  .settings-popover.active {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Hide both floating toggles when the Appearance bottom sheet is open */
+  html:has(.settings-popover.active) .floating-toggle,
+  .settings-toggle.active {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Hide layout max-width control on phones: screen width is fixed < 768px */
+  .settings-section.layout-section {
+    display: none;
+  }
+
+  /* Maximized diagrams and tables: full edge-to-edge view on phone screens */
+  .mermaid-container.maximized,
+  .table-scroll-container.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: var(--viewport-height, 100vh) !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  .mermaid-container.maximized .mermaid-viewport {
+    height: calc(100% - 42px) !important;
+  }
+
+  .table-scroll-container.maximized .table-wrapper {
+    height: calc(100% - 42px) !important;
+    border-radius: 0 !important;
+  }
+
+  /* Footer text stays cleanly centered across all viewports */
+  footer .footer-credits {
+    text-align: center;
+    justify-content: center;
+  }
+
+  figcaption {
+    text-wrap: balance;
   }
 }
 

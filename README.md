@@ -84,16 +84,17 @@ go test ./...
 npm test
 ```
 
-`npm test` checks browser assets and all four theme palettes, including text contrast,
+`npm test` checks browser assets and all five theme palettes, including text contrast,
 selected controls, translucent surfaces, syntax highlighting, and agreement with the Mermaid colors.
 It also checks saved-theme migration, restricted storage, heading IDs, and bounded code-line ranges.
 Theme colors live in `assets/themes/css/`; their accents and diagram colors are mirrored
 in `assets/themes/manifest.json` and `assets/themes/mermaid/`. The appearance swatches use
 the CSS theme colors directly.
 
-The four themes are **Lumina** (cool light, green accent), **Parchment** (warm light,
-terracotta accent), **Obsidian** (neutral dark, violet accent), and **Midnight Fjord**
-(blue dark, cyan accent). Old saved choices migrate to a supported theme automatically.
+The five themes are **Lumina** (pale light, violet accent), **Porcelain** (white and
+neutral light, blue accent), **Parchment** (soft paper, olive accent), **Obsidian**
+(warm charcoal, apricot accent), and **Midnight Fjord** (deep plum, rose accent).
+Old saved choices migrate to a supported theme automatically.
 
 Floating controls and the appearance panel use solid, contrast-optimized surfaces. Reduced-transparency
 and increased-contrast preferences use reinforced borders. Typography and document layout stay the same.

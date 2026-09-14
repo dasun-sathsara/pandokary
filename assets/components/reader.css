@@ -14,7 +14,6 @@
   transform-origin: left;
   background-color: var(--color-accent);
   z-index: 10000;
-  transition: transform 0.1s linear;
   will-change: transform;
 }
 
@@ -54,9 +53,6 @@
   body {
     padding-left: 310px;
     max-width: calc(var(--content-max-width, 1040px) + 310px);
-    transition:
-      padding-left var(--dur-panel) var(--ease-out),
-      max-width var(--dur-panel) var(--ease-out);
   }
 
   html:not(.toc-open) .toc-sidebar {
@@ -81,26 +77,28 @@
     left: 0;
     top: 0;
     bottom: 0;
-    width: 280px;
-    max-width: 80vw;
+    width: min(320px, 85vw);
+    max-width: 85vw;
     height: var(--viewport-height);
     max-height: var(--viewport-height);
     background: var(--color-surface);
     border-right: 1px solid var(--color-border);
     border-top: none;
     border-left: none;
-    border-radius: 0;
+    border-bottom: none;
+    border-radius: 0 16px 16px 0;
     margin: 0;
-    box-shadow: var(--shadow-elevated);
-    z-index: 10000;
-    padding: 24px 20px;
-    overflow-y: auto;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.18);
+    z-index: 10002;
+    padding: 0;
+    overflow: hidden;
     transform: translateX(-100%);
     transition: transform var(--dur-panel) var(--ease-out);
+    flex-direction: column;
   }
 
   html.toc-open .toc-sidebar {
-    display: block;
+    display: flex;
     transform: translateX(0);
   }
 
@@ -111,10 +109,12 @@
     width: 100vw;
     height: 100vh;
     background: var(--modal-backdrop-background);
-    z-index: 9999;
+    z-index: 10001;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     transition:
       opacity var(--dur-modal) var(--ease-out),
       visibility var(--dur-modal);
@@ -130,6 +130,47 @@
     display: flex;
     bottom: 1.5rem;
     left: 1.5rem;
+  }
+}
+
+.toc-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.toc-header-bar .toc-sidebar-title {
+  margin: 0;
+}
+
+.toc-sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px max(20px, calc(16px + env(safe-area-inset-bottom, 0px)));
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 1200px) {
+  .toc-header-bar {
+    padding: 0 0 1rem 0;
+    border-bottom: none;
+    position: static;
+  }
+
+  .toc-header-bar .toc-close {
+    display: none !important;
+  }
+
+  .toc-sidebar-body {
+    padding: 0;
+    overflow-y: visible;
   }
 }
 
@@ -188,6 +229,127 @@
   background-color: var(--color-accent-subtle);
   border-left-color: var(--color-accent);
   font-weight: 600;
+}
+
+/* Bulk fold controls live under the TOC title; hidden when folding is off. */
+.toc-fold-actions {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.toc-fold-btn {
+  background: none;
+  border: none;
+  padding: 0.15rem 0;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border);
+  text-underline-offset: 3px;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
+.toc-fold-btn:hover {
+  color: var(--color-accent);
+}
+
+/* Keyboard shortcut helper (desktop only — never rendered on compact layouts). */
+.shortcuts-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-backdrop-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 10002;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--dur-modal) var(--ease-out),
+    visibility var(--dur-modal);
+}
+
+.shortcuts-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.shortcuts-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-elevated);
+  padding: 1.1rem 1.25rem;
+  width: 330px;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(var(--viewport-height) - 4rem);
+  overflow-y: auto;
+  transform: scale(0.97) translateY(6px);
+  transition: transform var(--dur-modal) var(--ease-out);
+}
+
+.shortcuts-backdrop.visible .shortcuts-panel {
+  transform: none;
+}
+
+.shortcuts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+
+.shortcuts-header h3 {
+  margin: 0;
+  font-size: 1em;
+}
+
+.shortcuts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.shortcuts-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85em;
+  color: var(--color-text);
+}
+
+.shortcuts-keys {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: 500;
+  line-height: 1.6;
+  padding: 0 0.45em;
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+@media (max-width: 1199px) {
+  .shortcuts-backdrop {
+    display: none !important;
+  }
 }
 
 /* Lightbox Image Zoom */
@@ -304,12 +466,12 @@
   transform: translateY(-1px);
 }
 
-/* Code block Line Numbers & Focus Highlight */
-pre code {
+/* Code block Line Numbers & Focus Highlight (legacy/fallback without .code-gutter) */
+pre:not(:has(.code-gutter)) code {
   counter-reset: line-counter;
 }
 
-.code-line {
+pre:not(:has(.code-gutter)) .code-line {
   display: block !important;
   padding-left: 3.1em !important;
   position: relative !important;
@@ -318,7 +480,7 @@ pre code {
   transition: background-color var(--dur-micro) var(--ease-out);
 }
 
-.code-line::before {
+pre:not(:has(.code-gutter)) .code-line::before {
   counter-increment: line-counter;
   content: counter(line-counter);
   position: absolute !important;
@@ -336,19 +498,104 @@ pre code {
     opacity var(--dur-micro) var(--ease-out);
 }
 
-.code-line:hover::before {
+pre:not(:has(.code-gutter)) .code-line:hover::before {
   color: var(--color-text);
   opacity: 1;
 }
 
-.code-line:hover {
+pre:not(:has(.code-gutter)) .code-line:hover {
   background-color: var(--color-table-row-hover);
 }
 
-.code-line.focused-line {
+pre:not(:has(.code-gutter)) .code-line.focused-line {
   background-color: var(--focused-line-background) !important;
   border-left: 2px solid var(--focused-line-border) !important;
   padding-left: calc(3.1em - 2px) !important;
+}
+
+/* Section Folding — headings stay visible, their content collapses.
+   Groups animate grid rows (one-shot, one section). The main clip guard keeps
+   gutter-positioned fold buttons from ever causing page-level sideways scroll. */
+main {
+  overflow-x: clip;
+}
+
+.fold-group {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--dur-panel) var(--ease-out);
+}
+
+html.fold-instant .fold-group {
+  transition: none !important;
+}
+
+.fold-group.collapsed {
+  grid-template-rows: 0fr;
+}
+
+.fold-group-inner {
+  overflow: hidden;
+  min-height: 0;
+  min-width: 0;
+}
+
+.foldable {
+  position: relative;
+  cursor: pointer;
+}
+
+.fold-btn {
+  position: absolute;
+  left: calc(-1.2em - 8px);
+  top: 0.12em;
+  width: 1.2em;
+  height: 1.2em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  opacity: 0;
+  transition:
+    opacity var(--dur-micro) var(--ease-out),
+    color var(--dur-micro) var(--ease-out);
+}
+
+.foldable:hover .fold-btn,
+.foldable:focus-within .fold-btn,
+.fold-btn[aria-expanded="false"] {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .fold-btn {
+    opacity: 1;
+  }
+}
+
+.fold-btn:hover {
+  color: var(--color-accent);
+}
+
+.fold-btn svg {
+  width: 0.75em;
+  height: 0.75em;
+  transition: transform var(--dur-micro) var(--ease-out);
+}
+
+@supports (top: 1lh) {
+  .fold-btn {
+    top: calc((1lh - 1.2em) / 2);
+  }
+}
+
+.fold-btn[aria-expanded="false"] svg {
+  transform: rotate(-90deg);
 }
 
 .mermaid-btn.btn-rotate,

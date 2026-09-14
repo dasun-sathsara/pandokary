@@ -89,9 +89,7 @@
 @media (max-width: 1199px) {
   .toc-close {
     display: flex;
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    position: static;
   }
 }
 
@@ -158,6 +156,7 @@
 
   .floating-toggle,
   .settings-popover,
+  .shortcuts-backdrop,
   .toc-sidebar,
   .toc-backdrop,
   .modal-backdrop,
@@ -168,6 +167,7 @@
   .mermaid-actions,
   .table-actions,
   .heading-anchor,
+  .fold-btn,
   .scroll-shadow,
   .skip-link,
   #loading-overlay {
@@ -190,6 +190,16 @@
 
   .collapsible-code-block::after {
     display: none;
+  }
+
+  /* Folded sections always print fully expanded. */
+  .fold-group,
+  .fold-group.collapsed {
+    grid-template-rows: 1fr;
+  }
+
+  .fold-group-inner {
+    overflow: visible;
   }
 
   pre code {

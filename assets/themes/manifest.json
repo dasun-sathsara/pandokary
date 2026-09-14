@@ -1,29 +1,35 @@
 {
-  "default": "lumina",
+  "default": "porcelain",
   "themes": [
+    {
+      "id": "porcelain",
+      "name": "Porcelain",
+      "mode": "light",
+      "accent": "#1c5ca6"
+    },
     {
       "id": "lumina",
       "name": "Lumina",
       "mode": "light",
-      "accent": "#0a7840"
+      "accent": "#5940a5"
     },
     {
       "id": "parchment",
       "name": "Parchment",
       "mode": "light",
-      "accent": "#9d4627"
+      "accent": "#4a6018"
     },
     {
       "id": "obsidian",
       "name": "Obsidian",
       "mode": "dark",
-      "accent": "#a08aff"
+      "accent": "#f0a57b"
     },
     {
       "id": "midnight-fjord",
       "name": "Midnight Fjord",
       "mode": "dark",
-      "accent": "#68d1fc"
+      "accent": "#ec9cc9"
     }
   ]
 }
