@@ -5,16 +5,16 @@
   --color-surface-alt: #1e2a40; /* distinct arctic panel & table header */
   --color-border: rgba(183, 207, 230, 0.2); /* glacial hairline */
 
-  /* 2. TEXT HIERARCHY */
+  /* 2. TEXT HIERARCHY — body is the reference, headings/strong match it. */
   --color-text: #e6edf7; /* nordic snow body text (WCAG 13.5:1) */
   --color-text-muted: #9fb0c6; /* subtle ice slate meta (WCAG 6.5:1) */
-  --color-heading: #ffffff; /* pure glacial white headings */
-  --color-h1: #ffffff;
-  --color-h2: #f0f7ff;
+  --color-heading: #e6edf7; /* same as body — size carries hierarchy */
+  --color-h1: #e6edf7;
+  --color-h2: #e6edf7;
   --color-h3: #e6edf7;
-  --color-h4: #c9d7ec;
-  --color-h5: #a8bcda;
-  --color-strong: #ffffff; /* pure punch white — typographic weight, not link cyan */
+  --color-h4: #e6edf7;
+  --color-h5: #e6edf7;
+  --color-strong: #e6edf7; /* body ink — weight carries emphasis, not white */
   --strong-font-weight: 600;
 
   /* 3. BRAND & ACCENT */
@@ -53,7 +53,7 @@
   --modal-backdrop-background: rgba(0, 0, 0, 0.6);
   --color-on-accent: #111827;
   color-scheme: dark;
-  --selection-background: #21354b;
+  --selection-background: #346b84;
   --selection-color: #e6edf7;
   --focused-line-background: #21354b;
   --focused-line-border: #68d1fc;

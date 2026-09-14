@@ -11,12 +11,6 @@
 @media (max-width: 1199px) {
   :root {
     --font-size-body: var(--font-size-body-mobile);
-    --scale-h1: 1.52;
-    --scale-h2: 1.32;
-    --scale-h3: 1.18;
-    --scale-h4: 1.08;
-    --scale-h5: 1.02;
-    --scale-h6: 0.95;
     --toggle-size: 2.25rem;
   }
 
@@ -90,7 +84,6 @@
     border-radius: 0;
     border-left: none;
     border-right: none;
-    font-size: 12.5px;
     border-width: 1px !important;
   }
 
@@ -132,7 +125,6 @@
   .mermaid-btn,
   .table-btn {
     padding: 0.3rem 0.5rem !important;
-    font-size: 0.75rem !important;
     min-height: 1.85rem !important;
     min-width: 1.85rem !important;
     border-radius: 5px !important;
@@ -152,7 +144,6 @@
   }
 
   .mermaid-title {
-    font-size: 0.75rem !important;
     gap: 0.3rem !important;
   }
 
@@ -184,7 +175,6 @@
   }
 
   table {
-    font-size: 12.5px;
     margin: 1.25rem 0 1.5rem;
     border-width: 1px !important;
   }
@@ -216,19 +206,8 @@
   .table-wrapper th,
   .table-wrapper td {
     padding: 0.45rem 0.6rem;
-    font-size: 12px;
     min-width: 150px;
     max-width: 360px;
-  }
-
-  code {
-    font-size: 0.86em;
-  }
-
-  pre code,
-  pre code.hljs {
-    font-size: 13px;
-    line-height: 1.35;
   }
 
   hr {
@@ -263,16 +242,11 @@
     padding-bottom: 4px;
   }
 
-  .settings-header h3 {
-    font-size: 0.8rem;
-  }
-
   .settings-section {
     margin-bottom: 10px;
   }
 
   .settings-label {
-    font-size: 0.65rem;
     margin-bottom: 4px;
   }
 
@@ -283,7 +257,6 @@
   .theme-option {
     padding: 5px 8px;
     gap: 6px;
-    font-size: 0.72rem;
     border-radius: 5px;
     border-width: 1px !important;
   }
@@ -302,10 +275,6 @@
     margin-top: 8px;
   }
 
-  .control-name {
-    font-size: 0.72rem;
-  }
-
   .stepper-control {
     border-radius: 5px;
     padding: 1px;
@@ -315,22 +284,11 @@
   .stepper-btn {
     width: 20px;
     height: 20px;
-    font-size: 0.72rem;
     border-radius: 3px;
   }
 
   .stepper-val {
-    font-size: 0.7rem;
     width: 42px;
-  }
-
-  .footer-credits {
-    font-size: 0.75rem;
-  }
-
-  .heart-icon {
-    width: 12px;
-    height: 12px;
   }
 
   .mermaid-container.maximized,
@@ -403,7 +361,8 @@
   }
 }
 
-/* Keep scrolling and all component transitions quiet when motion is reduced. */
+/* Keep scrolling and all component motion quiet when motion is reduced.
+   Durations collapse via the shared tokens; the spinner and pulse freeze. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -412,5 +371,18 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .loading-spinner {
+    animation: none !important;
+    border-top-color: var(--color-border);
+  }
+
+  .footer-credits:hover .heart-beat {
+    animation: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
   }
 }

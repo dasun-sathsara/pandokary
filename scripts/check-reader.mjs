@@ -58,13 +58,46 @@ const context = vm.createContext({
     getElementById: (id) => ids.has(id),
   },
 });
-vm.runInContext(`${read("app.js")}\nglobalThis.modules = { CodeBlockModule, TOCModule };`, context);
-const { CodeBlockModule, TOCModule } = context.modules;
+vm.runInContext(
+  `${read("app.js")}\nglobalThis.modules = { CodeBlockModule, TOCModule, SectionLinkModule };`,
+  context,
+);
+const { CodeBlockModule, TOCModule, SectionLinkModule } = context.modules;
 assert.deepEqual([...CodeBlockModule.parseLineRange("1-999999999", 3)], [1, 2, 3]);
 assert.deepEqual([...CodeBlockModule.parseLineRange("{3-1,5}", 5)], [1, 2, 3, 5]);
 assert.equal(TOCModule.ensureHeadingID({ textContent: "!!!" }), "section-3");
 assert.equal(TOCModule.ensureHeadingID({ textContent: "සිංහල" }), "සිංහල-2");
 assert.equal(TOCModule.ensureHeadingID({ id: "custom", textContent: "Heading" }), "custom");
+assert.equal(SectionLinkModule.extractHeadingNumber("2.1 Top-level size"), "2.1");
+assert.equal(SectionLinkModule.extractHeadingNumber("2B.3 Git status"), "2B.3");
+assert.equal(SectionLinkModule.extractHeadingNumber("7. Implementation"), "7");
+assert.equal(SectionLinkModule.extractHeadingNumber("Why GitHub is wrong"), null);
+const sectionMap = SectionLinkModule.buildSectionMap([
+  { textContent: "1. TL;DR", id: "tldr" },
+  { textContent: "2.1 Top-level size", id: "top-level-size" },
+  { textContent: "2.1 Duplicate", id: "duplicate" },
+  { textContent: "No number", id: "no-number" },
+  { textContent: "3. Missing id", id: "" },
+]);
+assert.equal(sectionMap.get("1"), "tldr");
+assert.equal(sectionMap.get("2.1"), "top-level-size");
+assert.equal(sectionMap.has("3"), false);
+const refs = SectionLinkModule.findSectionRefs(
+  "see §7.2, and §7.1–7.5, plus §99.",
+  new Map([
+    ["7.2", "install"],
+    ["7.1", "exclude"],
+  ]),
+);
+assert.equal(refs.length, 3);
+assert.equal(refs[0].text, "§7.2");
+assert.equal(refs[0].display, "7.2");
+assert.equal(refs[0].target, "install");
+assert.equal(refs[1].text, "§7.1–7.5");
+assert.equal(refs[1].display, "7.1–7.5");
+assert.equal(refs[1].section, "7.1");
+assert.equal(refs[1].target, "exclude");
+assert.equal(refs[2].target, null);
 console.log(
-  "Reader regressions passed: theme migration, restricted storage, bounded ranges, and heading IDs.",
+  "Reader regressions passed: theme migration, restricted storage, bounded ranges, heading IDs, and section links.",
 );
