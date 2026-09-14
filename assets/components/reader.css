@@ -2,7 +2,8 @@
    Advanced Markdown Reader Features
    ========================================= */
 
-/* Reading Progress Bar */
+/* Reading Progress Bar — updated every scroll frame, so only the
+   compositor-friendly transform is animated. */
 .reading-progress {
   position: fixed;
   top: 0;
@@ -14,6 +15,7 @@
   background-color: var(--color-accent);
   z-index: 10000;
   transition: transform 0.1s linear;
+  will-change: transform;
 }
 
 .code-toggle-btn svg {
@@ -44,8 +46,8 @@
     padding-right: 1.5rem;
     user-select: none;
     transition:
-      transform 0.3s ease,
-      visibility 0.3s ease;
+      transform var(--dur-panel) var(--ease-out),
+      visibility var(--dur-panel);
     z-index: 100;
   }
 
@@ -53,8 +55,8 @@
     padding-left: 310px;
     max-width: calc(var(--content-max-width, 1040px) + 310px);
     transition:
-      padding-left 0.3s ease,
-      max-width 0.3s ease;
+      padding-left var(--dur-panel) var(--ease-out),
+      max-width var(--dur-panel) var(--ease-out);
   }
 
   html:not(.toc-open) .toc-sidebar {
@@ -94,7 +96,7 @@
     padding: 24px 20px;
     overflow-y: auto;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform var(--dur-panel) var(--ease-out);
   }
 
   html.toc-open .toc-sidebar {
@@ -103,7 +105,6 @@
   }
 
   .toc-backdrop {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -112,13 +113,16 @@
     background: var(--modal-backdrop-background);
     z-index: 9999;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.35s ease;
+    transition:
+      opacity var(--dur-modal) var(--ease-out),
+      visibility var(--dur-modal);
   }
 
   html.toc-open .toc-backdrop {
-    display: block;
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
   }
 
@@ -131,7 +135,7 @@
 
 .toc-sidebar-title {
   font-family: var(--font-heading);
-  font-size: 0.85rem;
+  font-size: 0.85em;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-muted);
@@ -150,11 +154,12 @@
 
 .toc-item-h2 {
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.85em;
 }
 
 .toc-item-h3 {
-  font-size: 0.8rem;
+  font-size: 0.85em;
+  font-weight: 400;
   padding-left: 0.85rem;
 }
 
@@ -168,9 +173,9 @@
   border-radius: 0 6px 6px 0;
   line-height: 1.4;
   transition:
-    color 0.15s ease,
-    background-color 0.15s ease,
-    border-left-color 0.15s ease;
+    color var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out),
+    border-left-color var(--dur-micro) var(--ease-out);
 }
 
 .toc-link:hover {
@@ -199,7 +204,8 @@
   z-index: 10001;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  /* Keep 300ms in sync with the dismiss timeout in app.js openLightbox. */
+  transition: opacity 0.3s var(--ease-out);
   cursor: zoom-out;
 }
 
@@ -215,19 +221,20 @@
   border-radius: 8px;
   box-shadow: var(--shadow-lg);
   transform: scale(0.95);
-  transition: transform 0.3s ease;
+  transition: transform var(--dur-panel) var(--ease-out);
 }
 
 .lightbox-backdrop.active .lightbox-img {
   transform: scale(1);
 }
 
-/* Collapsible Code Blocks */
+/* Collapsible Code Blocks — max-height is layout work, so this stays a
+   short one-shot transition on user toggle only. */
 .collapsible-code-block {
   max-height: 320px;
   overflow-y: hidden;
   position: relative;
-  transition: max-height 0.4s ease;
+  transition: max-height var(--dur-panel) var(--ease-out);
 }
 
 .collapsible-code-block.expanded {
@@ -243,7 +250,7 @@
   height: 60px;
   background: linear-gradient(to top, var(--color-code-bg), transparent);
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--dur-panel) var(--ease-out);
   opacity: 1;
 }
 
@@ -265,16 +272,16 @@
   border: 1px solid var(--color-border);
   color: var(--color-text);
   padding: 0.35rem 0.85rem;
-  font-size: 0.8rem;
+  font-size: 0.85em;
   cursor: pointer;
   border-radius: 20px;
   font-weight: 600;
   box-shadow: var(--shadow-sm);
   transition:
-    color 0.16s ease,
-    background-color 0.16s ease,
-    border-color 0.16s ease,
-    transform 0.16s ease;
+    color var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out),
+    border-color var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-spring);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -308,7 +315,7 @@ pre code {
   position: relative !important;
   line-height: var(--pre-line-height, 1.35) !important;
   min-height: 1.35em;
-  transition: background-color 0.2s ease;
+  transition: background-color var(--dur-micro) var(--ease-out);
 }
 
 .code-line::before {
@@ -325,8 +332,8 @@ pre code {
   user-select: none;
   cursor: pointer;
   transition:
-    color 0.2s ease,
-    opacity 0.2s ease;
+    color var(--dur-micro) var(--ease-out),
+    opacity var(--dur-micro) var(--ease-out);
 }
 
 .code-line:hover::before {
@@ -353,7 +360,7 @@ pre code {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.82rem;
+  font-size: 0.85em;
   color: var(--color-text-muted);
   margin-top: 0.4rem;
 }

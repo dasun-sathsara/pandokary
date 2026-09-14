@@ -117,8 +117,7 @@ const UIComponentFactory = (() => {
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrows-in-simple"><path d="M205.66,61.66,163.31,104H192a8,8,0,0,1,0,16H144a8,8,0,0,1-8-8V64a8,8,0,0,1,16,0V92.69l42.34-42.35a8,8,0,0,1,11.32,11.32ZM112,144H64a8,8,0,0,0,0,16H92.69L50.34,202.34a8,8,0,0,0,11.32,11.32L104,171.31V200a8,8,0,0,0,16,0V152A8,8,0,0,0,112,144Z"/></svg>',
     arrowClockwise:
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-arrow-clockwise"><path d="M232,128a8,8,0,0,1-16,0,80,80,0,1,0-23.9,56.5,8,8,0,0,1,11.3,11.3A96,96,0,1,1,232,128ZM224,80V40a8,8,0,0,0-16,0V60.4a95.86,95.86,0,0,0-19.5-24.6,8,8,0,1,0-11.3,11.3A79.88,79.88,0,0,1,192,67.3V48a8,8,0,0,0-16,0V88a8,8,0,0,0,8,8h40a8,8,0,0,0,0-16Z"/></svg>',
-    slidersHorizontal:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" class="ph ph-sliders-horizontal settings-icon"><path d="M120,80a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16h72A8,8,0,0,1,120,80Zm96,0H160a8,8,0,0,0,0,16h56a8,8,0,0,0,0-16Zm-80,96H40a8,8,0,0,0,0,16h96a8,8,0,0,0,0-16Zm80,0H184a8,8,0,0,0,0,16h32a8,8,0,0,0,0-16ZM136,56a24,24,0,1,0,24,24A24,24,0,0,0,136,56Zm0,32a8,8,0,1,1,8-8A8,8,0,0,1,136,88ZM160,152a24,24,0,1,0,24,24A24,24,0,0,0,160,152Zm0,32a8,8,0,1,1,8-8A8,8,0,0,1,160,184Z"/></svg>',
+    gear: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" class="ph ph-gear settings-icon"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"/></svg>',
     x: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-x"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',
     bookOpen:
       '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256" class="ph ph-book-open"><path d="M224,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h64a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM96,192H32V64H96a24,24,0,0,1,24,24V192A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></svg>',
@@ -697,7 +696,7 @@ const SettingsModule = (() => {
     toggle.setAttribute("aria-controls", "appearance-panel");
     toggle.setAttribute("aria-expanded", "false");
     toggle.title = "Appearance Settings";
-    toggle.innerHTML = ICONS.slidersHorizontal;
+    toggle.innerHTML = ICONS.gear;
     document.body.append(toggle);
 
     const panel = document.createElement("div");
@@ -1055,6 +1054,119 @@ const TOCModule = (() => {
   return { init, ensureHeadingID };
 })();
 
+const SectionLinkModule = (() => {
+  const HEADING_NUMBER = /^\s*(\d+[A-Za-z]?(?:\.\d+[A-Za-z]?)*)\b/;
+  const REF_SOURCE =
+    "§§?\\s*\\d+[A-Za-z]?(?:\\.\\d+[A-Za-z]?)*(?:\\s*[–—-]\\s*\\d+[A-Za-z]?(?:\\.\\d+[A-Za-z]?)*)?";
+  const FIRST_NUMBER = /\d+[A-Za-z]?(?:\.\d+[A-Za-z]?)*/;
+  const LEADING_MARKS = /^§§?\s*/;
+  const SKIP_SELECTOR = "pre,code,a,script,style";
+
+  function extractHeadingNumber(text) {
+    const match = String(text).match(HEADING_NUMBER);
+    return match ? match[1] : null;
+  }
+
+  function buildSectionMap(headings) {
+    const map = new Map();
+    for (const heading of headings) {
+      const number = extractHeadingNumber(heading.textContent);
+      if (!number || !heading.id || map.has(number)) continue;
+      map.set(number, heading.id);
+    }
+    return map;
+  }
+
+  function findSectionRefs(text, sectionMap) {
+    const pattern = new RegExp(REF_SOURCE, "g");
+    const refs = [];
+    for (const match of text.matchAll(pattern)) {
+      const first = match[0].match(FIRST_NUMBER);
+      const section = first ? first[0] : null;
+      const target = section ? sectionMap.get(section) : undefined;
+      refs.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        text: match[0],
+        display: match[0].replace(LEADING_MARKS, ""),
+        section,
+        target: target || null,
+      });
+    }
+    return refs;
+  }
+
+  function linkifyTextNode(node, sectionMap) {
+    const text = node.nodeValue;
+    if (!text?.includes("§")) return false;
+    const refs = findSectionRefs(text, sectionMap).filter((ref) => ref.target);
+    if (!refs.length) return false;
+    const fragment = document.createDocumentFragment();
+    let cursor = 0;
+    for (const ref of refs) {
+      if (ref.start > cursor) {
+        fragment.append(document.createTextNode(text.slice(cursor, ref.start)));
+      }
+      const link = document.createElement("a");
+      link.className = "section-link";
+      link.href = `#${encodeURIComponent(ref.target)}`;
+      link.textContent = ref.display;
+      link.setAttribute("aria-label", `Link to section ${ref.section}`);
+      fragment.append(link);
+      cursor = ref.end;
+    }
+    if (cursor < text.length) {
+      fragment.append(document.createTextNode(text.slice(cursor)));
+    }
+    node.parentNode.replaceChild(fragment, node);
+    return true;
+  }
+
+  function ensureHeadingIDs(headings) {
+    if (typeof TOCModule === "undefined" || !TOCModule.ensureHeadingID) return;
+    for (const heading of headings) {
+      if (!heading.id) TOCModule.ensureHeadingID(heading);
+    }
+  }
+
+  function collectCandidateNodes(main) {
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue?.includes("§")) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        const parent = node.parentElement;
+        if (!parent || parent.closest(SKIP_SELECTOR)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    return nodes;
+  }
+
+  function init() {
+    const main = document.querySelector("main");
+    if (!main) return null;
+    const headings = [...main.querySelectorAll("h1,h2,h3,h4,h5,h6")];
+    ensureHeadingIDs(headings);
+    const sectionMap = buildSectionMap(headings);
+    if (!sectionMap.size) return sectionMap;
+    for (const node of collectCandidateNodes(main)) {
+      try {
+        linkifyTextNode(node, sectionMap);
+      } catch (error) {
+        console.error("Section link failed", error);
+      }
+    }
+    return sectionMap;
+  }
+
+  return { init, extractHeadingNumber, buildSectionMap, findSectionRefs };
+})();
+
 const TaskListModule = (() => {
   function initMarkdownTasks() {
     document.querySelectorAll('main li input[type="checkbox"]').forEach((checkbox) => {
@@ -1262,9 +1374,7 @@ const ReaderExtrasModule = (() => {
     let pinching = false;
 
     const draw = (transition = false) => {
-      zoomed.style.transition = transition
-        ? "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
-        : "none";
+      zoomed.style.transition = transition ? "transform var(--dur-ui) var(--ease-out)" : "none";
       zoomed.style.transform = `translate(${x}px,${y}px) scale(${scale})`;
     };
     const toggleZoom = (clientX, clientY) => {
@@ -1671,6 +1781,11 @@ async function main() {
       TOCModule.init();
     } catch (error) {
       reportModuleError("TOCModule", error);
+    }
+    try {
+      SectionLinkModule.init();
+    } catch (error) {
+      reportModuleError("SectionLinkModule", error);
     }
     try {
       ReaderExtrasModule.init(settings);

@@ -18,8 +18,9 @@
   cursor: pointer;
   z-index: 10002;
   transition:
-    background-color 0.2s,
-    color 0.2s;
+    background-color var(--dur-micro) var(--ease-out),
+    color var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-spring);
 }
 
 .lightbox-close:hover {

@@ -57,8 +57,8 @@
   display: flex;
   flex-direction: column;
   transition:
-    border-color 0.3s ease,
-    background-color 0.3s ease;
+    border-color var(--dur-panel) var(--ease-standard),
+    background-color var(--dur-panel) var(--ease-standard);
   position: relative;
 }
 
@@ -70,12 +70,16 @@
   height: 100vh;
   background-color: var(--modal-backdrop-background);
   opacity: 0;
+  visibility: hidden;
   z-index: 9998;
-  transition: opacity 0.2s ease !important;
+  transition:
+    opacity var(--dur-ui) var(--ease-out),
+    visibility var(--dur-ui) !important;
 }
 
 .modal-backdrop.visible {
   opacity: 1;
+  visibility: visible;
 }
 
 .mermaid-container.maximized,
@@ -92,12 +96,12 @@
   box-shadow: var(--shadow-lg);
   background-color: var(--color-bg);
 
-  /* Transition hooks */
+  /* Transition hooks — keep 350ms in sync with closeModal timeout in app.js */
   opacity: 0;
   transform: scale(0.96);
   transition:
-    opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    opacity var(--dur-modal) var(--ease-out),
+    transform var(--dur-modal) var(--ease-out) !important;
 }
 
 .mermaid-container.maximized.visible,
@@ -123,7 +127,7 @@
   align-items: center;
   gap: 0.4rem;
   font-family: var(--font-heading);
-  font-size: 0.8rem;
+  font-size: 0.85em;
   font-weight: 600;
   color: var(--color-code-chrome-text);
 }
@@ -148,16 +152,16 @@
   width: 26px;
   height: 26px;
   padding: 0;
-  font-size: 0.75rem;
+  font-size: 0.75em;
   cursor: pointer;
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition:
-    color 0.16s ease,
-    border-color 0.16s ease,
-    background-color 0.16s ease;
+    color var(--dur-micro) var(--ease-out),
+    border-color var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out);
   font-family: inherit;
   box-shadow: var(--shadow-sm);
 }
@@ -188,7 +192,7 @@
   background-size: 20px 20px;
   background-position: center;
   background-color: var(--color-code-bg);
-  transition: background-color 0.3s ease;
+  transition: background-color var(--dur-panel) var(--ease-standard);
   touch-action: pan-y;
 }
 

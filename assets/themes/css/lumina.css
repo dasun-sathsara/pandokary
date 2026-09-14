@@ -9,16 +9,18 @@
 
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
+     Body is the reference. Headings and strong use body ink —
+     hierarchy comes from size/weight/spacing, not blacker color.
 	───────────────────────────────────────────── */
   --color-text: #0f172a; /* deep slate ink (L=20.8%, APCA Lc 99.6, no glare) */
   --color-text-muted: #475569; /* Slate-600 meta, line numbers, captions (WCAG 7.24:1) */
-  --color-heading: #020617; /* authoritative deep midnight ink */
-  --color-h1: #020617;
-  --color-h2: #090d16;
+  --color-heading: #0f172a; /* same as body — size carries hierarchy */
+  --color-h1: #0f172a;
+  --color-h2: #0f172a;
   --color-h3: #0f172a;
-  --color-h4: #1e293b;
-  --color-h5: #334155;
-  --color-strong: #020617; /* deep punch ink — typographic weight, not link color */
+  --color-h4: #0f172a;
+  --color-h5: #0f172a;
+  --color-strong: #0f172a; /* body ink — weight carries emphasis, not black */
   --strong-font-weight: 600;
 
   /* ─────────────────────────────────────────
@@ -66,13 +68,13 @@
   --shadow-elevated: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 10px 15px -3px rgba(15, 23, 42, 0.08);
   --color-on-accent: #ffffff;
   color-scheme: light;
-  --selection-background: #edf7f1;
-  --selection-color: #020617;
+  --selection-background: #b7c7be;
+  --selection-color: #0f172a;
   --focused-line-background: #edf7f1;
   --focused-line-border: #0a7840;
   --mermaid-note-fill: #edf7f1;
   --mermaid-note-stroke: #0a7840;
-  --mermaid-note-text: #020617;
+  --mermaid-note-text: #0f172a;
   --color-success-subtle: #ebf7f1;
   --color-success: #0f763e;
   --color-danger-subtle: #fdf2f2;

@@ -27,17 +27,26 @@
   --toggle-size: 2.75rem;
   --toggle-gap: 0.75rem;
 
-  /* Font Sizes & Scale — typical web default */
+  /* Font Sizes & Scale — body is the single source of truth (tuned, do not change).
+     All document type derives from body so --font-size-adjust scales everything. */
   --font-size-body-desktop: 17px;
   --font-size-body-mobile: 14.5px;
   --font-size-body: var(--font-size-body-desktop);
 
-  --scale-h1: 1.9;
-  --scale-h2: 1.52;
-  --scale-h3: 1.28;
-  --scale-h4: 1.14;
-  --scale-h5: 1.05;
-  --scale-h6: 0.95;
+  /* Heading scale (multipliers of body). Calm major-third progression. */
+  --scale-h1: 1.875;
+  --scale-h2: 1.5;
+  --scale-h3: 1.25;
+  --scale-h4: 1.125;
+  --scale-h5: 1;
+  --scale-h6: 0.85;
+
+  /* Supporting scale (multipliers of body). Only two meta sizes exist. */
+  --scale-small: 0.85;
+  --scale-xs: 0.75;
+  --scale-table: 0.88;
+  --scale-code-inline: 0.85;
+  --scale-code-block: 0.82;
 
   /* Spacing */
   --line-height-body: 1.56;
@@ -45,6 +54,16 @@
   --line-height-paragraph: var(--line-height-para);
   --spacing-paragraph: 1em;
   --radius-std: 0;
+
+  /* Motion — one easing family, four durations. Timings marked (*) stay in
+     sync with JS timeouts in app.js (modal close 350ms, overlay fade 200ms). */
+  --dur-micro: 120ms;
+  --dur-ui: 200ms; /* (*) matches overlay fade + copy/anchor reset pacing */
+  --dur-panel: 320ms;
+  --dur-modal: 350ms; /* (*) matches closeModal timeout */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.35, 0.4, 1);
 }
 
 /* Structural theme hooks. themes.css provides theme variable values. */
@@ -68,7 +87,8 @@
   --link-color: var(--color-accent);
   --link-decoration: none;
   --link-border-bottom: 1px solid var(--color-accent);
-  --link-transition: border-color 0.2s ease, color 0.2s ease;
+  --link-transition:
+    border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
   --link-hover-color: var(--color-accent-hover);
   --link-hover-decoration: none;
   --link-hover-border-color: var(--color-accent-hover);
@@ -79,8 +99,8 @@
   --blockquote-color: var(--color-text);
   --blockquote-border-radius: 0;
   --blockquote-box-shadow: none;
-  --selection-background: var(--color-accent-subtle);
-  --selection-color: var(--color-accent);
+  --selection-background: var(--color-accent);
+  --selection-color: var(--color-on-accent);
   --scrollbar-thumb: var(--color-border);
   --scrollbar-thumb-hover: var(--color-text-muted);
   --scroll-shadow-color: rgba(0, 0, 0, 0.08);
@@ -123,6 +143,49 @@
 ::selection {
   background: var(--selection-background);
   color: var(--selection-color);
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background: var(--selection-background);
+  color: var(--selection-color);
+  text-shadow: none;
+}
+
+/* Solid accent selection must win inside every surface: body, code, tables,
+   quotes, asides, links, and syntax tokens. */
+pre::selection,
+pre ::selection,
+code::selection,
+code ::selection,
+table::selection,
+table ::selection,
+blockquote::selection,
+blockquote ::selection,
+aside::selection,
+aside ::selection,
+a::selection,
+a ::selection,
+span::selection,
+span ::selection {
+  background: var(--selection-background);
+  color: var(--selection-color);
+  text-shadow: none;
+}
+
+pre::-moz-selection,
+pre ::-moz-selection,
+code::-moz-selection,
+code ::-moz-selection,
+table::-moz-selection,
+table ::-moz-selection,
+blockquote::-moz-selection,
+blockquote ::-moz-selection,
+aside::-moz-selection,
+aside ::-moz-selection {
+  background: var(--selection-background);
+  color: var(--selection-color);
+  text-shadow: none;
 }
 
 html {
@@ -154,8 +217,8 @@ body {
   margin: 0 auto;
   padding: 3.5rem 1.75rem;
   transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+    background-color var(--dur-panel) var(--ease-standard),
+    color var(--dur-panel) var(--ease-standard);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   overflow-wrap: break-word;
@@ -193,6 +256,8 @@ hr {
 
 /* =========================================
    4. Typography & Headings
+   Hierarchy derives from body (em), so the tuned 17px/14.5px base
+   plus --font-size-adjust scales every level proportionally.
    ========================================= */
 h1,
 h2,
@@ -201,50 +266,68 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  margin-top: 2.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.25;
   font-weight: var(--heading-font-weight, 600);
-  letter-spacing: -0.015em;
   color: var(--color-heading);
+  text-wrap: balance;
 }
 
 h1 {
-  font-size: calc(var(--font-size-body) * var(--scale-h1));
+  font-size: 1.875em;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   color: var(--color-h1);
   margin-top: 0;
+  margin-bottom: 1rem;
   border-bottom: 2px solid var(--color-border);
   padding-bottom: 0.4rem;
 }
 
 h2 {
-  font-size: calc(var(--font-size-body) * var(--scale-h2));
+  font-size: 1.5em;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
   color: var(--color-h2);
+  margin-top: 2.25rem;
+  margin-bottom: 0.85rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--color-border);
 }
 
 h3 {
-  font-size: calc(var(--font-size-body) * var(--scale-h3));
+  font-size: 1.25em;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   color: var(--color-h3);
+  margin-top: 1.9rem;
+  margin-bottom: 0.75rem;
 }
 
 h4 {
+  font-size: 1.125em;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
   color: var(--color-h4);
-  font-size: calc(var(--font-size-body) * var(--scale-h4));
-  margin-top: 2rem;
+  margin-top: 1.6rem;
+  margin-bottom: 0.6rem;
 }
 
 h5 {
-  font-size: calc(var(--font-size-body) * var(--scale-h5));
+  font-size: 1em;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
   color: var(--color-h5);
+  margin-top: 1.4rem;
+  margin-bottom: 0.5rem;
 }
 
 h6 {
-  font-size: calc(var(--font-size-body) * var(--scale-h6));
+  font-size: 0.85em;
+  line-height: 1.4;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  margin-top: 1.3rem;
+  margin-bottom: 0.5rem;
 }
 
 header p {
@@ -269,6 +352,10 @@ a:hover {
   color: var(--link-hover-color);
   text-decoration: var(--link-hover-decoration);
   border-bottom-color: var(--link-hover-border-color);
+}
+
+a.section-link {
+  white-space: nowrap;
 }
 
 strong,
@@ -355,7 +442,7 @@ main :where(blockquote, aside, .aside) > :last-child {
 /* Style for aside block starting with a dedicated emoji/icon paragraph */
 main :where(aside, .aside) > p.aside-icon,
 main :where(aside, .aside) > p.callout-icon {
-  font-size: 1.45rem;
+  font-size: 1.45em;
   line-height: 1;
   margin-bottom: 0.6rem;
 }
@@ -410,7 +497,7 @@ dl {
 dt {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1em;
   color: var(--color-heading);
   margin-top: 1rem;
   line-height: 1.45;
@@ -464,8 +551,8 @@ li.task-item {
   color: var(--color-text);
   margin-bottom: 0.35rem;
   transition:
-    color 0.2s ease,
-    opacity 0.2s ease;
+    color var(--dur-micro) var(--ease-out),
+    opacity var(--dur-micro) var(--ease-out);
 }
 
 .task-item > label,
@@ -505,7 +592,7 @@ li.task-item {
   margin: 0.4rem 0;
   line-height: 1.5;
   color: var(--color-text);
-  transition: color 0.2s ease;
+  transition: color var(--dur-micro) var(--ease-out);
 }
 
 .task-item input[type="checkbox"],
@@ -525,9 +612,9 @@ li.task-item {
   opacity: 1 !important;
   box-shadow: var(--shadow-sm);
   transition:
-    background-color 0.16s ease,
-    border-color 0.16s ease,
-    transform 0.16s ease;
+    background-color var(--dur-micro) var(--ease-out),
+    border-color var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-spring);
 }
 
 .task-item input[type="checkbox"] {
@@ -554,7 +641,7 @@ li.task-item {
   width: 0.65em;
   height: 0.65em;
   transform: scale(0);
-  transition: 150ms transform cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform var(--dur-micro) var(--ease-spring);
   box-shadow: inset 1em 1em var(--color-on-accent);
   transform-origin: center;
   clip-path: polygon(14% 44%, 0 65%, 45% 100%, 100% 16%, 82% 0%, 41% 65%);
@@ -586,7 +673,7 @@ figure img {
 figcaption {
   margin-top: 0.65rem;
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.85em;
   line-height: 1.45;
   color: var(--color-text-muted);
   text-align: center;
@@ -614,7 +701,7 @@ img {
   border: 1px dashed var(--color-border);
   border-radius: 8px;
   color: var(--color-text-muted);
-  font-size: 0.85rem;
+  font-size: 0.85em;
   text-align: center;
 }
 

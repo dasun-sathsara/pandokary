@@ -16,9 +16,9 @@
   color: var(--color-text-muted);
   opacity: 0;
   transition:
-    opacity 0.2s ease,
-    transform 0.2s ease,
-    color 0.2s ease;
+    opacity var(--dur-micro) var(--ease-out),
+    transform var(--dur-micro) var(--ease-spring),
+    color var(--dur-micro) var(--ease-out);
   text-decoration: none !important;
   border: none !important;
   cursor: pointer;

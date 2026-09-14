@@ -5,7 +5,7 @@
 code {
   font-family: var(--font-mono);
   letter-spacing: var(--letter-spacing-mono, -0.02em);
-  font-size: 0.88em;
+  font-size: 0.85em;
   font-weight: 400;
   padding: var(--inline-code-padding);
   border: var(--inline-code-border);
@@ -28,7 +28,8 @@ pre {
   overflow-x: auto;
   position: relative;
   box-shadow: var(--pre-box-shadow);
-  font-size: 14px;
+  font-size: 0.82em;
+  line-height: var(--pre-line-height);
   tab-size: 2;
 }
 
@@ -42,8 +43,8 @@ pre code.hljs {
   padding: 0;
   color: var(--color-code-text);
   border: none;
-  font-size: 14px;
-  line-height: var(--pre-line-height);
+  font-size: 1em;
+  line-height: inherit;
   display: block;
   font-family: var(--font-mono);
   font-weight: 400;
@@ -68,10 +69,10 @@ pre code.hljs {
   align-items: center;
   gap: 0.35rem;
   transition:
-    opacity 0.16s ease,
-    color 0.16s ease,
-    border-color 0.16s ease,
-    background-color 0.16s ease;
+    opacity var(--dur-micro) var(--ease-out),
+    color var(--dur-micro) var(--ease-out),
+    border-color var(--dur-micro) var(--ease-out),
+    background-color var(--dur-micro) var(--ease-out);
   opacity: 0;
   box-shadow: var(--shadow-card);
   z-index: 2;

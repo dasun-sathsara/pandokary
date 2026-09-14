@@ -12,18 +12,17 @@
 
   /* ─────────────────────────────────────────
 	   2. TEXT HIERARCHY
-	   Soft neutral body text, crisp white headings,
-	   and authoritative typographic weight.
+     Body is the reference. Headings and strong use body ink.
 	───────────────────────────────────────────── */
   --color-text: #e4e7ec; /* soft neutral body text (WCAG 14.9:1) */
   --color-text-muted: #8893a6; /* captions, table headers, metadata (WCAG 5.8:1) */
-  --color-heading: #f5f7fa; /* near-white base for headings */
-  --color-h1: #ffffff; /* full punch for the page title */
-  --color-h2: #f5f7fa;
-  --color-h3: #eaedf2;
-  --color-h4: #dde2ea;
-  --color-h5: #c9d0dc;
-  --color-strong: #ffffff; /* crisp punch white — typographic weight, not link violet */
+  --color-heading: #e4e7ec; /* same as body — size carries hierarchy */
+  --color-h1: #e4e7ec;
+  --color-h2: #e4e7ec;
+  --color-h3: #e4e7ec;
+  --color-h4: #e4e7ec;
+  --color-h5: #e4e7ec;
+  --color-strong: #e4e7ec; /* body ink — weight carries emphasis, not white */
   --strong-font-weight: 600;
 
   /* ─────────────────────────────────────────
@@ -76,7 +75,7 @@
   --modal-backdrop-background: rgba(0, 0, 0, 0.6);
   --color-on-accent: #0b0d12;
   color-scheme: dark;
-  --selection-background: #25253a;
+  --selection-background: #5c4f96;
   --selection-color: #e4e7ec;
   --focused-line-background: #25253a;
   --focused-line-border: #a08aff;
