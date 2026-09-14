@@ -6,6 +6,7 @@ const read = (name) => readFileSync(new URL(`../assets/${name}`, import.meta.url
 const bootstrap = read("template.html").match(/<script>([\s\S]*?)<\/script>/)[1];
 const migrations = {
   lumina: "lumina",
+  porcelain: "porcelain",
   parchment: "parchment",
   obsidian: "obsidian",
   "midnight-fjord": "midnight-fjord",
@@ -15,14 +16,14 @@ const migrations = {
   "studio-dark": "obsidian",
   "ayu-mirage": "obsidian",
   boreal: "midnight-fjord",
-  unknown: "lumina",
+  unknown: "porcelain",
 };
 
 function prepaint(preferences, restricted = false) {
   const properties = new Map();
   const document = {
     documentElement: {
-      dataset: { theme: "lumina" },
+      dataset: { theme: "porcelain" },
       classList: { add() {} },
       style: { setProperty: (key, value) => properties.set(key, value) },
     },
@@ -44,7 +45,7 @@ function prepaint(preferences, restricted = false) {
 for (const [saved, expected] of Object.entries(migrations)) {
   assert.equal(prepaint({ theme: saved }).theme, expected, `Saved theme ${saved}`);
 }
-assert.equal(prepaint({}, true).theme, "lumina", "Blocked storage keeps a readable theme");
+assert.equal(prepaint({}, true).theme, "porcelain", "Blocked storage keeps a readable theme");
 const invalid = prepaint({ "font-size-adjust": "999", "layout-max-width": "9999" });
 assert.equal(invalid.properties.get("--font-size-adjust"), "8px");
 assert.equal(invalid.properties.has("--content-max-width"), false);
@@ -59,10 +60,10 @@ const context = vm.createContext({
   },
 });
 vm.runInContext(
-  `${read("app.js")}\nglobalThis.modules = { CodeBlockModule, TOCModule, SectionLinkModule };`,
+  `${read("app.js")}\nglobalThis.modules = { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule };`,
   context,
 );
-const { CodeBlockModule, TOCModule, SectionLinkModule } = context.modules;
+const { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule } = context.modules;
 assert.deepEqual([...CodeBlockModule.parseLineRange("1-999999999", 3)], [1, 2, 3]);
 assert.deepEqual([...CodeBlockModule.parseLineRange("{3-1,5}", 5)], [1, 2, 3, 5]);
 assert.equal(TOCModule.ensureHeadingID({ textContent: "!!!" }), "section-3");
@@ -98,6 +99,26 @@ assert.equal(refs[1].display, "7.1–7.5");
 assert.equal(refs[1].section, "7.1");
 assert.equal(refs[1].target, "exclude");
 assert.equal(refs[2].target, null);
+assert.equal(FoldModule.headingLevel("H1"), 1);
+assert.equal(FoldModule.headingLevel("H4"), 4);
+assert.deepEqual(
+  FoldModule.planGroups([2, 3, 3, 2]).map((group) => [group.start, group.end]),
+  [
+    [0, 3],
+    [1, 2],
+    [2, 3],
+    [3, 4],
+  ],
+);
+assert.deepEqual(
+  FoldModule.planGroups([1, 2, 3, 2]).map((group) => [group.start, group.end]),
+  [
+    [0, 4],
+    [1, 3],
+    [2, 3],
+    [3, 4],
+  ],
+);
 console.log(
-  "Reader regressions passed: theme migration, restricted storage, bounded ranges, heading IDs, and section links.",
+  "Reader regressions passed: theme migration, restricted storage, bounded ranges, heading IDs, section links, and fold planning.",
 );

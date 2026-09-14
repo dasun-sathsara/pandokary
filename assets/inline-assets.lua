@@ -69,6 +69,7 @@ local stylesheet_files = {
   "components/lightbox.css",
   "components/footer.css",
   "themes/css/lumina.css",
+  "themes/css/porcelain.css",
   "themes/css/parchment.css",
   "themes/css/obsidian.css",
   "themes/css/midnight-fjord.css",
@@ -78,6 +79,7 @@ local stylesheet_files = {
 
 local mermaid_files = {
   { id = "lumina", path = "themes/mermaid/lumina.json" },
+  { id = "porcelain", path = "themes/mermaid/porcelain.json" },
   { id = "parchment", path = "themes/mermaid/parchment.json" },
   { id = "obsidian", path = "themes/mermaid/obsidian.json" },
  { id = "midnight-fjord", path = "themes/mermaid/midnight-fjord.json" },

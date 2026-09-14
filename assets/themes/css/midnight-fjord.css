@@ -1,67 +1,71 @@
 [data-theme="midnight-fjord"] {
-  /* 1. CORE CANVAS & SURFACES */
-  --color-bg: #111827; /* deep marine navy canvas */
-  --color-surface: #172033; /* elevated fjord navy card surface */
-  --color-surface-alt: #1e2a40; /* distinct arctic panel & table header */
-  --color-border: rgba(183, 207, 230, 0.2); /* glacial hairline */
+  /* Rose light and deep plum neutrals.
+     OKLCH hue 345; neutral chroma 0.015, accent chroma at most 0.11.
+     sRGB values below are converted from the annotated OKLCH anchors.
+     Chroma is reduced at fixed L/H to fit sRGB.
+     Roles: https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale
+     Color space: https://www.w3.org/TR/css-color-4/#ok-lab
+     Contrast: https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html */
 
-  /* 2. TEXT HIERARCHY — body is the reference, headings/strong match it. */
-  --color-text: #e6edf7; /* nordic snow body text (WCAG 13.5:1) */
-  --color-text-muted: #9fb0c6; /* subtle ice slate meta (WCAG 6.5:1) */
-  --color-heading: #e6edf7; /* same as body — size carries hierarchy */
-  --color-h1: #e6edf7;
-  --color-h2: #e6edf7;
-  --color-h3: #e6edf7;
-  --color-h4: #e6edf7;
-  --color-h5: #e6edf7;
-  --color-strong: #e6edf7; /* body ink — weight carries emphasis, not white */
+  --color-bg: #1c1419; /* OKLCH 0.205 0.015 345 */
+  --color-surface: #241c21; /* OKLCH 0.239 0.015 345 */
+  --color-surface-alt: #2e2329; /* OKLCH 0.272 0.018 345 */
+  --color-border: #51414a; /* OKLCH 0.395 0.027 345 */
+
+  --color-text: #dcd0d6; /* OKLCH 0.87 0.015 345 */
+  --color-text-muted: #b0a1a9; /* OKLCH 0.725 0.021 345 */
+  --color-heading: #f8e0ec; /* OKLCH 0.93 0.03 345 */
+  --color-h1: #f8d1e6; /* OKLCH 0.9 0.0506 345 */
+  --color-h2: #f6bbdb; /* OKLCH 0.855 0.0792 345 */
+  --color-h3: #edacd0; /* OKLCH 0.815 0.088 345 */
+  --color-h4: #dda6c4; /* OKLCH 0.785 0.0748 345 */
+  --color-h5: #cea5bb; /* OKLCH 0.765 0.0572 345 */
+  --color-strong: #f7e5ef; /* OKLCH 0.94 0.0225 345 */
   --strong-font-weight: 600;
 
-  /* 3. BRAND & ACCENT */
-  --color-accent: #68d1fc; /* glacial sky cyan (WCAG > 8:1 on all surfaces) */
-  --color-accent-hover: #9de1ff; /* brighter ice cyan on hover */
-  --color-accent-subtle: #21354b; /* marine cyan wash */
+  --color-accent: #ec9cc9; /* OKLCH 0.785 0.11 345 */
+  --color-accent-hover: #febbe0; /* OKLCH 0.865 0.0902 345 */
+  --color-accent-subtle: #33262d; /* OKLCH 0.285 0.0231 345 */
 
-  /* 4. CODEBLOCKS & INLINE CODE */
-  --color-code-bg: #0b1220; /* deep marine abyss well */
-  --color-code-text: #e5edf7;
-  --color-code-border: rgba(125, 211, 252, 0.18);
-  --color-code-chrome-bg: #080e19; /* fjord header bar */
-  --color-code-chrome-text: #9fb0c6;
-  --color-inline-code-bg: rgba(104, 209, 252, 0.1);
-  --color-inline-code-text: #7dd5f9;
+  --color-code-bg: #20141b; /* OKLCH 0.211 0.0225 345 */
+  --color-code-text: #e2d0d9; /* OKLCH 0.875 0.0225 345 */
+  --color-code-border: #4d3b45; /* OKLCH 0.375 0.03 345 */
+  --color-code-chrome-bg: #2b1c24; /* OKLCH 0.248 0.027 345 */
+  --color-code-chrome-text: #b0a1a9; /* OKLCH 0.725 0.021 345 */
+  --color-inline-code-bg: #372b31; /* OKLCH 0.304 0.0209 345 */
+  --color-inline-code-text: #fcbade; /* OKLCH 0.86 0.088 345 */
 
-  /* 5. SYNTAX HIGHLIGHTING TOKENS */
-  --code-keyword: #cdb5ff; /* soft periwinkle */
-  --code-string: #8dd9a2; /* mint green */
-  --code-function: #68d1fc; /* sky cyan (accent) */
-  --code-number: #f5b667; /* amber hearth */
-  --code-comment: #8fa1b8; /* muted fjord slate */
-  --code-operator: #72e5d9; /* bioluminescent teal */
-  --code-variable: #e6edf7; /* cool off-white */
+  --code-keyword: #ed9ecb; /* OKLCH 0.79 0.11 345 */
+  --code-string: #e7bcd3; /* OKLCH 0.84 0.0572 345 */
+  --code-function: #ffc8e6; /* OKLCH 0.89 0.072619 345 */
+  --code-number: #e7a7cb; /* OKLCH 0.8 0.088 345 */
+  --code-comment: #a39ca0; /* OKLCH 0.7 0.0088 345 */
+  --code-operator: #c2b2ba; /* OKLCH 0.78 0.0209 345 */
+  --code-variable: #e5ccd9; /* OKLCH 0.87 0.0319 345 */
 
-  /* 6. TABLES & HR */
-  --color-table-row-alt: rgba(104, 209, 252, 0.035);
-  --color-table-row-hover: rgba(104, 209, 252, 0.09);
-  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(104, 209, 252, 0.35), transparent);
+  --color-table-row-alt: #241a1f; /* OKLCH 0.232 0.0195 345 */
+  --color-table-row-hover: #33282e; /* OKLCH 0.291 0.0209 345 */
+  /* OKLCH 0.44 0.03 345 */
+  --bg-hr-gradient: linear-gradient(90deg, transparent, #5f4c56, transparent);
 
-  /* 7. SHADOWS & FINISHES */
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.18);
-  --shadow-elevated: 0 5px 14px rgba(0, 0, 0, 0.34), 0 22px 48px rgba(0, 0, 0, 0.28);
+  /* OKLCH 0.12 0.007 345 / 0.28; 0.12 0.007 345 / 0.38 */
+  --shadow-card: 0 1px 2px rgba(7, 5, 6, 0.28), 0 8px 20px rgba(7, 5, 6, 0.38);
+  /* OKLCH 0.12 0.007 345 / 0.38; 0.12 0.007 345 / 0.38 */
+  --shadow-elevated: 0 5px 14px rgba(7, 5, 6, 0.38), 0 22px 48px rgba(7, 5, 6, 0.38);
 
-  --scroll-shadow-color: rgba(0, 0, 0, 0.3);
-  --modal-backdrop-background: rgba(0, 0, 0, 0.6);
-  --color-on-accent: #111827;
+  --scroll-shadow-color: rgba(7, 5, 6, 0.4); /* OKLCH 0.12 0.007 345 / 0.4 */
+  --modal-backdrop-background: rgba(7, 5, 6, 0.78); /* OKLCH 0.12 0.007 345 / 0.78 */
+  --color-on-accent: #181316; /* OKLCH 0.195 0.009 345 */
   color-scheme: dark;
-  --selection-background: #346b84;
-  --selection-color: #e6edf7;
-  --focused-line-background: #21354b;
-  --focused-line-border: #68d1fc;
-  --mermaid-note-fill: #21354b;
-  --mermaid-note-stroke: #68d1fc;
-  --mermaid-note-text: #e6edf7;
-  --color-success-subtle: #14242c;
-  --color-success: #73d9aa;
-  --color-danger-subtle: #211e2d;
-  --color-danger: #ff9aab;
+  --selection-background: #573749; /* OKLCH 0.38 0.0528 345 */
+  --selection-color: #ffedf6; /* OKLCH 0.963 0.0225 345 */
+  --focused-line-background: #362830; /* OKLCH 0.296 0.0242 345 */
+  --focused-line-border: #ec9cc9; /* OKLCH 0.785 0.11 345 */
+  --mermaid-note-fill: #35262e; /* OKLCH 0.29 0.0264 345 */
+  --mermaid-note-stroke: #ec9cc9; /* OKLCH 0.785 0.11 345 */
+  --mermaid-note-text: #dcd0d6; /* OKLCH 0.87 0.015 345 */
+  --color-success-subtle: #1f2c23; /* OKLCH 0.279 0.025 155 */
+  --color-success: #85d2a0; /* OKLCH 0.8 0.105 155 */
+  --color-danger-subtle: #342321; /* OKLCH 0.276 0.026 25 */
+  --color-danger: #ffa59e; /* OKLCH 0.81 0.1074 25 */
 }

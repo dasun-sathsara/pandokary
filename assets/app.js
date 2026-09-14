@@ -270,6 +270,8 @@ const UIComponentFactory = (() => {
   }
 
   function openModal(container) {
+    window.clearTimeout(container._modalTimer);
+    delete container._modalTimer;
     container.classList.add("maximized");
     const backdrop = document.createElement("div");
     backdrop.className = "modal-backdrop";
@@ -292,10 +294,12 @@ const UIComponentFactory = (() => {
     container.classList.remove("visible");
     const backdrop = container._modalBackdrop || document.querySelector(".modal-backdrop");
     backdrop?.classList.remove("visible");
-    window.setTimeout(() => {
+    window.clearTimeout(container._modalTimer);
+    container._modalTimer = window.setTimeout(() => {
       container.classList.remove("maximized", "rotated-landscape");
       backdrop?.remove();
       delete container._modalBackdrop;
+      delete container._modalTimer;
       updateScrollLock();
     }, 350);
   }
@@ -317,6 +321,8 @@ const UIComponentFactory = (() => {
 
 const CodeBlockModule = (() => {
   const { ICONS, copyText, createButton, setButtonTitle } = UIComponentFactory;
+  // Phone query must match the ≤768px CSS section styling these classes.
+  const phoneMedia = window.matchMedia ? window.matchMedia("(max-width: 768px)") : null;
 
   function parseLineRange(spec, lineCount = 100000) {
     const lines = new Set();
@@ -347,7 +353,7 @@ const CodeBlockModule = (() => {
       else if (stripped.startsWith("-")) classes.push("diff-deletion");
       else if (stripped.startsWith("@@")) classes.push("diff-meta");
     }
-    return `<div class="${classes.join(" ")}">${lineContent || " "}</div>`;
+    return `<div class="${classes.join(" ")}" data-line="${index + 1}">${lineContent || " "}</div>`;
   }
 
   function getLineSpec(pre, code) {
@@ -390,6 +396,35 @@ const CodeBlockModule = (() => {
     );
     holder.querySelector("button").setAttribute("aria-expanded", "false");
     pre.after(holder);
+  }
+
+  function addScrollAffordance(element) {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const phone = phoneMedia ? phoneMedia.matches : false;
+      const canScroll = phone && element.scrollWidth > element.clientWidth + 2;
+      element.classList.toggle("is-scrollable", canScroll);
+      element.classList.toggle("at-left", canScroll && element.scrollLeft <= 2);
+      element.classList.toggle(
+        "at-right",
+        canScroll && element.scrollLeft >= element.scrollWidth - element.clientWidth - 2,
+      );
+      if (canScroll && !element.hasAttribute("tabindex")) {
+        element.tabIndex = 0;
+        element.setAttribute("role", "region");
+        element.setAttribute("aria-label", "Scrollable code");
+      }
+    };
+    const scheduleUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    element.addEventListener("scroll", scheduleUpdate, { passive: true });
+    if (phoneMedia?.addEventListener) phoneMedia.addEventListener("change", scheduleUpdate);
+    if (window.ResizeObserver) new ResizeObserver(scheduleUpdate).observe(element);
+    window.setTimeout(scheduleUpdate, 100);
   }
 
   function addCopyControl(pre, plainCode) {
@@ -478,17 +513,43 @@ const CodeBlockModule = (() => {
         .trim() === ""
     )
       lines.pop();
+
+    const gutter = document.createElement("div");
+    gutter.className = "code-gutter";
+    gutter.setAttribute("aria-hidden", "true");
+    gutter.innerHTML = lines
+      .map((_, i) => {
+        const lineNum = i + 1;
+        const lineClasses = ["code-gutter-line"];
+        if (highlightedLines.has(lineNum)) lineClasses.push("highlighted-line");
+        return `<span class="${lineClasses.join(" ")}" data-line="${lineNum}">${lineNum}</span>`;
+      })
+      .join("");
+
+    const scrollArea = document.createElement("div");
+    scrollArea.className = "code-scroll-area";
+
     code.innerHTML = lines
       .map((line, index) => formatSingleCodeLine(line, index, highlightedLines, isDiff))
       .join("");
-    code.addEventListener("click", (event) => {
-      const line = event.target.closest(".code-line");
-      if (line && event.clientX - line.getBoundingClientRect().left < 55) {
-        line.classList.toggle("focused-line");
-      }
+
+    scrollArea.append(code);
+    pre.innerHTML = "";
+    pre.append(gutter, scrollArea);
+
+    pre.addEventListener("click", (event) => {
+      const target = event.target.closest(".code-line, .code-gutter-line");
+      if (!target) return;
+      const lineNum = target.dataset.line;
+      if (!lineNum) return;
+      const lineElem = pre.querySelector(`.code-line[data-line="${lineNum}"]`);
+      const gutterElem = pre.querySelector(`.code-gutter-line[data-line="${lineNum}"]`);
+      lineElem?.classList.toggle("focused-line");
+      gutterElem?.classList.toggle("focused-line");
     });
     addCollapseControl(pre, lines.length);
     addCopyControl(pre, plainCode);
+    addScrollAffordance(scrollArea);
   }
 
   function init() {
@@ -633,7 +694,16 @@ const TableModule = (() => {
     table.before(container);
     wrapper.append(table);
     container.append(actions, wrapper, left, right);
-    wrapper.addEventListener("scroll", updateShadows, { passive: true });
+    let scrollTicking = false;
+    const scheduleShadows = () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        scrollTicking = false;
+        updateShadows();
+      });
+    };
+    wrapper.addEventListener("scroll", scheduleShadows, { passive: true });
     if (typeof window.ResizeObserver === "function") {
       const observer = new window.ResizeObserver(updateShadows);
       observer.observe(wrapper);
@@ -658,6 +728,7 @@ const TableModule = (() => {
 const SettingsModule = (() => {
   const { ICONS, requestFrame } = UIComponentFactory;
   const DEFAULT_THEMES = Object.freeze([
+    { id: "porcelain", name: "Porcelain" },
     { id: "lumina", name: "Lumina" },
     { id: "parchment", name: "Parchment" },
     { id: "obsidian", name: "Obsidian" },
@@ -675,6 +746,7 @@ const SettingsModule = (() => {
     const fontLoads = Promise.all([
       document.fonts.load("12px 'Studio Feixen Sans'"),
       document.fonts.load("12px 'Geist Mono'"),
+      document.fonts.load("500 12px 'Geist Mono'"),
     ]).catch((error) => {
       console.warn("Font loading failed; CSS fallbacks remain active", error);
     });
@@ -733,7 +805,7 @@ const SettingsModule = (() => {
           </div>
         </div>
       </div>
-      <div class="settings-section">
+      <div class="settings-section layout-section">
         <div class="settings-label">Layout</div>
         <div class="control-row">
           <span class="control-name">Max Width</span>
@@ -750,6 +822,11 @@ const SettingsModule = (() => {
 
   function bindPanelVisibility(panel, toggle) {
     const closeButton = panel.querySelector(".close-settings");
+    const backdrop = document.createElement("div");
+    backdrop.className = "settings-backdrop";
+    backdrop.addEventListener("touchmove", (event) => event.preventDefault(), { passive: false });
+    document.body.append(backdrop);
+
     const focusableSelector = "a[href], button, input, select, textarea, [tabindex]";
     const restoreTabindex = (element) => {
       if (!Object.hasOwn(element.dataset, "pdyTabindex")) return;
@@ -772,13 +849,16 @@ const SettingsModule = (() => {
     };
     const show = (visible, restoreFocus = false) => {
       panel.classList.toggle("active", visible);
+      backdrop.classList.toggle("active", visible);
       toggle.classList.toggle("active", visible);
       toggle.setAttribute("aria-expanded", String(visible));
       panel.setAttribute("aria-hidden", String(!visible));
       setFocusability(visible);
       if (visible) requestFrame(() => closeButton?.focus());
       else if (restoreFocus) toggle.focus();
+      else if (panel.contains(document.activeElement)) document.activeElement.blur();
     };
+    backdrop.addEventListener("click", () => show(false));
     toggle.addEventListener("click", (event) => {
       event.stopPropagation();
       show(!panel.classList.contains("active"));
@@ -786,7 +866,11 @@ const SettingsModule = (() => {
     panel.addEventListener("click", (event) => event.stopPropagation());
     closeButton?.addEventListener("click", (event) => {
       event.stopPropagation();
-      show(false, true);
+      // Keyboard-activated buttons dispatch click with detail 0: only then is
+      // handing focus back to the toggle correct. A pointer dismissal must not
+      // park programmatic (focus-visible-matching) focus on the toggle, or the
+      // scroll auto-hide would never engage again.
+      show(false, event.detail === 0);
     });
     window.addEventListener("click", () => show(false));
     window.addEventListener("keydown", (event) => {
@@ -806,7 +890,7 @@ const SettingsModule = (() => {
         boreal: "midnight-fjord",
       };
       const candidate = legacy[requested] || requested;
-      const theme = getThemes().some((entry) => entry.id === candidate) ? candidate : "lumina";
+      const theme = getThemes().some((entry) => entry.id === candidate) ? candidate : "porcelain";
       const changed = document.documentElement.dataset.theme !== theme;
       document.documentElement.dataset.theme = theme;
       StorageManager.setPreference("theme", theme);
@@ -819,7 +903,7 @@ const SettingsModule = (() => {
     panel.querySelectorAll(".theme-option").forEach((button) => {
       button.addEventListener("click", () => applyTheme(button.dataset.themeKey));
     });
-    applyTheme(StorageManager.getPreference("theme", "lumina"));
+    applyTheme(StorageManager.getPreference("theme", "porcelain"));
   }
 
   function bindFontSizeControls(panel) {
@@ -831,11 +915,11 @@ const SettingsModule = (() => {
     const increase = panel.querySelector(".inc-font-size");
     const value = panel.querySelector(".font-size-val");
     const update = () => {
-      document.documentElement.style.setProperty("--font-size-adjust", `${size}px`);
       const baseSize =
         Number.parseFloat(
           getComputedStyle(document.documentElement).getPropertyValue("--font-size-body"),
         ) || (isCompactLayout() ? 14.5 : 17);
+      document.documentElement.style.setProperty("--font-size-adjust", `${size}px`);
       value.textContent = `${Math.round(((baseSize + size) / baseSize) * 100)}%`;
       decrease.disabled = size <= -4;
       increase.disabled = size >= 8;
@@ -932,11 +1016,12 @@ const TOCModule = (() => {
       link.classList.add("active");
       link.setAttribute("aria-current", "location");
       if (aside.inert) return;
-      const bounds = aside.getBoundingClientRect();
+      const scrollTarget = aside.querySelector(".toc-sidebar-body") || aside;
+      const bounds = scrollTarget.getBoundingClientRect();
       const linkBounds = link.getBoundingClientRect();
       if (linkBounds.top < bounds.top || linkBounds.bottom > bounds.bottom) {
         // Scroll only the navigation, never the document being read.
-        aside.scrollTop += linkBounds.top - bounds.top - aside.clientHeight / 2;
+        scrollTarget.scrollTop += linkBounds.top - bounds.top - scrollTarget.clientHeight / 2;
       }
     };
     const schedule = () => {
@@ -948,9 +1033,14 @@ const TOCModule = (() => {
       offsets = headings.map((heading) => heading.getBoundingClientRect().top + window.scrollY);
       schedule();
     };
+    let resizeTimer = 0;
+    const scheduleMeasure = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(measure, 100);
+    };
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", measure, { passive: true });
-    if (window.ResizeObserver) new ResizeObserver(measure).observe(document.body);
+    window.addEventListener("resize", scheduleMeasure, { passive: true });
+    if (window.ResizeObserver) new ResizeObserver(scheduleMeasure).observe(document.body);
     window.addEventListener("load", measure, { once: true });
     measure();
   }
@@ -965,11 +1055,41 @@ const TOCModule = (() => {
     aside.className = "toc-sidebar";
     aside.id = "document-contents";
     aside.setAttribute("aria-label", "Table of contents");
-    aside.innerHTML =
-      '<h3 class="toc-sidebar-title">Table of Contents</h3><ul class="toc-list"></ul>';
-    const list = aside.querySelector(".toc-list");
+
+    const header = document.createElement("div");
+    header.className = "toc-header-bar";
+    const title = document.createElement("h3");
+    title.className = "toc-sidebar-title";
+    title.textContent = "Table of Contents";
     const close = createButton("toc-close close-settings", ICONS.x, "Close table of contents");
-    aside.prepend(close);
+    header.append(title, close);
+
+    const bodyWrap = document.createElement("div");
+    bodyWrap.className = "toc-sidebar-body";
+    const list = document.createElement("ul");
+    list.className = "toc-list";
+    bodyWrap.append(list);
+
+    if (
+      document.querySelector(".fold-group") &&
+      typeof FoldModule !== "undefined" &&
+      FoldModule.expandAll
+    ) {
+      const actions = document.createElement("div");
+      actions.className = "toc-fold-actions";
+      const expand = document.createElement("button");
+      expand.type = "button";
+      expand.className = "toc-fold-btn";
+      expand.textContent = "Expand all";
+      expand.addEventListener("click", () => FoldModule.expandAll());
+      const collapse = document.createElement("button");
+      collapse.type = "button";
+      collapse.className = "toc-fold-btn";
+      collapse.textContent = "Collapse all";
+      collapse.addEventListener("click", () => FoldModule.collapseAll());
+      actions.append(expand, collapse);
+      bodyWrap.prepend(actions);
+    }
     headings.forEach((heading) => {
       {
         ensureHeadingID(heading);
@@ -983,6 +1103,7 @@ const TOCModule = (() => {
         list.append(item);
       }
     });
+    aside.append(header, bodyWrap);
     document.body.append(aside);
 
     const backdrop = document.createElement("div");
@@ -1167,6 +1288,192 @@ const SectionLinkModule = (() => {
   return { init, extractHeadingNumber, buildSectionMap, findSectionRefs };
 })();
 
+const FoldModule = (() => {
+  const { ICONS, createButton, setButtonTitle } = UIComponentFactory;
+  const FOLDABLE_SELECTOR = "main > h2,main > h3,main > h4,main > h5,main > h6";
+  const VIEWPORT_OFFSET = 96;
+  let uid = 0;
+  const groups = [];
+
+  function headingLevel(tagName) {
+    return Number.parseInt(String(tagName).slice(1), 10);
+  }
+
+  // Pure: exclusive end of section i — the first later heading at least as high.
+  function sectionEnd(levels, i) {
+    for (let j = i + 1; j < levels.length; j += 1) {
+      if (levels[j] <= levels[i]) return j;
+    }
+    return levels.length;
+  }
+
+  function planGroups(levels) {
+    return levels.map((level, i) => ({ level, start: i, end: sectionEnd(levels, i) }));
+  }
+
+  function setCollapsed(entry, collapsed) {
+    entry.group.classList.toggle("collapsed", collapsed);
+    entry.button.setAttribute("aria-expanded", String(!collapsed));
+    setButtonTitle(entry.button, collapsed ? "Expand section" : "Fold section");
+  }
+
+  function toggleGroup(entry) {
+    setCollapsed(entry, !entry.group.classList.contains("collapsed"));
+  }
+
+  function toggleCurrent() {
+    if (!groups.length) return null;
+    let current = groups[0];
+    for (const entry of groups) {
+      if (entry.heading.getBoundingClientRect().top <= VIEWPORT_OFFSET) current = entry;
+      else break;
+    }
+    toggleGroup(current);
+    return current;
+  }
+
+  // Bulk ops skip the collapse animation: N simultaneous grid animations jank
+  // on long docs, and an instant switch reads better for "show/hide everything".
+  function setAllInstant(collapsed) {
+    document.documentElement.classList.add("fold-instant");
+    for (const entry of groups) setCollapsed(entry, collapsed);
+    void document.documentElement.offsetHeight;
+    window.requestAnimationFrame(() => {
+      document.documentElement.classList.remove("fold-instant");
+    });
+  }
+
+  function expandAll() {
+    setAllInstant(false);
+  }
+
+  function collapseAll() {
+    setAllInstant(true);
+  }
+
+  function expandAncestors(element) {
+    let branch = element.parentElement;
+    while (branch) {
+      if (branch.classList?.contains("fold-group") && branch.classList.contains("collapsed")) {
+        const entry = groups.find((candidate) => candidate.group === branch);
+        if (entry) setCollapsed(entry, false);
+        else branch.classList.remove("collapsed");
+      }
+      branch = branch.parentElement;
+    }
+  }
+
+  // Reveal anything a fragment link points at: collapsed ancestor groups plus,
+  // when the target is a section heading, that heading's own content group
+  // (groups are siblings that follow their heading, not ancestors of it).
+  function revealElement(element) {
+    expandAncestors(element);
+    const heading = element.closest?.("h1,h2,h3,h4,h5,h6");
+    const entry = groups.find((candidate) => candidate.heading === heading);
+    if (entry) setCollapsed(entry, false);
+  }
+
+  function nextGroupId() {
+    uid += 1;
+    return `fold-group-${uid}`;
+  }
+
+  function isSectionBoundary(node, level) {
+    return (
+      node.nodeType === Node.ELEMENT_NODE &&
+      /^H[1-6]$/.test(node.tagName) &&
+      headingLevel(node.tagName) <= level
+    );
+  }
+
+  function collectSectionNodes(group, inner, level) {
+    let node = group.nextSibling;
+    while (node && !isSectionBoundary(node, level)) {
+      const next = node.nextSibling;
+      inner.append(node);
+      node = next;
+    }
+  }
+
+  function attachFoldControl(heading, group) {
+    if (!heading.id && TOCModule.ensureHeadingID) TOCModule.ensureHeadingID(heading);
+    heading.classList.add("foldable");
+    const button = createButton("fold-btn", ICONS.caretDown, "Fold section", () => {
+      const entry = groups.find((candidate) => candidate.heading === heading);
+      if (entry) toggleGroup(entry);
+    });
+    button.setAttribute("aria-expanded", "true");
+    button.setAttribute("aria-controls", group.id);
+    heading.prepend(button);
+    return button;
+  }
+
+  function buildGroups(headings) {
+    for (const heading of headings) {
+      const level = headingLevel(heading.tagName);
+      const group = document.createElement("div");
+      group.className = "fold-group";
+      group.id = nextGroupId();
+      const inner = document.createElement("div");
+      inner.className = "fold-group-inner";
+      group.append(inner);
+      heading.after(group);
+      collectSectionNodes(group, inner, level);
+      if (!inner.querySelector("*")) {
+        group.remove();
+        continue;
+      }
+      const button = attachFoldControl(heading, group);
+      groups.push({ heading, button, group, level });
+    }
+  }
+
+  function init() {
+    const main = document.querySelector("main");
+    if (!main) return groups;
+    buildGroups([...main.querySelectorAll(FOLDABLE_SELECTOR)]);
+    if (window.location?.hash) {
+      try {
+        const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+        if (target) revealElement(target);
+      } catch (_error) {
+        // A malformed hash must never break reader startup.
+      }
+    }
+    document.addEventListener(
+      "click",
+      (event) => {
+        const target = event.target instanceof Element ? event.target : null;
+        const link = target?.closest('a[href^="#"]');
+        if (!link || link.classList.contains("heading-anchor")) return;
+        try {
+          const destination = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+          if (destination) revealElement(destination);
+        } catch (_error) {
+          // Ignore malformed fragment links.
+        }
+      },
+      true,
+    );
+    // Headings toggle their own section. Text selection and interactive
+    // descendants (links, buttons, code) keep working: those clicks are ignored.
+    // Folding is a desktop affordance; compact layouts keep every section open.
+    main.addEventListener("click", (event) => {
+      if (isCompactLayout()) return;
+      const target = event.target instanceof Element ? event.target : null;
+      const heading = target?.closest(".foldable");
+      if (!heading || !main.contains(heading)) return;
+      if (target.closest("a,button,code,pre,input,textarea,select")) return;
+      if (window.getSelection()?.toString()) return;
+      const entry = groups.find((candidate) => candidate.heading === heading);
+      if (entry) toggleGroup(entry);
+    });
+    return groups;
+  }
+
+  return { init, headingLevel, planGroups, toggleCurrent, expandAll, collapseAll };
+})();
+
 const TaskListModule = (() => {
   function initMarkdownTasks() {
     document.querySelectorAll('main li input[type="checkbox"]').forEach((checkbox) => {
@@ -1248,6 +1555,15 @@ const ReaderExtrasModule = (() => {
     const settingsPanel = settings?.panel || document.querySelector(".settings-popover");
     let lastScrollTop = 0;
     let scheduled = false;
+    // Only a keyboard-visible focus pins a button on screen. Mouse/touch
+    // activation parks DOM focus on the toggle without ever matching
+    // :focus-visible — that stale focus must not pin it, nor should hiding
+    // strand focus on an invisible control.
+    function focusPinned(element) {
+      return (
+        Boolean(element) && document.activeElement === element && element.matches(":focus-visible")
+      );
+    }
     const update = () => {
       scheduled = false;
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -1262,18 +1578,15 @@ const ReaderExtrasModule = (() => {
       }
       const hide = scrollTop > lastScrollTop && scrollTop > 150;
       const compactLayout = isCompactLayout();
-      settingsToggle?.classList.toggle(
-        "hidden",
-        compactLayout &&
-          hide &&
-          document.activeElement !== settingsToggle &&
-          !settingsPanel?.classList.contains("active"),
-      );
-      const tocToggle = document.querySelector(".toc-toggle");
-      const tocOpen = compactLayout && document.documentElement.classList.contains("toc-open");
-      tocToggle?.classList.toggle(
-        "hidden",
-        compactLayout && hide && document.activeElement !== tocToggle && !tocOpen,
+      const updateToggle = (toggle, blocked) => {
+        const hideIt = compactLayout && hide && !focusPinned(toggle) && !blocked;
+        if (hideIt && document.activeElement === toggle) toggle.blur();
+        toggle?.classList.toggle("hidden", hideIt);
+      };
+      updateToggle(settingsToggle, settingsPanel?.classList.contains("active"));
+      updateToggle(
+        document.querySelector(".toc-toggle"),
+        document.documentElement.classList.contains("toc-open"),
       );
       lastScrollTop = scrollTop;
     };
@@ -1315,12 +1628,16 @@ const ReaderExtrasModule = (() => {
     bar.className = "reading-progress";
     document.body.append(bar);
     let scheduled = false;
+    let maxScroll = 1;
+    const measure = () => {
+      maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    };
     const update = () => {
       scheduled = false;
-      const height = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = height > 0 ? Math.max(0, Math.min(1, window.scrollY / height)) : 0;
+      const progress = Math.max(0, Math.min(1, window.scrollY / maxScroll));
       bar.style.transform = `scaleX(${progress})`;
     };
+    measure();
     window.addEventListener(
       "scroll",
       () => {
@@ -1330,8 +1647,19 @@ const ReaderExtrasModule = (() => {
       },
       { passive: true },
     );
-    window.addEventListener("resize", debounce(update, 100), { passive: true });
-    if (window.ResizeObserver) new ResizeObserver(update).observe(document.body);
+    window.addEventListener(
+      "resize",
+      debounce(() => {
+        measure();
+        update();
+      }, 100),
+      { passive: true },
+    );
+    if (window.ResizeObserver)
+      new ResizeObserver(() => {
+        measure();
+        update();
+      }).observe(document.body);
     update();
 
     const main = document.querySelector("main");
@@ -1582,7 +1910,63 @@ const ReaderExtrasModule = (() => {
     });
   }
 
+  // Keep in sync with handleReaderShortcuts + handleFoldShortcut.
+  const SHORTCUT_ROWS = [
+    ["Toggle section fold", ["E"]],
+    ["Expand all sections", ["Shift", "E"]],
+    ["Collapse all sections", ["Shift", "C"]],
+    ["Cycle theme", ["T"]],
+    ["Table of contents", ["M"]],
+    ["Next / previous heading", ["J", "K"]],
+    ["This panel", ["?"]],
+    ["Close dialogs", ["Esc"]],
+  ];
+
+  let shortcutsBackdrop = null;
+
+  function closeShortcuts() {
+    if (!shortcutsBackdrop) return;
+    const backdrop = shortcutsBackdrop;
+    shortcutsBackdrop = null;
+    backdrop.classList.remove("visible");
+    window.setTimeout(() => backdrop.remove(), 350);
+  }
+
+  function openShortcuts() {
+    if (isCompactLayout() || shortcutsBackdrop) return;
+    const backdrop = document.createElement("div");
+    backdrop.className = "shortcuts-backdrop";
+    const rows = SHORTCUT_ROWS.map(
+      ([label, keys]) =>
+        `<li><span>${label}</span><span class="shortcuts-keys">${keys.map((key) => `<kbd>${key}</kbd>`).join("")}</span></li>`,
+    ).join("");
+    backdrop.innerHTML =
+      `<div class="shortcuts-panel" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">` +
+      `<div class="shortcuts-header"><h3 id="shortcuts-title">Keyboard shortcuts</h3>` +
+      `<button type="button" class="close-settings" aria-label="Close shortcuts">${ICONS.x}</button></div>` +
+      `<ul class="shortcuts-list">${rows}</ul></div>`;
+    backdrop.querySelector(".close-settings").addEventListener("click", (event) => {
+      event.stopPropagation();
+      closeShortcuts();
+    });
+    backdrop.addEventListener("click", (event) => {
+      if (event.target === backdrop) closeShortcuts();
+    });
+    document.body.append(backdrop);
+    shortcutsBackdrop = backdrop;
+    requestFrame(() => {
+      backdrop.classList.add("visible");
+      backdrop.querySelector(".close-settings")?.focus();
+    });
+  }
+
+  function toggleShortcuts() {
+    if (shortcutsBackdrop) closeShortcuts();
+    else openShortcuts();
+  }
+
   function handleEscapeKey() {
+    closeShortcuts();
     document
       .querySelectorAll(".table-scroll-container.maximized,.mermaid-container.maximized")
       .forEach((container) => {
@@ -1592,8 +1976,8 @@ const ReaderExtrasModule = (() => {
   }
 
   function cycleTheme() {
-    const themes = ["lumina", "parchment", "obsidian", "midnight-fjord"];
-    const current = document.documentElement.dataset.theme || "lumina";
+    const themes = ["porcelain", "lumina", "parchment", "obsidian", "midnight-fjord"];
+    const current = document.documentElement.dataset.theme || "porcelain";
     const index = themes.indexOf(current);
     const next = themes[(index + 1) % themes.length];
     const panel = document.getElementById("appearance-panel");
@@ -1623,6 +2007,23 @@ const ReaderExtrasModule = (() => {
     );
   }
 
+  function handleFoldShortcut(event) {
+    if (isCompactLayout()) return false;
+    const key = event.key.toLowerCase();
+    if (key === "e") {
+      event.preventDefault();
+      if (event.shiftKey) FoldModule.expandAll();
+      else FoldModule.toggleCurrent();
+      return true;
+    }
+    if (key === "c" && event.shiftKey) {
+      event.preventDefault();
+      FoldModule.collapseAll();
+      return true;
+    }
+    return false;
+  }
+
   function handleReaderShortcuts(event) {
     if (event.key === "Escape") {
       handleEscapeKey();
@@ -1632,6 +2033,7 @@ const ReaderExtrasModule = (() => {
     if (isInputActive(event.target)) return;
     if (document.querySelector(".modal-backdrop.visible, .lightbox-backdrop.active")) return;
 
+    if (handleFoldShortcut(event)) return;
     switch (event.key.toLowerCase()) {
       case "t":
         event.preventDefault();
@@ -1649,6 +2051,11 @@ const ReaderExtrasModule = (() => {
       case "k":
         event.preventDefault();
         jumpToHeading(-1);
+        break;
+      case "?":
+        if (isCompactLayout()) break;
+        event.preventDefault();
+        toggleShortcuts();
         break;
     }
   }
@@ -1751,6 +2158,12 @@ async function main() {
       StorageManager.init();
     } catch (error) {
       reportModuleError("StorageManager", error);
+    }
+    try {
+      // Fold first: it wraps raw Pandoc blocks so later modules keep working inside groups.
+      FoldModule.init();
+    } catch (error) {
+      reportModuleError("FoldModule", error);
     }
     try {
       void SettingsModule.loadFonts();

@@ -3,8 +3,8 @@
    ========================================= */
 
 footer {
-  margin-top: 5rem;
-  margin-bottom: 3rem;
+  margin-top: 2.5rem;
+  margin-bottom: 2rem;
 }
 
 .footer-credits {
@@ -13,27 +13,30 @@ footer {
   font-size: 0.85em;
   color: var(--color-text-muted);
   letter-spacing: 0.02em;
-  margin: 1.5rem 0 0 0;
+  margin: 1rem 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3em;
 }
 
 .heart-beat {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
   line-height: 1;
-  vertical-align: -0.125em;
-  margin: 0 0.2em;
-  overflow: visible;
-  color: var(--color-danger);
+  color: #e05252;
 }
 
 .heart-icon {
-  display: block;
-  width: 0.8em;
-  height: 0.8em;
-  margin: 0.1em auto;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
   overflow: visible;
   fill: currentColor;
+  color: #e05252;
 }
 
 .footer-name {
@@ -48,7 +51,7 @@ footer {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.12);
+    transform: scale(1.18);
   }
 }
 

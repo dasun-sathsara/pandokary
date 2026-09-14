@@ -234,6 +234,7 @@ func writeBundledFontCSS(path string) ([]string, error) {
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium Italic", "PDY_BODY_FONT_MEDIUM_ITALIC", "500", "italic"},
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Semibold Italic", "PDY_BODY_FONT_SEMIBOLD_ITALIC", "600", "italic"},
 		{"Geist Mono", "Geist Mono:style=Regular", "PDY_MONO_FONT_REGULAR", "400", "normal"},
+		{"Geist Mono", "Geist Mono:style=Medium", "PDY_MONO_FONT_MEDIUM", "500", "normal"},
 	}
 	var css strings.Builder
 	var warnings []string

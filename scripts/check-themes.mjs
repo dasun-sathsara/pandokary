@@ -11,7 +11,7 @@ const declarations = (css) =>
 const defaults = declarations(read("base.css"));
 let checks = 0;
 const ids = manifest.themes.map((theme) => theme.id).sort();
-assert.deepEqual(ids, ["lumina", "midnight-fjord", "obsidian", "parchment"]);
+assert.deepEqual(ids, ["lumina", "midnight-fjord", "obsidian", "parchment", "porcelain"]);
 for (const [folder, extension] of [
   ["css", ".css"],
   ["mermaid", ".json"],

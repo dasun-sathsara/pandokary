@@ -64,6 +64,7 @@ main tbody tr:hover {
   display: flex;
   flex-direction: column;
   background-color: var(--color-surface);
+  contain: layout paint;
 }
 
 .table-wrapper {
@@ -123,7 +124,14 @@ main tbody tr:hover {
   background: var(--scrollbar-thumb-hover);
 }
 
-* {
+html,
+body,
+pre,
+.table-wrapper,
+.toc-sidebar,
+.toc-sidebar-body,
+.code-scroll-area,
+.settings-popover {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
 }
@@ -134,7 +142,7 @@ main tbody tr:hover {
   bottom: 0;
   width: 15px;
   pointer-events: none;
-  transition: opacity var(--dur-panel) var(--ease-out);
+  transition: opacity var(--dur-micro) var(--ease-out);
   opacity: 0;
   z-index: 5;
 }

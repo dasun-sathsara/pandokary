@@ -1,82 +1,68 @@
 [data-theme="lumina"] {
-  /* ─────────────────────────────────────────
-	   1. CORE CANVAS & SURFACES
-	───────────────────────────────────────────── */
-  --color-bg: #f8fafc; /* crisp cool slate-white canvas (L=98.4%) */
-  --color-surface: #ffffff; /* elevated pure white card surface (L=100%) */
-  --color-surface-alt: #f1f5f9; /* distinct structural layout surface (L=96.8%) */
-  --color-border: rgba(15, 23, 42, 0.08); /* fine slate hairline */
+  /* Violet ink and pale mineral neutrals.
+     OKLCH hue 290; neutral chroma 0.006, accent chroma at most 0.155.
+     sRGB values below are converted from the annotated OKLCH anchors.
+     Chroma is reduced at fixed L/H to fit sRGB.
+     Roles: https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale
+     Color space: https://www.w3.org/TR/css-color-4/#ok-lab
+     Contrast: https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html */
 
-  /* ─────────────────────────────────────────
-	   2. TEXT HIERARCHY
-     Body is the reference. Headings and strong use body ink —
-     hierarchy comes from size/weight/spacing, not blacker color.
-	───────────────────────────────────────────── */
-  --color-text: #0f172a; /* deep slate ink (L=20.8%, APCA Lc 99.6, no glare) */
-  --color-text-muted: #475569; /* Slate-600 meta, line numbers, captions (WCAG 7.24:1) */
-  --color-heading: #0f172a; /* same as body — size carries hierarchy */
-  --color-h1: #0f172a;
-  --color-h2: #0f172a;
-  --color-h3: #0f172a;
-  --color-h4: #0f172a;
-  --color-h5: #0f172a;
-  --color-strong: #0f172a; /* body ink — weight carries emphasis, not black */
+  --color-bg: #f9f8fd; /* OKLCH 0.982 0.006 290 */
+  --color-surface: #f4f3f8; /* OKLCH 0.967 0.006 290 */
+  --color-surface-alt: #ececf1; /* OKLCH 0.945 0.0072 290 */
+  --color-border: #bfbec6; /* OKLCH 0.805 0.0108 290 */
+
+  --color-text: #2e2d31; /* OKLCH 0.3 0.006 290 */
+  --color-text-muted: #56565b; /* OKLCH 0.455 0.0084 290 */
+  --color-heading: #202026; /* OKLCH 0.245 0.012 290 */
+  --color-h1: #2e264f; /* OKLCH 0.3 0.0713 290 */
+  --color-h2: #3c2c6f; /* OKLCH 0.35 0.1116 290 */
+  --color-h3: #463581; /* OKLCH 0.39 0.124 290 */
+  --color-h4: #4d4182; /* OKLCH 0.42 0.1054 290 */
+  --color-h5: #524a7c; /* OKLCH 0.44 0.0806 290 */
+  --color-strong: #1e1d22; /* OKLCH 0.235 0.009 290 */
   --strong-font-weight: 600;
 
-  /* ─────────────────────────────────────────
-	   3. BRAND & ACCENT
-	───────────────────────────────────────────── */
-  --color-accent: #0a7840; /* botanical emerald (L=48.5%, C=0.136, h=153.5°) */
-  --color-accent-hover: #065f32; /* deep spruce shade (L=40.5%, C=0.125) */
-  --color-accent-subtle: #edf7f1; /* soft sage wash (L=96.8%, C=0.016, h=153.5°) */
+  --color-accent: #5940a5; /* OKLCH 0.455 0.155 290 */
+  --color-accent-hover: #443180; /* OKLCH 0.38 0.1271 290 */
+  --color-accent-subtle: #e8e6fe; /* OKLCH 0.934 0.03255 290 */
 
-  /* ─────────────────────────────────────────
-	   4. CODEBLOCKS & INLINE CODE
-	───────────────────────────────────────────── */
-  --color-code-bg: #f0f4f8; /* calibrated cool inset well (L=96.3%) */
-  --color-code-text: #0f172a; /* deep slate monospace text */
-  --color-code-border: rgba(15, 23, 42, 0.08);
-  --color-code-chrome-bg: #e4eaf1; /* structured chrome bar (L=93.2%) */
-  --color-code-chrome-text: #475569; /* Slate-600 chrome text (WCAG 6.26:1) */
-  --color-inline-code-bg: rgba(15, 23, 42, 0.055);
-  --color-inline-code-text: #0f172a;
+  --color-code-bg: #f0f0f7; /* OKLCH 0.957 0.009 290 */
+  --color-code-text: #313136; /* OKLCH 0.315 0.009 290 */
+  --color-code-border: #bfbec7; /* OKLCH 0.805 0.012 290 */
+  --color-code-chrome-bg: #ebeaf2; /* OKLCH 0.941 0.0108 290 */
+  --color-code-chrome-text: #56565b; /* OKLCH 0.455 0.0084 290 */
+  --color-inline-code-bg: #e2e0f6; /* OKLCH 0.916 0.02945 290 */
+  --color-inline-code-text: #3d2b77; /* OKLCH 0.355 0.124 290 */
 
-  /* ─────────────────────────────────────────
-	   5. SYNTAX HIGHLIGHTING TOKENS
-	   Calibrated in OKLCH: uniform lightness L≈48–50%,
-	   chroma C≈0.10–0.16, WCAG ≥ 5.1:1 on code well.
-	───────────────────────────────────────────── */
-  --code-keyword: #275ec6; /* sapphire blue (h=265°) */
-  --code-string: #09773b; /* forest emerald (h=152°) */
-  --code-function: #6549aa; /* royal amethyst (h=291°) */
-  --code-number: #a84414; /* terracotta amber (h=42°) */
-  --code-comment: #546377; /* slate-500 comment (h=255°) */
-  --code-operator: #00708a; /* deep cerulean teal (h=218°) */
-  --code-variable: #374353; /* deep charcoal variable (h=255°) */
+  --code-keyword: #51379b; /* OKLCH 0.425 0.155 290 */
+  --code-string: #554d7f; /* OKLCH 0.45 0.0806 290 */
+  --code-function: #3d2c74; /* OKLCH 0.355 0.1178 290 */
+  --code-number: #5d4d9c; /* OKLCH 0.475 0.124 290 */
+  --code-comment: #616169; /* OKLCH 0.495 0.0124 290 */
+  --code-operator: #484758; /* OKLCH 0.405 0.02945 290 */
+  --code-variable: #403d57; /* OKLCH 0.375 0.04495 290 */
 
-  /* ─────────────────────────────────────────
-	   6. TABLES & HR
-	───────────────────────────────────────────── */
-  --color-table-row-alt: rgba(15, 23, 42, 0.02);
-  --color-table-row-hover: rgba(10, 120, 64, 0.05);
-  --bg-hr-gradient: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.12), transparent);
+  --color-table-row-alt: #f4f3f9; /* OKLCH 0.967 0.0078 290 */
+  --color-table-row-hover: #e3e1f7; /* OKLCH 0.919 0.02945 290 */
+  /* OKLCH 0.76 0.012 290 */
+  --bg-hr-gradient: linear-gradient(90deg, transparent, #b1b0b8, transparent);
 
-  /* ─────────────────────────────────────────
-	   7. SHADOWS & FINISHES
-	───────────────────────────────────────────── */
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.03), 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-elevated: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 10px 15px -3px rgba(15, 23, 42, 0.08);
-  --color-on-accent: #ffffff;
+  /* OKLCH 0.12 0.007 290 / 0.07; 0.12 0.007 290 / 0.1 */
+  --shadow-card: 0 1px 3px rgba(6, 5, 8, 0.07), 0 1px 2px rgba(6, 5, 8, 0.1);
+  /* OKLCH 0.12 0.007 290 / 0.1; 0.12 0.007 290 / 0.1 */
+  --shadow-elevated: 0 4px 6px -1px rgba(6, 5, 8, 0.1), 0 10px 15px -3px rgba(6, 5, 8, 0.1);
+  --color-on-accent: #fcfbfe; /* OKLCH 0.99 0.0036 290 */
   color-scheme: light;
-  --selection-background: #b7c7be;
-  --selection-color: #0f172a;
-  --focused-line-background: #edf7f1;
-  --focused-line-border: #0a7840;
-  --mermaid-note-fill: #edf7f1;
-  --mermaid-note-stroke: #0a7840;
-  --mermaid-note-text: #0f172a;
-  --color-success-subtle: #ebf7f1;
-  --color-success: #0f763e;
-  --color-danger-subtle: #fdf2f2;
-  --color-danger: #b91c1c;
+  --selection-background: #cdc6fc; /* OKLCH 0.851 0.0744 290 */
+  --selection-color: #1e1d22; /* OKLCH 0.235 0.009 290 */
+  --focused-line-background: #e2dff8; /* OKLCH 0.914 0.0341 290 */
+  --focused-line-border: #5940a5; /* OKLCH 0.455 0.155 290 */
+  --mermaid-note-fill: #e5e3fe; /* OKLCH 0.925 0.0372 290 */
+  --mermaid-note-stroke: #5940a5; /* OKLCH 0.455 0.155 290 */
+  --mermaid-note-text: #2e2d31; /* OKLCH 0.3 0.006 290 */
+  --color-success-subtle: #daecdf; /* OKLCH 0.926 0.025 155 */
+  --color-success: #005830; /* OKLCH 0.405 0.10002 155 */
+  --color-danger-subtle: #f7e0dd; /* OKLCH 0.924 0.026 25 */
+  --color-danger: #842928; /* OKLCH 0.42 0.125 25 */
 }
