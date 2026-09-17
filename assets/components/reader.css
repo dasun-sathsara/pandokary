@@ -181,7 +181,7 @@
   letter-spacing: 0.05em;
   color: var(--color-text-muted);
   margin-bottom: 1rem;
-  font-weight: 600;
+  font-weight: 570;
 }
 
 .toc-list {
@@ -194,7 +194,7 @@
 }
 
 .toc-item-h2 {
-  font-weight: 600;
+  font-weight: 570;
   font-size: 0.85em;
 }
 
@@ -228,7 +228,7 @@
   color: var(--color-accent);
   background-color: var(--color-accent-subtle);
   border-left-color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 570;
 }
 
 /* Bulk fold controls live under the TOC title; hidden when folding is off. */
@@ -437,7 +437,7 @@ kbd {
   font-size: 0.85em;
   cursor: pointer;
   border-radius: 20px;
-  font-weight: 600;
+  font-weight: 570;
   box-shadow: var(--shadow-sm);
   transition:
     color var(--dur-micro) var(--ease-out),

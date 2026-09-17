@@ -57,6 +57,16 @@ function CodeBlock(block)
   return block
 end
 
+function Table(tbl)
+  local new_colspecs = {}
+  for _, colspec in ipairs(tbl.colspecs) do
+    table.insert(new_colspecs, { colspec[1], pandoc.ColWidthDefault })
+  end
+  tbl.colspecs = new_colspecs
+  return tbl
+end
+
+
 local stylesheet_files = {
   "base.css",
   "components/code.css",

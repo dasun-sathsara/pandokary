@@ -124,10 +124,8 @@ func TestWriteBundledFontCSS(t *testing.T) {
 
 	t.Setenv("PDY_BODY_FONT_REGULAR", fontFile)
 	t.Setenv("PDY_BODY_FONT_MEDIUM", fontFile)
-	t.Setenv("PDY_BODY_FONT_SEMIBOLD", fontFile)
 	t.Setenv("PDY_BODY_FONT_ITALIC", fontFile)
 	t.Setenv("PDY_BODY_FONT_MEDIUM_ITALIC", fontFile)
-	t.Setenv("PDY_BODY_FONT_SEMIBOLD_ITALIC", fontFile)
 	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
 	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
 
@@ -154,6 +152,38 @@ func TestWriteBundledFontCSS(t *testing.T) {
 	}
 	if !strings.Contains(cssStr, "@font-face") {
 		t.Errorf("font-assets.css does not contain @font-face, got: %s", cssStr)
+	}
+}
+
+func TestWriteBundledFontCSSVariableBodyFont(t *testing.T) {
+	tempDir := t.TempDir()
+	fontFile := filepath.Join(tempDir, "mock-vf.ttf")
+	if err := os.WriteFile(fontFile, []byte("mock variable font content"), 0o644); err != nil {
+		t.Fatalf("failed to create mock font: %v", err)
+	}
+
+	t.Setenv("PDY_BODY_FONT_VF", fontFile)
+	t.Setenv("PDY_BODY_FONT_ITALIC", fontFile)
+	t.Setenv("PDY_BODY_FONT_MEDIUM_ITALIC", fontFile)
+	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
+	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
+
+	cssPath := filepath.Join(tempDir, "font-assets.css")
+	if _, err := writeBundledFontCSS(cssPath); err != nil {
+		t.Fatalf("writeBundledFontCSS failed: %v", err)
+	}
+
+	content, err := os.ReadFile(cssPath)
+	if err != nil {
+		t.Fatalf("failed to read font-assets.css: %v", err)
+	}
+
+	cssStr := string(content)
+	if !strings.Contains(cssStr, "font-weight:100 900") {
+		t.Errorf("font-assets.css does not declare the variable weight range, got: %s", cssStr)
+	}
+	if strings.Count(cssStr, "@font-face") != 5 {
+		t.Errorf("expected 5 @font-face rules (VF upright + 2 italics + 2 mono), got: %s", cssStr)
 	}
 }
 

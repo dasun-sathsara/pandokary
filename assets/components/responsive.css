@@ -41,58 +41,9 @@
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
   }
 
-  /* Compact reading column: justified prose with hyphenation on mobile,
-     matching desktop editorial aesthetic. */
-  p,
-  blockquote p {
-    text-align: justify;
-    text-justify: inter-word;
-  }
-
-  /* Natural spacing for paragraphs with inline formulas (prevent stretching) */
-  p:has(mjx-container),
-  blockquote p:has(mjx-container) {
-    text-align: left;
-  }
-
-  li,
-  dd {
-    text-align: left;
-  }
-
-  p,
-  blockquote p,
-  li,
-  dd,
-  aside p,
-  .aside p {
-    hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphenate-limit-chars: 6 3 2;
-  }
-
-  /* Never hyphenate code, links, tables, or math: dictionaries mangle
-     identifiers, URLs, and versions. (hyphens inherits, so opt out.) */
-  code,
-  pre,
-  kbd,
-  samp,
-  a[href],
-  table,
-  .table-wrapper,
-  mjx-container {
-    hyphens: none;
-    -webkit-hyphens: none;
-  }
-
-  body:lang(si) p,
-  body:lang(si) li,
-  body:lang(si) dd,
-  body:lang(si) blockquote p,
-  body:lang(si) aside p {
-    hyphens: manual;
-  }
-
+  /* Justification, hyphenation, and heading hyphen suppression now live in
+     base.css (section 4c) so desktop gets them too; only the narrow-screen
+     break-word guard stays viewport-specific. */
   h1,
   h2,
   h3,
@@ -101,16 +52,6 @@
   h6,
   li {
     overflow-wrap: break-word;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    hyphens: none;
-    -webkit-hyphens: none;
   }
 
   /* Cheaper indents: reclaims ~6px per nesting level for 360–412px screens. */
@@ -284,8 +225,8 @@
   .table-wrapper th,
   .table-wrapper td {
     padding: 0.45rem 0.6rem;
-    min-width: 150px;
-    max-width: 360px;
+    min-width: auto;
+    max-width: none;
   }
 
   hr {

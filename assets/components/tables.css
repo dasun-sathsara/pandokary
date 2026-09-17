@@ -161,13 +161,18 @@ pre,
 
 .table-wrapper table {
   display: table;
-  width: max-content;
+  width: 100%;
   min-width: 100%;
-  max-width: none;
   border-collapse: collapse;
   border: none;
   margin: 0;
   border-spacing: 0;
+  table-layout: auto;
+}
+
+.table-wrapper colgroup,
+.table-wrapper col {
+  width: auto !important;
 }
 
 .table-wrapper th,
@@ -177,8 +182,7 @@ pre,
   border-right: 1px solid var(--color-border);
   word-break: normal;
   overflow-wrap: break-word;
-  min-width: 180px;
-  max-width: 480px;
+  vertical-align: top;
 }
 
 .table-wrapper th:last-child,
@@ -193,8 +197,15 @@ pre,
 .table-wrapper th {
   font-family: var(--font-heading);
   color: var(--color-heading);
-  font-weight: 600;
+  font-weight: 570;
   background-color: var(--color-surface-alt);
+}
+
+.col-compact,
+.table-wrapper th.col-compact,
+.table-wrapper td.col-compact {
+  width: 1%;
+  white-space: nowrap;
 }
 
 .col-numeric,

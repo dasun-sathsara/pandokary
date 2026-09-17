@@ -11,7 +11,7 @@
   --color-surface-alt: #f7f7f7; /* OKLCH 0.975 0 255 */
   --color-border: #c8cbce; /* OKLCH 0.84 0.005 255 */
 
-  --color-text: #2b2e32; /* OKLCH 0.3 0.008 255 */
+  --color-text: #24272a; /* OKLCH 0.27 0.008 255 */
   --color-text-muted: #555a60; /* OKLCH 0.465 0.012 255 */
   --color-heading: #1c2128; /* OKLCH 0.245 0.015 255 */
   --color-h1: #19212b; /* OKLCH 0.245 0.022 255 */
@@ -19,8 +19,8 @@
   --color-h3: #224167; /* OKLCH 0.37 0.075 255 */
   --color-h4: #304969; /* OKLCH 0.4 0.063 255 */
   --color-h5: #3c4e66; /* OKLCH 0.42 0.045 255 */
-  --color-strong: #181c21; /* OKLCH 0.225 0.012 255 */
-  --strong-font-weight: 600;
+  --color-strong: #0b0f14; /* OKLCH 0.165 0.012 255 */
+  --strong-font-weight: 570;
 
   --color-accent: #1c5ca6; /* OKLCH 0.475 0.135 255 */
   --color-accent-hover: #15457d; /* OKLCH 0.39 0.108 255 */
@@ -65,7 +65,7 @@
   --focused-line-border: #1c5ca6; /* OKLCH 0.475 0.135 255 */
   --mermaid-note-fill: #eef4fd; /* OKLCH 0.966 0.014 255 */
   --mermaid-note-stroke: #1c5ca6; /* OKLCH 0.475 0.135 255 */
-  --mermaid-note-text: #2b2e32; /* OKLCH 0.3 0.008 255 */
+  --mermaid-note-text: #24272a; /* OKLCH 0.27 0.008 255 */
   --color-success-subtle: #edf6f0; /* OKLCH 0.965 0.013 155 */
   --color-success: #0a5b33; /* OKLCH 0.415 0.098 155 */
   --color-danger-subtle: #fcefee; /* OKLCH 0.963 0.014 25 */

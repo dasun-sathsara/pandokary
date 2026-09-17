@@ -12,7 +12,7 @@
   --color-surface-alt: #e5eade; /* OKLCH 0.931 0.0168 125 */
   --color-border: #bbc2b1; /* OKLCH 0.805 0.0252 125 */
 
-  --color-text: #2c2f28; /* OKLCH 0.3 0.014 125 */
+  --color-text: #252820; /* OKLCH 0.27 0.014 125 */
   --color-text-muted: #54594d; /* OKLCH 0.455 0.0196 125 */
   --color-heading: #1d2314; /* OKLCH 0.245 0.028 125 */
   --color-h1: #283217; /* OKLCH 0.3 0.046 125 */
@@ -20,8 +20,8 @@
   --color-h3: #3b4c17; /* OKLCH 0.39 0.08 125 */
   --color-h4: #455428; /* OKLCH 0.42 0.068 125 */
   --color-h5: #4c5838; /* OKLCH 0.44 0.052 125 */
-  --color-strong: #1c2015; /* OKLCH 0.235 0.021 125 */
-  --strong-font-weight: 600;
+  --color-strong: #0e1208; /* OKLCH 0.175 0.021 125 */
+  --strong-font-weight: 570;
 
   --color-accent: #4a6018; /* OKLCH 0.455 0.1 125 */
   --color-accent-hover: #384a12; /* OKLCH 0.38 0.082 125 */
@@ -67,7 +67,7 @@
   --focused-line-border: #4a6018; /* OKLCH 0.455 0.1 125 */
   --mermaid-note-fill: #e2e9d8; /* OKLCH 0.925 0.024 125 */
   --mermaid-note-stroke: #4a6018; /* OKLCH 0.455 0.1 125 */
-  --mermaid-note-text: #2c2f28; /* OKLCH 0.3 0.014 125 */
+  --mermaid-note-text: #252820; /* OKLCH 0.27 0.014 125 */
   --color-success-subtle: #daecdf; /* OKLCH 0.926 0.025 155 */
   --color-success: #005830; /* OKLCH 0.405 0.10002 155 */
   --color-danger-subtle: #f7e0dd; /* OKLCH 0.924 0.026 25 */

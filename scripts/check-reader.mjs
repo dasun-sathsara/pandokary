@@ -60,10 +60,10 @@ const context = vm.createContext({
   },
 });
 vm.runInContext(
-  `${read("app.js")}\nglobalThis.modules = { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule };`,
+  `${read("app.js")}\nglobalThis.modules = { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule, TableModule };`,
   context,
 );
-const { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule } = context.modules;
+const { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule, TableModule } = context.modules;
 assert.deepEqual([...CodeBlockModule.parseLineRange("1-999999999", 3)], [1, 2, 3]);
 assert.deepEqual([...CodeBlockModule.parseLineRange("{3-1,5}", 5)], [1, 2, 3, 5]);
 assert.equal(TOCModule.ensureHeadingID({ textContent: "!!!" }), "section-3");
@@ -119,6 +119,87 @@ assert.deepEqual(
     [3, 4],
   ],
 );
+
+const mockTableRows = [
+  {
+    children: [
+      { textContent: "IS 4990", querySelector: () => null },
+      { textContent: "Comprehensive Group Project", querySelector: () => null },
+      { textContent: "10.0", querySelector: () => null },
+      { textContent: "100% CA", querySelector: () => null },
+      {
+        textContent: "Year-long flagship capstone project with enterprise software architecture",
+        querySelector: () => null,
+      },
+    ],
+  },
+  {
+    children: [
+      { textContent: "IS 4650", querySelector: () => null },
+      { textContent: "Software Management", querySelector: () => null },
+      { textContent: "2.5", querySelector: () => null },
+      { textContent: "40% CA / 60% WE", querySelector: () => null },
+      { textContent: "Agile SDLC governance and resource planning", querySelector: () => null },
+    ],
+  },
+];
+
+const mockHeaders = [
+  { textContent: "Module Code" },
+  { textContent: "Module Name" },
+  { textContent: "Credits" },
+  { textContent: "Evaluation" },
+  { textContent: "Academic Focus & Strategic Value for Career" },
+];
+
+const stats0 = TableModule.getColumnStats(mockTableRows, 0);
+assert.equal(
+  TableModule.isColumnCompact(mockHeaders[0], stats0),
+  true,
+  "Module Code column must be compact",
+);
+
+const stats1 = TableModule.getColumnStats(mockTableRows, 1);
+assert.equal(
+  TableModule.isColumnCompact(mockHeaders[1], stats1),
+  false,
+  "Module Name column must not be compact",
+);
+
+const stats2 = TableModule.getColumnStats(mockTableRows, 2);
+assert.equal(
+  TableModule.isColumnCompact(mockHeaders[2], stats2),
+  true,
+  "Credits column must be compact",
+);
+assert.equal(stats2.numeric / stats2.total >= 0.75, true, "Credits column must be numeric");
+
+const stats3 = TableModule.getColumnStats(mockTableRows, 3);
+assert.equal(
+  TableModule.isColumnCompact(mockHeaders[3], stats3),
+  true,
+  "Evaluation column must be compact",
+);
+
+const stats4 = TableModule.getColumnStats(mockTableRows, 4);
+assert.equal(
+  TableModule.isColumnCompact(mockHeaders[4], stats4),
+  false,
+  "Academic Focus column must not be compact",
+);
+
+const multilineRow = [
+  {
+    children: [{ textContent: "• IS 4990 • IS 3920", querySelector: () => ({ tagName: "BR" }) }],
+  },
+];
+const multilineStats = TableModule.getColumnStats(multilineRow, 0);
+assert.equal(
+  TableModule.isColumnCompact({ textContent: "Modules" }, multilineStats),
+  false,
+  "Multiline cells must not be compact",
+);
+
 console.log(
-  "Reader regressions passed: theme migration, restricted storage, bounded ranges, heading IDs, section links, and fold planning.",
+  "Reader regressions passed: theme migration, restricted storage, bounded ranges, heading IDs, section links, fold planning, and smart table column sizing.",
 );
