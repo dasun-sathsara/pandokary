@@ -78,13 +78,13 @@ pre:has(.code-line):not(:has(.code-gutter)) {
 
 .code-gutter-line.focused-line {
   color: var(--color-accent) !important;
-  font-weight: 600;
+  font-weight: 500;
   opacity: 1;
 }
 
 .code-gutter-line.highlighted-line {
   color: var(--color-accent) !important;
-  font-weight: 600;
+  font-weight: 500;
   opacity: 1;
 }
 
@@ -274,5 +274,5 @@ pre:not(:has(.code-gutter)) .code-line.highlighted-line {
 }
 
 .hljs-strong {
-  font-weight: 600;
+  font-weight: 500;
 }

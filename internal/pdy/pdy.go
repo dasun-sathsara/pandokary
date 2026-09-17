@@ -226,32 +226,85 @@ func copyDir(source, target string) error {
 type font struct{ family, spec, env, weight, style string }
 
 func writeBundledFontCSS(path string) ([]string, error) {
-	fonts := []font{
+	staticUprights := []font{
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Regular", "PDY_BODY_FONT_REGULAR", "400", "normal"},
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium", "PDY_BODY_FONT_MEDIUM", "500", "normal"},
-		{"Studio Feixen Sans", "Studio Feixen Sans:style=Semibold", "PDY_BODY_FONT_SEMIBOLD", "600", "normal"},
+	}
+	fonts := []font{
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Italic", "PDY_BODY_FONT_ITALIC", "400", "italic"},
 		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium Italic", "PDY_BODY_FONT_MEDIUM_ITALIC", "500", "italic"},
-		{"Studio Feixen Sans", "Studio Feixen Sans:style=Semibold Italic", "PDY_BODY_FONT_SEMIBOLD_ITALIC", "600", "italic"},
 		{"Geist Mono", "Geist Mono:style=Regular", "PDY_MONO_FONT_REGULAR", "400", "normal"},
 		{"Geist Mono", "Geist Mono:style=Medium", "PDY_MONO_FONT_MEDIUM", "500", "normal"},
 	}
 	var css strings.Builder
 	var warnings []string
+	// Upright body text prefers the variable font so intermediate weights
+	// (e.g. 570) interpolate instead of snapping to the nearest static.
+	// Machines without it fall back to the Regular/Medium statics, where
+	// 570 renders as 500.
+	if vfPath, err := resolveBodyVariableFont(); err == nil {
+		if embedErr := embedFont(&css, "Studio Feixen Sans", "normal", "100 900", vfPath); embedErr != nil {
+			warnings = append(warnings, fmt.Sprintf("variable body font %q could not be read: %v; using static fallback", vfPath, embedErr))
+			fonts = append(staticUprights, fonts...)
+		}
+	} else {
+		fonts = append(staticUprights, fonts...)
+	}
 	for _, item := range fonts {
 		fontPath, err := resolveFont(item.env, item.spec)
 		if err != nil {
 			warnings = append(warnings, fmt.Sprintf("font %q unavailable: %v; using CSS fallback", item.spec, err))
 			continue
 		}
-		data, err := os.ReadFile(fontPath)
-		if err != nil {
+		if err := embedFont(&css, item.family, item.style, item.weight, fontPath); err != nil {
 			warnings = append(warnings, fmt.Sprintf("font %q could not be read: %v; using CSS fallback", fontPath, err))
-			continue
 		}
-		fmt.Fprintf(&css, "@font-face{font-family:%q;font-style:%s;font-weight:%s;font-display:swap;src:url(\"data:%s;base64,%s\") format(\"%s\");}\n", item.family, item.style, item.weight, fontMIME(fontPath), base64.StdEncoding.EncodeToString(data), fontFormat(fontPath))
 	}
 	return warnings, os.WriteFile(path, []byte(css.String()), 0o644)
+}
+
+// embedFont appends an @font-face rule with the file at fontPath inlined.
+func embedFont(css *strings.Builder, family, style, weight, fontPath string) error {
+	data, err := os.ReadFile(fontPath)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(css, "@font-face{font-family:%q;font-style:%s;font-weight:%s;font-display:swap;src:url(\"data:%s;base64,%s\") format(\"%s\");}\n", family, style, weight, fontMIME(fontPath), base64.StdEncoding.EncodeToString(data), fontFormat(fontPath))
+	return nil
+}
+
+// resolveBodyVariableFont locates the Studio Feixen Sans variable font, if
+// installed. PDY_BODY_FONT_VF overrides; otherwise fontconfig is asked for a
+// variable-flagged file in the family.
+func resolveBodyVariableFont() (string, error) {
+	if override := strings.TrimSpace(os.Getenv("PDY_BODY_FONT_VF")); override != "" {
+		if info, err := os.Stat(override); err == nil && !info.IsDir() {
+			return override, nil
+		}
+		return "", fmt.Errorf("PDY_BODY_FONT_VF points to an invalid file: %s", override)
+	}
+	lister, err := exec.LookPath("fc-list")
+	if err != nil {
+		return "", errors.New("fc-list not installed")
+	}
+	out, err := exec.Command(lister, "Studio Feixen Sans", "file", "variable").CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("fc-list: %s", strings.TrimSpace(string(out)))
+	}
+	for _, line := range strings.Split(string(out), "\n") {
+		file, flag, ok := strings.Cut(line, ": :variable=")
+		if !ok {
+			continue
+		}
+		file = strings.TrimSpace(file)
+		if strings.TrimSpace(flag) != "True" || file == "" {
+			continue
+		}
+		if info, err := os.Stat(file); err == nil && !info.IsDir() {
+			return file, nil
+		}
+	}
+	return "", errors.New("no variable Studio Feixen Sans installed")
 }
 
 func resolveFont(env, spec string) (string, error) {

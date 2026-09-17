@@ -598,23 +598,49 @@ const TableModule = (() => {
     );
   }
 
-  function isColumnNumeric(rows, colIndex) {
-    let numericCount = 0;
-    let totalCount = 0;
+  function isCellShort(cell, maxLen = 22) {
+    if (!cell) return true;
+    if (cell.querySelector("br, p, ul, ol, blockquote, pre, table")) return false;
+    const text = cell.textContent.trim().replace(/\s+/g, " ");
+    return text.length <= maxLen;
+  }
+
+  function getColumnStats(rows, colIndex) {
+    let total = 0;
+    let totalLen = 0;
+    let numeric = 0;
+    let allShort = true;
+
     for (const row of rows) {
-      const text = row.children[colIndex]?.textContent.trim();
-      if (text) {
-        totalCount += 1;
-        if (isNumericText(text)) numericCount += 1;
-      }
+      const cell = row.children[colIndex];
+      const text = cell?.textContent.trim().replace(/\s+/g, " ");
+      if (!text) continue;
+      total += 1;
+      totalLen += text.length;
+      if (isNumericText(text)) numeric += 1;
+      if (allShort && !isCellShort(cell, 22)) allShort = false;
     }
-    return totalCount > 0 && numericCount / totalCount >= 0.75;
+
+    return { total, avgLen: total ? totalLen / total : 0, numeric, allShort };
+  }
+
+  function isColumnCompact(header, stats) {
+    if (stats.total === 0 || !stats.allShort) return false;
+    const headerText = header?.textContent.trim().replace(/\s+/g, " ") || "";
+    return headerText.length <= 22 && stats.avgLen <= 16;
   }
 
   function applyColumnNumeric(header, rows, colIndex) {
     header?.classList.add("col-numeric");
     for (const row of rows) {
       row.children[colIndex]?.classList.add("col-numeric");
+    }
+  }
+
+  function applyColumnCompact(header, rows, colIndex) {
+    header?.classList.add("col-compact");
+    for (const row of rows) {
+      row.children[colIndex]?.classList.add("col-compact");
     }
   }
 
@@ -626,8 +652,16 @@ const TableModule = (() => {
 
     for (let c = 0; c < colCount; c++) {
       const header = headerCells[c];
-      if (header?.getAttribute("align") || header?.style.textAlign) continue;
-      if (isColumnNumeric(rows, c)) applyColumnNumeric(header, rows, c);
+      const stats = getColumnStats(rows, c);
+      const isNumeric = stats.total > 0 && stats.numeric / stats.total >= 0.75;
+
+      if (isNumeric && !header?.getAttribute("align") && !header?.style.textAlign) {
+        applyColumnNumeric(header, rows, c);
+      }
+
+      if (isNumeric || isColumnCompact(header, stats)) {
+        applyColumnCompact(header, rows, c);
+      }
     }
   }
 
@@ -722,7 +756,14 @@ const TableModule = (() => {
     });
   }
 
-  return { init };
+  return {
+    init,
+    autoAlignColumns,
+    getColumnStats,
+    isCellShort,
+    isColumnCompact,
+    isNumericText,
+  };
 })();
 
 const SettingsModule = (() => {
