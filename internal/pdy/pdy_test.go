@@ -1,6 +1,8 @@
 package pdy
 
 import (
+	"bytes"
+	"encoding/base64"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -97,7 +99,7 @@ func TestReaderLoadsOnlyRequiredLibraries(t *testing.T) {
 				if strings.Contains(html, "const MIN_SCALE") != tc.diagram {
 					t.Error("diagram controller must be bundled only for diagrams")
 				}
-				for _, theme := range []string{"lumina", "porcelain", "parchment", "obsidian", "midnight-fjord"} {
+				for _, theme := range []string{"lumina", "porcelain", "parchment", "obsidian", "midnight-fjord", "evergreen"} {
 					if !strings.Contains(html, `[data-theme="`+theme+`"]`) {
 						t.Errorf("missing theme %s", theme)
 					}
@@ -115,90 +117,8 @@ func TestReaderLoadsOnlyRequiredLibraries(t *testing.T) {
 	}
 }
 
-func TestWriteBundledFontCSS(t *testing.T) {
-	tempDir := t.TempDir()
-	fontFile := filepath.Join(tempDir, "mock-font.ttf")
-	if err := os.WriteFile(fontFile, []byte("mock ttf content"), 0o644); err != nil {
-		t.Fatalf("failed to create mock font: %v", err)
-	}
-
-	t.Setenv("PDY_BODY_FONT_REGULAR", fontFile)
-	t.Setenv("PDY_BODY_FONT_MEDIUM", fontFile)
-	t.Setenv("PDY_BODY_FONT_ITALIC", fontFile)
-	t.Setenv("PDY_BODY_FONT_MEDIUM_ITALIC", fontFile)
-	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
-	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
-
-	cssPath := filepath.Join(tempDir, "font-assets.css")
-	warnings, err := writeBundledFontCSS(cssPath)
-	if err != nil {
-		t.Fatalf("writeBundledFontCSS failed: %v", err)
-	}
-	if len(warnings) != 0 {
-		t.Logf("warnings during writeBundledFontCSS: %v", warnings)
-	}
-
-	content, err := os.ReadFile(cssPath)
-	if err != nil {
-		t.Fatalf("failed to read font-assets.css: %v", err)
-	}
-
-	cssStr := string(content)
-	if !strings.Contains(cssStr, "Studio Feixen Sans") {
-		t.Errorf("font-assets.css does not contain Studio Feixen Sans, got: %s", cssStr)
-	}
-	if !strings.Contains(cssStr, "Geist Mono") {
-		t.Errorf("font-assets.css does not contain Geist Mono, got: %s", cssStr)
-	}
-	if !strings.Contains(cssStr, "@font-face") {
-		t.Errorf("font-assets.css does not contain @font-face, got: %s", cssStr)
-	}
-}
-
-func TestWriteBundledFontCSSVariableBodyFont(t *testing.T) {
-	tempDir := t.TempDir()
-	fontFile := filepath.Join(tempDir, "mock-vf.ttf")
-	if err := os.WriteFile(fontFile, []byte("mock variable font content"), 0o644); err != nil {
-		t.Fatalf("failed to create mock font: %v", err)
-	}
-
-	t.Setenv("PDY_BODY_FONT_VF", fontFile)
-	t.Setenv("PDY_BODY_FONT_ITALIC", fontFile)
-	t.Setenv("PDY_BODY_FONT_MEDIUM_ITALIC", fontFile)
-	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
-	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
-
-	cssPath := filepath.Join(tempDir, "font-assets.css")
-	if _, err := writeBundledFontCSS(cssPath); err != nil {
-		t.Fatalf("writeBundledFontCSS failed: %v", err)
-	}
-
-	content, err := os.ReadFile(cssPath)
-	if err != nil {
-		t.Fatalf("failed to read font-assets.css: %v", err)
-	}
-
-	cssStr := string(content)
-	if !strings.Contains(cssStr, "font-weight:100 900") {
-		t.Errorf("font-assets.css does not declare the variable weight range, got: %s", cssStr)
-	}
-	if strings.Count(cssStr, "@font-face") != 5 {
-		t.Errorf("expected 5 @font-face rules (VF upright + 2 italics + 2 mono), got: %s", cssStr)
-	}
-}
-
 func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 	tempDir := t.TempDir()
-
-	// Create mock font file and set env vars to ensure font-assets.css is populated
-	fontFile := filepath.Join(tempDir, "mock-font.ttf")
-	if err := os.WriteFile(fontFile, []byte("dummy font data"), 0o644); err != nil {
-		t.Fatalf("failed to write mock font: %v", err)
-	}
-	t.Setenv("PDY_BODY_FONT_REGULAR", fontFile)
-	t.Setenv("PDY_MONO_FONT_REGULAR", fontFile)
-	t.Setenv("PDY_MONO_FONT_MEDIUM", fontFile)
-
 	// Create a sample markdown file
 	mdFile := filepath.Join(tempDir, "sample.md")
 	if err := os.WriteFile(mdFile, []byte("# Test Document\n\nHello world"), 0o644); err != nil {
@@ -227,14 +147,92 @@ func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 			}
 			html := string(htmlBytes)
 
-			// Studio Feixen Sans and Geist Mono @font-face must be present in the inline style of both modes
-			if !strings.Contains(html, "Studio Feixen Sans") {
-				t.Errorf("Mode %s: output HTML missing 'Studio Feixen Sans'", mode)
+			for _, expected := range []string{
+				`font-family: "Studio Feixen Sans";`,
+				`font-family: "Geist Mono";`,
+				`font-family: "Noto Sans Sinhala";`,
+				`local("StudioFeixenSansVF")`,
+				"font-weight: 100 900;",
+				"--body-font-weight-desktop: 400;",
+				"--body-font-weight-mobile: 430;",
+				"--strong-font-weight: 550;",
+				"--heading-font-weight-desktop: 600;",
+				"--heading-font-weight-mobile: 630;",
+				"--mono-font-weight-desktop: 420;",
+				"--mono-font-weight-mobile: 450;",
+				"--mono-emphasis-font-weight-desktop: 520;",
+				"--mono-emphasis-font-weight-mobile: 550;",
+				`font-variation-settings: "ital" 1;`,
+				"size-adjust: 88%;",
+				"--letter-spacing-body: -0.005em;",
+				"--letter-spacing-heading: -0.015em;",
+				"--letter-spacing-mono: -0.01em;",
+			} {
+				if !strings.Contains(html, expected) {
+					t.Errorf("Mode %s: output HTML missing %q", mode, expected)
+				}
 			}
-			if !strings.Contains(html, "Geist Mono") {
-				t.Errorf("Mode %s: output HTML missing 'Geist Mono'", mode)
+			for _, obsolete := range []string{"TheFont-", "Android Trial", "Mobile Trial", "Feixen Mono Box", `url("fonts/`} {
+				if strings.Contains(html, obsolete) {
+					t.Errorf("Mode %s: output HTML still contains obsolete font path %q", mode, obsolete)
+				}
 			}
+			// All role declarations retain their CSS weight mappings, while each
+			// source font is encoded only once in the HTML's font loader.
+			fontFiles := []string{
+				"StudioFeixenSans-Variable.woff2",
+				"GeistMono-Variable.ttf",
+				"GeistMono-Variable-Italic.ttf",
+				"NotoSansSinhala-Variable.ttf",
+			}
+			if !strings.Contains(html, `id="pdy-inline-css"`) || !strings.Contains(html, "URL.createObjectURL") {
+				t.Errorf("Mode %s: missing inline stylesheet or font loader", mode)
+			}
+			for _, name := range fontFiles {
+				want, err := os.ReadFile(filepath.Join("..", "..", "assets", "fonts", name))
+				if err != nil {
+					t.Fatalf("Mode %s: read packaged font %s: %v", mode, name, err)
+				}
+				encoded := base64.StdEncoding.EncodeToString(want)
+				if copies := strings.Count(html, encoded); copies != 1 {
+					t.Errorf("Mode %s: found %d copies of %s, want one", mode, copies, name)
+				}
+				if !strings.Contains(html, `url("pdy-font:`+name+`")`) {
+					t.Errorf("Mode %s: missing CSS reference to %s", mode, name)
+				}
+			}
+
 		})
+	}
+}
+
+func TestOfflineExportDoesNotDuplicateFontPayloads(t *testing.T) {
+	dir := t.TempDir()
+	input := filepath.Join(dir, "tiny.md")
+	if err := os.WriteFile(input, []byte("x\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	result, err := Run(Options{
+		InputPath: input, Export: true, ExportName: filepath.Join(dir, "tiny.html"),
+		AssetMode: "offline", EmbedResources: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	html, err := os.ReadFile(result.OutputPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	font, err := os.ReadFile(filepath.Join("..", "..", "assets", "fonts", "NotoSansSinhala-Variable.ttf"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	encoded := []byte(base64.StdEncoding.EncodeToString(font))
+	if copies := bytes.Count(html, encoded); copies != 1 {
+		t.Errorf("Sinhala font payload appears %d times; want one copy", copies)
+	}
+	if len(html) > 3_000_000 {
+		t.Errorf("tiny offline export is %d bytes; want at most 3 MB", len(html))
 	}
 }
 

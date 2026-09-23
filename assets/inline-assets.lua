@@ -18,6 +18,81 @@ local function read_asset(name)
   return read_file(asset_path(name)) or read_file(name)
 end
 
+local function read_asset_bytes(name)
+  local function read(path)
+    local file = io.open(path, "rb")
+    if not file then return nil end
+    local content = file:read("a")
+    file:close()
+    return content
+  end
+  return read(asset_path(name)) or read(name)
+end
+
+local function base64(data)
+  local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+  local encoded = {}
+  for i = 1, #data, 3 do
+    local a, b, c = data:byte(i, i + 2)
+    local value = a * 65536 + (b or 0) * 256 + (c or 0)
+    encoded[#encoded + 1] = alphabet:sub(math.floor(value / 262144) % 64 + 1, math.floor(value / 262144) % 64 + 1)
+    encoded[#encoded + 1] = alphabet:sub(math.floor(value / 4096) % 64 + 1, math.floor(value / 4096) % 64 + 1)
+    encoded[#encoded + 1] = b and alphabet:sub(math.floor(value / 64) % 64 + 1, math.floor(value / 64) % 64 + 1) or "="
+    encoded[#encoded + 1] = c and alphabet:sub(value % 64 + 1, value % 64 + 1) or "="
+  end
+  return table.concat(encoded)
+end
+
+-- A self-contained page needs every referenced font, but repeating its data URI
+-- in each @font-face rule multiplies the file size. Keep one encoded copy per
+-- source and replace the CSS placeholders with shared blob URLs in the head.
+local function bundle_fonts(css)
+  local files, order = {}, {}
+  css = css:gsub('url%("fonts/([%w%-%._]+)"%)', function(file)
+    if not files[file] then
+      local path = "fonts/" .. file
+      local font = read_asset_bytes(path)
+      if not font then error("required pdy font not found: " .. path) end
+      local mime = file:match("%.woff2$") and "font/woff2" or file:match("%.ttf$") and "font/ttf"
+      if not mime then error("unsupported pdy font format: " .. path) end
+      files[file] = { mime, base64(font) }
+      table.insert(order, file)
+    end
+    return 'url("pdy-font:' .. file .. '")'
+  end)
+
+  local entries = {}
+  for _, file in ipairs(order) do
+    table.insert(entries, string.format("[%q,%q,%q]", file, files[file][1], files[file][2]))
+  end
+  local loader = [[
+(function () {
+  const style = document.getElementById("pdy-inline-css");
+  if (!style) return;
+  const fonts = ]] .. "[" .. table.concat(entries, ",") .. "];\n" .. [[
+  const urls = Object.create(null);
+  for (const [file, mime, encoded] of fonts) {
+    if (typeof URL.createObjectURL === "function") {
+      const binary = atob(encoded);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      urls[file] = URL.createObjectURL(new Blob([bytes], { type: mime }));
+    } else {
+      urls[file] = "data:" + mime + ";base64," + encoded;
+    }
+  }
+  style.textContent = style.textContent.replace(
+    /url\("pdy-font:([\w._-]+)"\)/g,
+    function (source, file) {
+      if (!urls[file]) throw new Error("pdy font missing from bundle: " + file);
+      return 'url("' + urls[file] + '")';
+    }
+  );
+})();
+]]
+  return css, loader
+end
+
 local function concatenate(names)
   local parts = {}
   for _, name in ipairs(names) do
@@ -83,6 +158,7 @@ local stylesheet_files = {
   "themes/css/parchment.css",
   "themes/css/obsidian.css",
   "themes/css/midnight-fjord.css",
+  "themes/css/evergreen.css",
   "components/responsive.css",
   "components/surfaces.css",
 }
@@ -92,7 +168,8 @@ local mermaid_files = {
   { id = "porcelain", path = "themes/mermaid/porcelain.json" },
   { id = "parchment", path = "themes/mermaid/parchment.json" },
   { id = "obsidian", path = "themes/mermaid/obsidian.json" },
- { id = "midnight-fjord", path = "themes/mermaid/midnight-fjord.json" },
+  { id = "midnight-fjord", path = "themes/mermaid/midnight-fjord.json" },
+  { id = "evergreen", path = "themes/mermaid/evergreen.json" },
 }
 
 local function build_theme_js()
@@ -122,14 +199,12 @@ function Pandoc(doc)
   doc.meta["has-code"] = pandoc.MetaBool(has_code)
   doc.meta["has-math"] = pandoc.MetaBool(has_math)
   doc.meta["has-mermaid"] = pandoc.MetaBool(has_mermaid)
-  local css = concatenate(stylesheet_files)
+  local css, font_loader = bundle_fonts(concatenate(stylesheet_files))
   local theme_js = build_theme_js()
-
-  local font_css = read_asset("font-assets.css") or ""
-  if font_css ~= "" then css = font_css .. "\n" .. css end
 
   doc.meta["theme-js"] = raw_html(theme_js)
   doc.meta["inline-css"] = raw_html(css)
+  doc.meta["inline-font-loader"] = raw_html(font_loader)
   doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate(has_mermaid and { "mermaid.js", "app.js" } or { "app.js" }))
   doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
   return doc

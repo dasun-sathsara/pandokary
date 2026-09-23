@@ -11,25 +11,31 @@
       "id": "lumina",
       "name": "Lumina",
       "mode": "light",
-      "accent": "#5940a5"
+      "accent": "#016259"
     },
     {
       "id": "parchment",
       "name": "Parchment",
       "mode": "light",
-      "accent": "#4a6018"
+      "accent": "#833941"
     },
     {
       "id": "obsidian",
       "name": "Obsidian",
       "mode": "dark",
-      "accent": "#f0a57b"
+      "accent": "#dfac90"
     },
     {
       "id": "midnight-fjord",
       "name": "Midnight Fjord",
       "mode": "dark",
-      "accent": "#ec9cc9"
+      "accent": "#97c1db"
+    },
+    {
+      "id": "evergreen",
+      "name": "Evergreen",
+      "mode": "dark",
+      "accent": "#a8c7b1"
     }
   ]
 }

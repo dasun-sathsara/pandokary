@@ -1,7 +1,155 @@
-/* =========================================
-   1. System Tokens & Layout Variables
-   ========================================= */
+/* Variable-font sources preserve continuous weight selection and native italics.
+   Noto Sinhala uses discrete CSS-role descriptors so its tuned axis weights
+   remain deterministic inside mixed-script and monospace text. */
+@font-face {
+  font-family: "Studio Feixen Sans";
+  src:
+    url("fonts/StudioFeixenSans-Variable.woff2") format("woff2"),
+    local("StudioFeixenSansVF");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Studio Feixen Sans";
+  src:
+    url("fonts/StudioFeixenSans-Variable.woff2") format("woff2"),
+    local("StudioFeixenSansVF");
+  font-weight: 100 900;
+  font-style: italic;
+  font-variation-settings: "ital" 1;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("fonts/GeistMono-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("fonts/GeistMono-Variable-Italic.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noto Sans Sinhala";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 400;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 400;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+/* Keep the Latin CSS roles while mapping Sinhala runs to their tuned weights. */
+@font-face {
+  font-family: "Noto Sans Sinhala";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 550;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 540;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+@font-face {
+  font-family: "Noto Sans Sinhala";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 600;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 580;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+
+@font-face {
+  font-family: "Noto Sans Sinhala";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 420;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 400;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+@font-face {
+  font-family: "Noto Sans Sinhala";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 520;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 540;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+
+@font-face {
+  font-family: "Noto Sans Sinhala Mobile";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 430;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 430;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+@font-face {
+  font-family: "Noto Sans Sinhala Mobile";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 450;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 430;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+@font-face {
+  font-family: "Noto Sans Sinhala Mobile";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 550;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 570;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+@font-face {
+  font-family: "Noto Sans Sinhala Mobile";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 580;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 570;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+@font-face {
+  font-family: "Noto Sans Sinhala Mobile";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 630;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 610;
+  font-display: swap;
+  size-adjust: 88%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
+
 :root {
+  font-synthesis: none;
   --viewport-height: 100vh;
   --radius-control: 6px;
   --radius-panel: 12px;
@@ -12,15 +160,16 @@
 
   /* Fonts */
   --font-body:
-    "Studio Feixen Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Inter",
-    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-heading:
-    "Studio Feixen Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Inter",
-    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-sinhala: "Noto Sans Sinhala", sans-serif;
-  --font-mono: "Geist Mono", monospace;
-  --letter-spacing-mono: -0.02em;
-  --font-optical-sizing: auto;
+    "Studio Feixen Sans", "Noto Sans Sinhala", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "SF Pro", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: var(--font-body);
+  --font-sinhala: var(--font-body);
+  --font-mono: "Geist Mono", "Noto Sans Sinhala", monospace;
+  --letter-spacing-mono: -0.01em;
+  /* A light negative tracking: enough to close the word gaps the lighter
+     weights open up, not enough to notice as tracking. */
+  --letter-spacing-body: -0.005em;
+  --letter-spacing-heading: -0.015em;
   --font-variation-settings: normal;
 
   /* Floating toggles */
@@ -29,15 +178,15 @@
 
   /* Font Sizes & Scale — body is the single source of truth (tuned, do not change).
      All document type derives from body so --font-size-adjust scales everything. */
-  --font-size-body-desktop: 17px;
-  --font-size-body-mobile: 14.5px;
+  --font-size-body-desktop: 16px;
+  --font-size-body-mobile: 14.75px;
   --font-size-body: var(--font-size-body-desktop);
 
-  /* Heading scale (multipliers of body). Calm major-third progression. */
-  --scale-h1: 1.875;
-  --scale-h2: 1.5;
-  --scale-h3: 1.25;
-  --scale-h4: 1.125;
+  /* Heading scale (multipliers of body). Slightly restrained progression. */
+  --scale-h1: 1.7;
+  --scale-h2: 1.4;
+  --scale-h3: 1.2;
+  --scale-h4: 1.1;
   --scale-h5: 1;
   --scale-h6: 0.85;
 
@@ -45,14 +194,24 @@
   --scale-small: 0.85;
   --scale-xs: 0.75;
   --scale-table: 0.88;
-  --scale-code-inline: 0.85;
-  --scale-code-block: 0.82;
+  /* Code sits under the body size. The mono carries the same x-height as the
+     sans at a given size, but its glyphs read larger, so inline code only needs
+     a small step down while a code block wants a clear one. */
+  --scale-code-inline: 0.87em;
+  --scale-code-block: 0.87em;
 
   /* Spacing */
-  --line-height-body: 1.56;
-  --line-height-para: 1.55;
+  --line-height-body-desktop: 1.48;
+  --line-height-body-mobile: 1.42;
+  --line-height-body: var(--line-height-body-desktop);
+  --line-height-para-desktop: 1.48;
+  --line-height-para-mobile: 1.42;
+  --line-height-para: var(--line-height-para-desktop);
   --line-height-paragraph: var(--line-height-para);
-  --spacing-paragraph: 1em;
+  --spacing-list-item-desktop: 0.24rem;
+  --spacing-list-item-mobile: 0.24rem;
+  --spacing-list-item: var(--spacing-list-item-desktop);
+  --spacing-paragraph: 0.65em;
   --radius-std: 0;
 
   /* Motion — one easing family, four durations. Timings marked (*) stay in
@@ -78,8 +237,25 @@
 /* Structural theme hooks. themes.css provides theme variable values. */
 :root {
   --body-background: var(--color-bg);
-  --strong-font-weight: 570;
-  --heading-font-weight: 570;
+  /* One variable-font weight scale is shared by desktop and mobile. */
+  --body-font-weight-desktop: 400;
+  --body-font-weight-mobile: 430;
+  --body-font-weight: var(--body-font-weight-desktop);
+
+  --strong-font-weight: 550;
+  --strong-font-weight-mobile: 580;
+
+  --heading-font-weight-desktop: 600;
+  --heading-font-weight-mobile: 630;
+  --heading-font-weight: var(--heading-font-weight-desktop);
+
+  --mono-font-weight-desktop: 420;
+  --mono-font-weight-mobile: 450;
+  --mono-font-weight: var(--mono-font-weight-desktop);
+
+  --mono-emphasis-font-weight-desktop: 520;
+  --mono-emphasis-font-weight-mobile: 550;
+  --mono-emphasis-font-weight: var(--mono-emphasis-font-weight-desktop);
   --aside-background: var(--color-surface);
   --aside-border: 1px solid var(--color-border);
   --aside-border-left: 4px solid var(--color-accent);
@@ -92,7 +268,7 @@
   --pre-border-radius: 6px;
   --pre-box-shadow: none;
   --pre-padding: 0.65rem 0.85rem;
-  --pre-line-height: 1.35;
+  --pre-line-height: 1.44;
   --link-color: var(--color-accent);
   --link-decoration: none;
   --link-border-bottom: 1px solid var(--color-accent);
@@ -101,7 +277,7 @@
   --link-hover-color: var(--color-accent-hover);
   --link-hover-decoration: none;
   --link-hover-border-color: var(--color-accent-hover);
-  --blockquote-margin: 1.4rem 0 1.55rem;
+  --blockquote-margin: 1rem 0 1.1rem;
   --blockquote-padding: 0.55rem 0.75rem;
   --blockquote-border-left: 4px solid var(--color-accent);
   --blockquote-background: var(--color-code-bg);
@@ -118,7 +294,7 @@
   --focused-line-border: #eab308;
   --inline-code-border: 1px solid var(--color-code-border);
   --inline-code-border-radius: 4px;
-  --inline-code-padding: 0.05em 0.32em;
+  --inline-code-padding: 0.02em 0.32em;
   --table-width: max-content;
   --table-border-collapse: separate;
   --table-border-radius: 0;
@@ -127,7 +303,7 @@
   --table-box-shadow: none;
   --table-header-background: var(--color-surface-alt);
   --table-header-color: var(--color-heading);
-  --table-header-font-weight: 570;
+  --table-header-font-weight: var(--heading-font-weight);
   --table-header-border-bottom: 1px solid var(--color-border);
   --table-cell-padding: 0.7rem 0.85rem;
   --mermaid-text-color: var(--color-text);
@@ -214,12 +390,12 @@ body.scroll-locked {
 
 body {
   font-family: var(--font-body);
-  font-weight: 400;
-  font-optical-sizing: var(--font-optical-sizing);
+  font-weight: var(--body-font-weight, 400);
+  letter-spacing: var(--letter-spacing-body, -0.005em);
   font-variation-settings: var(--font-variation-settings);
   background: var(--body-background);
   color: var(--color-text);
-  line-height: var(--line-height-body, 1.56);
+  line-height: var(--line-height-body, 1.48);
   font-size: calc(var(--font-size-body) + var(--font-size-adjust, 0px));
   min-width: 0;
   max-width: var(--content-max-width, 1040px);
@@ -228,8 +404,6 @@ body {
   transition:
     background-color var(--dur-panel) var(--ease-standard),
     color var(--dur-panel) var(--ease-standard);
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
   overflow-wrap: break-word;
 }
 
@@ -252,9 +426,24 @@ textarea {
 }
 
 body:lang(si) {
-  font-family: var(--font-sinhala);
+  font-family: var(--font-body);
+  /* Latin tracking must not stretch Sinhala conjuncts. */
+  letter-spacing: normal;
+  --letter-spacing-body: normal;
+  --letter-spacing-heading: normal;
   line-height: 1.7;
   --line-height-para: 1.75;
+  --line-height-paragraph: 1.75;
+}
+
+/* Keep Sinhala's natural spacing in prose without overriding Mono tracking. */
+:lang(si):not(code):not(code *):not(pre):not(pre *):not(kbd):not(kbd *):not(samp):not(samp *) {
+  letter-spacing: normal !important;
+}
+
+body:lang(si) :is(h1, h2, h3, h4, h5, h6, dt, th) {
+  font-family: var(--font-body);
+  letter-spacing: normal;
 }
 
 /* =========================================
@@ -264,14 +453,14 @@ hr {
   border: none;
   height: 1px;
   background: var(--bg-hr-gradient);
-  margin: 1.5rem auto;
+  margin: 1.25rem auto;
   width: 80%;
   opacity: 0.9;
 }
 
 /* =========================================
    4. Typography & Headings
-   Hierarchy derives from body (em), so the tuned 17px/14.5px base
+   Hierarchy derives from body (em), so the tuned 15.75px/14.75px base
    plus --font-size-adjust scales every level proportionally.
    ========================================= */
 h1,
@@ -281,59 +470,55 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: var(--heading-font-weight, 570);
+  font-weight: var(--heading-font-weight, 600);
+  letter-spacing: var(--letter-spacing-heading, -0.015em);
   color: var(--color-heading);
   text-wrap: balance;
-  text-rendering: optimizeLegibility;
 }
 
 h1 {
-  font-size: 1.875em;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  font-size: 1.7em;
+  line-height: 1.18;
   color: var(--color-h1);
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   border-bottom: 2px solid var(--color-border);
   padding-bottom: 0.4rem;
 }
 
 h2 {
-  font-size: 1.5em;
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  font-size: 1.4em;
+  line-height: 1.22;
   color: var(--color-h2);
-  margin-top: 2.25rem;
-  margin-bottom: 0.85rem;
+  margin-top: 1.75rem;
+  margin-bottom: 0.65rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--color-border);
 }
 
 h3 {
-  font-size: 1.25em;
+  font-size: 1.2em;
   line-height: 1.25;
-  letter-spacing: -0.015em;
   color: var(--color-h3);
-  margin-top: 1.9rem;
-  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.55rem;
 }
 
 h4 {
-  font-size: 1.125em;
+  font-size: 1.1em;
   line-height: 1.3;
-  letter-spacing: -0.01em;
   color: var(--color-h4);
-  margin-top: 1.6rem;
-  margin-bottom: 0.6rem;
+  margin-top: 1.3rem;
+  margin-bottom: 0.5rem;
 }
 
 h5 {
-  font-size: 1em;
+  font-size: 1.05em;
+  font-weight: var(--heading-font-weight, 600);
   line-height: 1.4;
-  letter-spacing: -0.01em;
   color: var(--color-h5);
-  margin-top: 1.4rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1.15rem;
+  margin-bottom: 0.4rem;
 }
 
 h6 {
@@ -342,8 +527,8 @@ h6 {
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-top: 1.3rem;
-  margin-bottom: 0.5rem;
+  margin-top: 1.1rem;
+  margin-bottom: 0.4rem;
 }
 
 header p {
@@ -369,7 +554,7 @@ header > p:last-child {
 p {
   max-width: 100%;
   margin: 0 0 var(--spacing-paragraph);
-  line-height: var(--line-height-paragraph, var(--line-height-para, 1.55));
+  line-height: var(--line-height-paragraph, var(--line-height-para, 1.48));
   text-align: justify;
   text-wrap: pretty;
 }
@@ -395,7 +580,7 @@ strong,
 b {
   font-family: inherit;
   font-size: inherit;
-  font-weight: var(--strong-font-weight);
+  font-weight: var(--strong-font-weight, 550);
   line-height: inherit;
   color: var(--color-strong);
 }
@@ -412,7 +597,14 @@ pre b,
 kbd strong,
 kbd b {
   color: inherit;
-  font-weight: 500;
+  font-weight: var(--mono-emphasis-font-weight, 520);
+}
+
+/* Code nested inside strong keeps mono emphasis instead of falling back to the
+   mono base (the element rule would otherwise beat the inherited strong). */
+strong code,
+b code {
+  font-weight: var(--mono-emphasis-font-weight, 520);
 }
 
 blockquote {
@@ -457,7 +649,7 @@ main aside p,
 main .aside p {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  line-height: 1.55;
+  line-height: var(--line-height-para, 1.48);
   text-align: left;
 }
 
@@ -552,14 +744,14 @@ h6 {
    ========================================= */
 ul,
 ol {
-  margin: 0.85rem 0;
+  margin: 0.65rem 0;
   padding-left: 1.45rem;
 }
 
 li {
-  margin-bottom: 0.22rem;
+  margin-bottom: var(--spacing-list-item, 0.35rem);
   padding-left: 0.35rem;
-  line-height: 1.56;
+  line-height: var(--line-height-body, 1.48);
 }
 
 li:last-child {
@@ -568,7 +760,7 @@ li:last-child {
 
 li::marker {
   color: var(--color-accent);
-  font-weight: 570;
+  font-weight: var(--strong-font-weight, 550);
 }
 
 main li > :where(ul, ol) {
@@ -591,15 +783,15 @@ main li > p:last-child {
    3b. Definition Lists (<dl>, <dt>, <dd>) & Abbreviations
    ========================================= */
 dl {
-  margin: 0.85rem 0 1.25rem;
+  margin: 0.65rem 0 0.95rem;
 }
 
 dt {
   font-family: var(--font-heading);
-  font-weight: 570;
+  font-weight: var(--heading-font-weight, 600);
   font-size: 1em;
   color: var(--color-heading);
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   line-height: 1.45;
 }
 
@@ -613,7 +805,7 @@ dd {
   border-left: 2px solid var(--color-border);
   margin-top: 0.25rem;
   margin-bottom: 0.65rem;
-  line-height: 1.56;
+  line-height: var(--line-height-body, 1.48);
   color: var(--color-text);
 }
 
@@ -647,7 +839,7 @@ abbr[title] {
 li.task-item {
   list-style: none !important;
   padding-left: 0 !important;
-  line-height: 1.56;
+  line-height: var(--line-height-body, 1.48);
   color: var(--color-text);
   margin-bottom: 0.35rem;
   transition:
@@ -665,7 +857,7 @@ li.task-item {
   gap: 0.6rem;
   margin-left: -1.35rem;
   cursor: pointer;
-  line-height: 1.56;
+  line-height: var(--line-height-body, 1.48);
 }
 
 .task-item > label .task-text,
@@ -716,7 +908,7 @@ li.task-item {
   align-items: flex-start;
   gap: 0.65rem;
   margin: 0.4rem 0;
-  line-height: 1.5;
+  line-height: var(--line-height-body, 1.48);
   color: var(--color-text);
   transition: color var(--dur-micro) var(--ease-out);
 }
@@ -848,11 +1040,65 @@ img {
   overflow-wrap: break-word;
 }
 
-/* =========================================
-   9. MathJax
-   ========================================= */
-mjx-container {
+/* Subscripts and superscripts: prevent expanding parent line-box */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+/* Pandoc Footnotes */
+.footnotes {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.88em;
+  line-height: var(--line-height-body, 1.48);
+  color: var(--color-text-muted);
+}
+
+.footnotes ol {
+  padding-left: 1.25rem;
+}
+
+.footnotes li {
+  margin-bottom: 0.5rem;
+  line-height: inherit;
+}
+
+.footnote-ref {
+  text-decoration: none;
+  font-weight: var(--strong-font-weight, 550);
+  color: var(--color-accent);
+  padding: 0 0.1em;
+}
+
+.footnote-back {
+  text-decoration: none;
+  font-family: var(--font-body);
+  margin-left: 0.35em;
+  color: var(--color-accent);
+}
+mjx-container[display="true"],
+.MathJax_Display,
+mjx-container:not([jax="CHTML"]):not([display="false"]) {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0.5rem 0;
+}
+
+mjx-container[display="false"],
+mjx-container:not([display="true"]) {
+  padding: 0;
+  vertical-align: baseline;
 }

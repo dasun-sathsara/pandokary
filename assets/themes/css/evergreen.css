@@ -1,0 +1,62 @@
+[data-theme="evergreen"] {
+  /* Near-neutral charcoal with muted sage accents and warm gray text.
+     Softened in OKLCH: background chroma reduced 70%, accent chroma 40%.
+     Lightness is retained; colors are gamut-mapped and rounded to sRGB.
+     Palette rationale and sources: docs/theme-palettes.md */
+
+  --color-bg: #151816; /* OKLCH 0.205 0.0048 155 */
+  --color-surface: #1d201e; /* OKLCH 0.24 0.0054 155 */
+  --color-surface-alt: #262927; /* OKLCH 0.278 0.0063 155 */
+  --color-border: #474b48; /* OKLCH 0.409 0.0084 155 */
+  --color-text: #d8d8d3; /* OKLCH 0.88 0.007 105 */
+  --color-text-muted: #a3a7a1; /* OKLCH 0.724 0.011 135 */
+  --color-heading: #ecece5; /* OKLCH 0.94 0.009 105 */
+  --color-h1: #eaeae1; /* OKLCH 0.935 0.0132 110 */
+  --color-h2: #c9dbcc; /* OKLCH 0.875 0.0282 150 */
+  --color-h3: #bbcfbe; /* OKLCH 0.835 0.0324 150 */
+  --color-h4: #b7c6b7; /* OKLCH 0.81 0.0258 145 */
+  --color-h5: #b5beb3; /* OKLCH 0.79 0.018 140 */
+  --color-strong: #edede8; /* OKLCH 0.945 0.0065 105 */
+  --color-accent: #a8c7b1; /* OKLCH 0.8 0.045 155 */
+  --color-accent-hover: #c7dccb; /* OKLCH 0.875 0.033 150 */
+  --color-accent-subtle: #2b302c; /* OKLCH 0.303 0.0096 155 */
+  --color-code-bg: #191c1a; /* OKLCH 0.222 0.0045 155 */
+  --color-code-text: #d8d8d3; /* OKLCH 0.88 0.007 105 */
+  --color-code-border: #444845; /* OKLCH 0.397 0.0075 155 */
+  --color-code-chrome-bg: #222523; /* OKLCH 0.26 0.0063 155 */
+  --color-code-chrome-text: #a3a7a1; /* OKLCH 0.724 0.011 135 */
+  --color-inline-code-bg: #2d322e; /* OKLCH 0.31 0.0084 150 */
+  --color-inline-code-text: #c5dac8; /* OKLCH 0.867 0.0324 150 */
+  --color-table-row-alt: #1d201e; /* OKLCH 0.24 0.0051 155 */
+  --color-table-row-hover: #2a2e2b; /* OKLCH 0.297 0.0087 155 */
+  --color-on-accent: #151816; /* OKLCH 0.205 0.0057 155 */
+  --strong-font-weight: 550;
+  --strong-font-weight-mobile: 580;
+
+  --code-keyword: #a4c8af; /* OKLCH 0.8 0.0525 155 */
+  --code-string: #d6ccaf; /* OKLCH 0.845 0.0399 90 */
+  --code-function: #a4c6db; /* OKLCH 0.81 0.0469 235 */
+  --code-number: #d8b6a3; /* OKLCH 0.8 0.0469 50 */
+  --code-comment: #9ca09a; /* OKLCH 0.7 0.01 135 */
+  --code-operator: #babdb8; /* OKLCH 0.795 0.0085 130 */
+  --code-variable: #d8d8d3; /* OKLCH 0.88 0.007 105 */
+
+  --bg-hr-gradient: linear-gradient(90deg, transparent, #535854, transparent);
+  --shadow-card: 0 1px 2px rgba(5, 10, 17, 0.28), 0 8px 20px rgba(5, 10, 17, 0.32);
+  --shadow-elevated: 0 5px 14px rgba(5, 10, 17, 0.36), 0 22px 48px rgba(5, 10, 17, 0.36);
+  --scroll-shadow-color: rgba(5, 10, 17, 0.4);
+  --modal-backdrop-background: rgba(5, 10, 17, 0.78);
+  color-scheme: dark;
+
+  --selection-background: #3d4c42; /* OKLCH 0.4 0.0255 155 */
+  --selection-color: #f2f2ed; /* OKLCH 0.96 0.0065 105 */
+  --focused-line-background: #292e2a; /* OKLCH 0.294 0.0087 155 */
+  --focused-line-border: #a8c7b1; /* OKLCH 0.8 0.045 155 */
+  --mermaid-note-fill: #2f312d; /* OKLCH 0.31 0.0072 125 */
+  --mermaid-note-stroke: #a8c7b1; /* OKLCH 0.8 0.045 155 */
+  --mermaid-note-text: #d8d8d3; /* OKLCH 0.88 0.007 105 */
+  --color-success-subtle: #232b25; /* OKLCH 0.279 0.015 155 */
+  --color-success: #95cda8; /* OKLCH 0.8 0.07875 155 */
+  --color-danger-subtle: #2f2524; /* OKLCH 0.276 0.0156 25 */
+  --color-danger: #f1ada7; /* OKLCH 0.81 0.08025 25 */
+}

@@ -18,7 +18,7 @@ if (initialMermaid) {
   const NOTE_PADDING = 50;
   const MODAL_TRANSITION_MS = 350;
   const WHEEL_SETTLE_MS = 180;
-  const DARK_THEME_IDS = new Set(["obsidian", "midnight-fjord"]);
+  const DARK_THEME_IDS = new Set(["obsidian", "midnight-fjord", "evergreen"]);
   const controllers = new Set();
   const controllerByContainer = new WeakMap();
   let activeModalController = null;
@@ -35,10 +35,11 @@ if (initialMermaid) {
     flowchart: {
       useMaxWidth: false,
       htmlLabels: false,
-      subGraphTitleMargin: { top: 16, bottom: 16 },
-      nodeSpacing: 50,
-      rankSpacing: 50,
-      diagramPadding: 20,
+      subGraphTitleMargin: { top: 12, bottom: 12 },
+      nodeSpacing: 32,
+      rankSpacing: 36,
+      diagramPadding: 12,
+      padding: 6,
     },
     sequence: { useMaxWidth: false, boxMargin: 12, noteMargin: 12 },
     gantt: { useMaxWidth: false },
@@ -265,6 +266,9 @@ if (initialMermaid) {
       "color: var(--color-danger)",
       "padding: 1.5rem",
       "font-family: var(--font-mono), monospace",
+      "font-size: var(--scale-code-inline, 0.87em)",
+      "font-weight: var(--mono-font-weight, 420)",
+      "letter-spacing: var(--letter-spacing-mono, -0.01em)",
       "border-left: 4px solid var(--color-danger)",
       "background: var(--color-code-bg)",
       "text-align: left",
@@ -274,6 +278,7 @@ if (initialMermaid) {
 
     const heading = document.createElement("strong");
     heading.textContent = "Mermaid Error:";
+    heading.style.fontWeight = "var(--mono-emphasis-font-weight, 520)";
     const details = document.createElement("pre");
     details.style.cssText = [
       "border: none",
@@ -281,7 +286,10 @@ if (initialMermaid) {
       "padding: 0.5rem 0",
       "color: var(--color-danger)",
       "background: transparent",
-      "font-size: 14px",
+      "font-family: var(--font-mono), monospace",
+      "font-size: 1em",
+      "font-weight: var(--mono-font-weight, 420)",
+      "letter-spacing: var(--letter-spacing-mono, -0.01em)",
       "text-align: left",
       "white-space: pre-wrap",
     ].join(";");

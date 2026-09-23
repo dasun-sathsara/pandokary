@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="porcelain" data-font="studio-feixen">
+<html lang="$if(lang)$$lang$$else$en$endif$" data-theme="porcelain" data-font="studio-feixen">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
       var t = localStorage.getItem("theme");
       t = legacy[t] || t;
       document.documentElement.dataset.theme =
-        ["lumina", "porcelain", "parchment", "obsidian", "midnight-fjord"].includes(t) ? t : "porcelain";
+        ["lumina", "porcelain", "parchment", "obsidian", "midnight-fjord", "evergreen"].includes(t) ? t : "porcelain";
       var size = Math.max(-4, Math.min(8, parseInt(localStorage.getItem("font-size-adjust"), 10) || 0));
       document.documentElement.style.setProperty("--font-size-adjust", size + "px");
       var width = parseInt(localStorage.getItem("layout-max-width"), 10);
@@ -25,7 +25,8 @@
     setTimeout(function () { document.getElementById("loading-overlay")?.remove(); }, 5000);
   </script>
   $if(inline-css)$
-  <style>$inline-css$</style>
+  <style id="pdy-inline-css">$inline-css$</style>
+  $if(inline-font-loader)$<script>$inline-font-loader$</script>$endif$
   $else$
   <link rel="stylesheet" href="base.css">
   <link rel="stylesheet" href="components/code.css">
@@ -42,6 +43,7 @@
   <link rel="stylesheet" href="themes/css/parchment.css">
   <link rel="stylesheet" href="themes/css/obsidian.css">
   <link rel="stylesheet" href="themes/css/midnight-fjord.css">
+  <link rel="stylesheet" href="themes/css/evergreen.css">
   <link rel="stylesheet" href="components/responsive.css">
   <link rel="stylesheet" href="components/surfaces.css">
   $endif$

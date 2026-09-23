@@ -774,6 +774,7 @@ const SettingsModule = (() => {
     { id: "parchment", name: "Parchment" },
     { id: "obsidian", name: "Obsidian" },
     { id: "midnight-fjord", name: "Midnight Fjord" },
+    { id: "evergreen", name: "Evergreen" },
   ]);
 
   let fontPromise;
@@ -785,9 +786,17 @@ const SettingsModule = (() => {
   async function loadDocumentFonts() {
     if (!document.fonts?.load) return;
     const fontLoads = Promise.all([
-      document.fonts.load("12px 'Studio Feixen Sans'"),
-      document.fonts.load("12px 'Geist Mono'"),
-      document.fonts.load("500 12px 'Geist Mono'"),
+      ...[400, 550, 600].flatMap((weight) => [
+        document.fonts.load(`${weight} 12px 'Studio Feixen Sans'`),
+        document.fonts.load(`italic ${weight} 12px 'Studio Feixen Sans'`),
+      ]),
+      ...[420, 520].flatMap((weight) => [
+        document.fonts.load(`${weight} 12px 'Geist Mono'`),
+        document.fonts.load(`italic ${weight} 12px 'Geist Mono'`),
+      ]),
+      ...[400, 420, 520, 540, 550, 580, 600].map((weight) =>
+        document.fonts.load(`${weight} 12px 'Noto Sans Sinhala'`, "සිංහල"),
+      ),
     ]).catch((error) => {
       console.warn("Font loading failed; CSS fallbacks remain active", error);
     });
@@ -959,7 +968,7 @@ const SettingsModule = (() => {
       const baseSize =
         Number.parseFloat(
           getComputedStyle(document.documentElement).getPropertyValue("--font-size-body"),
-        ) || (isCompactLayout() ? 14.5 : 17);
+        ) || (isCompactLayout() ? 14.75 : 16);
       document.documentElement.style.setProperty("--font-size-adjust", `${size}px`);
       value.textContent = `${Math.round(((baseSize + size) / baseSize) * 100)}%`;
       decrease.disabled = size <= -4;
@@ -2017,7 +2026,7 @@ const ReaderExtrasModule = (() => {
   }
 
   function cycleTheme() {
-    const themes = ["porcelain", "lumina", "parchment", "obsidian", "midnight-fjord"];
+    const themes = ["porcelain", "lumina", "parchment", "obsidian", "midnight-fjord", "evergreen"];
     const current = document.documentElement.dataset.theme || "porcelain";
     const index = themes.indexOf(current);
     const next = themes[(index + 1) % themes.length];
