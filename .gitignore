@@ -3,6 +3,8 @@
 
 # Local build/test outputs
 bin/
+/pdy
+.firecrawl/
 node_modules/
 *.tmp
 *.log

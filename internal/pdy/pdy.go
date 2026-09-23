@@ -3,7 +3,6 @@ package pdy
 
 import (
 	"bytes"
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -46,15 +45,12 @@ func Run(options Options) (Result, error) {
 	if assets.cleanup != nil {
 		defer assets.cleanup()
 	}
-	runtimeAssets, cleanup, fontWarnings, err := prepareRuntimeAssets(assets)
+	runtimeAssets, cleanup, err := prepareRuntimeAssets(assets)
 	if err != nil {
 		return Result{}, fmt.Errorf("prepare runtime assets: %w", err)
 	}
 	if cleanup != nil {
 		defer cleanup()
-	}
-	for _, warning := range fontWarnings {
-		fmt.Fprintf(os.Stderr, "warning: %s\n", warning)
 	}
 
 	pandoc, err := findPandoc(options.PandocPath)
@@ -159,29 +155,22 @@ func findAssetsFromCWD() (string, error) {
 	return "", errors.New("assets not found")
 }
 
-func prepareRuntimeAssets(source assetLocation) (string, func(), []string, error) {
+func prepareRuntimeAssets(source assetLocation) (string, func(), error) {
 	dir := source.dir
 	var cleanup func()
 	if !source.writable {
 		var err error
 		dir, err = os.MkdirTemp("", "pdy-runtime-assets-*")
 		if err != nil {
-			return "", nil, nil, err
+			return "", nil, err
 		}
 		cleanup = func() { _ = os.RemoveAll(dir) }
 		if err = copyDir(source.dir, dir); err != nil {
 			cleanup()
-			return "", nil, nil, err
+			return "", nil, err
 		}
 	}
-	warnings, err := writeBundledFontCSS(filepath.Join(dir, "font-assets.css"))
-	if err != nil {
-		if cleanup != nil {
-			cleanup()
-		}
-		return "", nil, warnings, err
-	}
-	return dir, cleanup, warnings, nil
+	return dir, cleanup, nil
 }
 
 func copyDir(source, target string) error {
@@ -221,155 +210,6 @@ func copyDir(source, target string) error {
 		}
 		return outputErr
 	})
-}
-
-type font struct{ family, spec, env, weight, style string }
-
-func writeBundledFontCSS(path string) ([]string, error) {
-	staticUprights := []font{
-		{"Studio Feixen Sans", "Studio Feixen Sans:style=Regular", "PDY_BODY_FONT_REGULAR", "400", "normal"},
-		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium", "PDY_BODY_FONT_MEDIUM", "500", "normal"},
-	}
-	fonts := []font{
-		{"Studio Feixen Sans", "Studio Feixen Sans:style=Italic", "PDY_BODY_FONT_ITALIC", "400", "italic"},
-		{"Studio Feixen Sans", "Studio Feixen Sans:style=Medium Italic", "PDY_BODY_FONT_MEDIUM_ITALIC", "500", "italic"},
-		{"Geist Mono", "Geist Mono:style=Regular", "PDY_MONO_FONT_REGULAR", "400", "normal"},
-		{"Geist Mono", "Geist Mono:style=Medium", "PDY_MONO_FONT_MEDIUM", "500", "normal"},
-	}
-	var css strings.Builder
-	var warnings []string
-	// Upright body text prefers the variable font so intermediate weights
-	// (e.g. 570) interpolate instead of snapping to the nearest static.
-	// Machines without it fall back to the Regular/Medium statics, where
-	// 570 renders as 500.
-	if vfPath, err := resolveBodyVariableFont(); err == nil {
-		if embedErr := embedFont(&css, "Studio Feixen Sans", "normal", "100 900", vfPath); embedErr != nil {
-			warnings = append(warnings, fmt.Sprintf("variable body font %q could not be read: %v; using static fallback", vfPath, embedErr))
-			fonts = append(staticUprights, fonts...)
-		}
-	} else {
-		fonts = append(staticUprights, fonts...)
-	}
-	for _, item := range fonts {
-		fontPath, err := resolveFont(item.env, item.spec)
-		if err != nil {
-			warnings = append(warnings, fmt.Sprintf("font %q unavailable: %v; using CSS fallback", item.spec, err))
-			continue
-		}
-		if err := embedFont(&css, item.family, item.style, item.weight, fontPath); err != nil {
-			warnings = append(warnings, fmt.Sprintf("font %q could not be read: %v; using CSS fallback", fontPath, err))
-		}
-	}
-	return warnings, os.WriteFile(path, []byte(css.String()), 0o644)
-}
-
-// embedFont appends an @font-face rule with the file at fontPath inlined.
-func embedFont(css *strings.Builder, family, style, weight, fontPath string) error {
-	data, err := os.ReadFile(fontPath)
-	if err != nil {
-		return err
-	}
-	fmt.Fprintf(css, "@font-face{font-family:%q;font-style:%s;font-weight:%s;font-display:swap;src:url(\"data:%s;base64,%s\") format(\"%s\");}\n", family, style, weight, fontMIME(fontPath), base64.StdEncoding.EncodeToString(data), fontFormat(fontPath))
-	return nil
-}
-
-// resolveBodyVariableFont locates the Studio Feixen Sans variable font, if
-// installed. PDY_BODY_FONT_VF overrides; otherwise fontconfig is asked for a
-// variable-flagged file in the family.
-func resolveBodyVariableFont() (string, error) {
-	if override := strings.TrimSpace(os.Getenv("PDY_BODY_FONT_VF")); override != "" {
-		if info, err := os.Stat(override); err == nil && !info.IsDir() {
-			return override, nil
-		}
-		return "", fmt.Errorf("PDY_BODY_FONT_VF points to an invalid file: %s", override)
-	}
-	lister, err := exec.LookPath("fc-list")
-	if err != nil {
-		return "", errors.New("fc-list not installed")
-	}
-	out, err := exec.Command(lister, "Studio Feixen Sans", "file", "variable").CombinedOutput()
-	if err != nil {
-		return "", fmt.Errorf("fc-list: %s", strings.TrimSpace(string(out)))
-	}
-	for _, line := range strings.Split(string(out), "\n") {
-		file, flag, ok := strings.Cut(line, ": :variable=")
-		if !ok {
-			continue
-		}
-		file = strings.TrimSpace(file)
-		if strings.TrimSpace(flag) != "True" || file == "" {
-			continue
-		}
-		if info, err := os.Stat(file); err == nil && !info.IsDir() {
-			return file, nil
-		}
-	}
-	return "", errors.New("no variable Studio Feixen Sans installed")
-}
-
-func resolveFont(env, spec string) (string, error) {
-	if override := strings.TrimSpace(os.Getenv(env)); override != "" {
-		if info, err := os.Stat(override); err == nil && !info.IsDir() {
-			return override, nil
-		}
-		return "", fmt.Errorf("%s points to an invalid file: %s", env, override)
-	}
-	if strings.HasPrefix(env, "PDY_BODY_FONT_") {
-		for _, fallbackEnv := range []string{"PDY_BODY_FONT", "PDY_BODY_FONT_REGULAR"} {
-			if override := strings.TrimSpace(os.Getenv(fallbackEnv)); override != "" {
-				if info, err := os.Stat(override); err == nil && !info.IsDir() {
-					return override, nil
-				}
-			}
-		}
-	}
-	if strings.HasPrefix(env, "PDY_MONO_FONT_") {
-		for _, fallbackEnv := range []string{"PDY_MONO_FONT", "PDY_MONO_FONT_MEDIUM", "PDY_MONO_FONT_REGULAR"} {
-			if override := strings.TrimSpace(os.Getenv(fallbackEnv)); override != "" {
-				if info, err := os.Stat(override); err == nil && !info.IsDir() {
-					return override, nil
-				}
-			}
-		}
-	}
-	matcher, err := exec.LookPath("fc-match")
-	if err != nil {
-		return "", errors.New("fc-match not installed")
-	}
-	out, err := exec.Command(matcher, "-f", "%{file}", spec).CombinedOutput()
-	if err != nil {
-		return "", fmt.Errorf("fc-match: %s", strings.TrimSpace(string(out)))
-	}
-	path := strings.TrimSpace(string(out))
-	info, statErr := os.Stat(path)
-	if path == "" || statErr != nil || info.IsDir() {
-		return "", errors.New("no usable matching font file")
-	}
-	return path, nil
-}
-func fontMIME(path string) string {
-	switch strings.ToLower(filepath.Ext(path)) {
-	case ".otf":
-		return "font/otf"
-	case ".woff":
-		return "font/woff"
-	case ".woff2":
-		return "font/woff2"
-	default:
-		return "font/ttf"
-	}
-}
-func fontFormat(path string) string {
-	switch strings.ToLower(filepath.Ext(path)) {
-	case ".otf":
-		return "opentype"
-	case ".woff":
-		return "woff"
-	case ".woff2":
-		return "woff2"
-	default:
-		return "truetype"
-	}
 }
 
 func findPandoc(override string) (string, error) {

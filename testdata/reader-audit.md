@@ -58,7 +58,7 @@ for (const [project, entries] of groupNotes(notes)) {
 ```diff
 @@ Reader preferences @@
 - themes: 10
-+ themes: 5
++ themes: 6
 ```
 
 ### Comparing results
@@ -66,7 +66,7 @@ for (const [project, entries] of groupNotes(notes)) {
 | Area       | What to check        | Expected result                         | Status |
 | :--------- | :------------------- | :-------------------------------------- | :----- |
 | Reading    | Fonts and scale      | Original typography                     | Ready  |
-| Appearance | Five palettes        | Three light and two dark                | Ready  |
+| Appearance | Six palettes         | Three light and three dark              | Ready  |
 | Navigation | Keyboard and touch   | Visible focus and section state         | Review |
 | Tables     | Horizontal scrolling | Header stays visible in the viewer      | Review |
 | Export     | Printed pages        | Complete code without floating controls | Review |
@@ -88,7 +88,7 @@ sequenceDiagram
     participant Reader
     participant Document
     Reader->>Document: Open appearance
-    Document-->>Reader: Show five themes
+    Document-->>Reader: Show six themes
     Note over Reader,Document: Preferences stay in this browser
     Reader->>Document: Choose a theme
     Document-->>Reader: Update content and diagrams

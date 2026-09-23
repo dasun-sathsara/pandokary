@@ -48,7 +48,7 @@
   stroke-linejoin: round;
 }
 .mermaid-container {
-  margin: 2rem 0;
+  margin: 1.5rem 0;
   border: 1px solid var(--surface-border);
   border-radius: 8px;
   background-color: var(--color-code-bg);
@@ -132,7 +132,7 @@
   gap: 0.4rem;
   font-family: var(--font-heading);
   font-size: 0.85em;
-  font-weight: 570;
+  font-weight: var(--heading-font-weight, 600);
   color: var(--color-code-chrome-text);
 }
 
@@ -221,7 +221,6 @@
   display: block;
   user-select: none;
   background: transparent !important;
-  text-rendering: optimizeLegibility;
   shape-rendering: geometricPrecision;
 }
 
@@ -243,14 +242,30 @@
 .mermaid-viewport svg .cluster-label,
 .mermaid-viewport svg .actorText,
 .mermaid-viewport svg tspan {
-  font-family: var(--font-mono), "Geist Mono", monospace !important;
-  font-weight: 500;
-  letter-spacing: var(--letter-spacing-mono, -0.02em);
+  font-family: var(--font-mono), monospace !important;
+  font-size: 0.87em !important;
+  font-weight: var(--mono-font-weight, 420);
+  letter-spacing: var(--letter-spacing-mono, -0.01em);
+}
+
+/* Mermaid renders node labels as HTML inside foreignObject. The document
+   prose rules (justified text, paragraph margins) must not leak in here:
+   labels stay centered with no extra spacing. */
+.mermaid-viewport svg div,
+.mermaid-viewport svg p,
+.mermaid-viewport svg span {
+  text-align: center;
+  text-wrap: balance;
+}
+
+.mermaid-viewport svg p {
+  margin: 0 !important;
+  line-height: 1.45;
 }
 
 .mermaid-viewport strong,
 .mermaid-viewport b {
-  font-weight: 500;
+  font-weight: var(--strong-font-weight, 550);
 }
 
 @media (max-width: 768px) {

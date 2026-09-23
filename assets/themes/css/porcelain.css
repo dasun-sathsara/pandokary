@@ -20,7 +20,8 @@
   --color-h4: #304969; /* OKLCH 0.4 0.063 255 */
   --color-h5: #3c4e66; /* OKLCH 0.42 0.045 255 */
   --color-strong: #0b0f14; /* OKLCH 0.165 0.012 255 */
-  --strong-font-weight: 570;
+  --strong-font-weight: 550;
+  --strong-font-weight-mobile: 580;
 
   --color-accent: #1c5ca6; /* OKLCH 0.475 0.135 255 */
   --color-accent-hover: #15457d; /* OKLCH 0.39 0.108 255 */

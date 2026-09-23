@@ -4,10 +4,11 @@
 
 code {
   font-family: var(--font-mono);
-  letter-spacing: var(--letter-spacing-mono, -0.02em);
-  font-size: 0.85em;
-  font-weight: 500;
+  letter-spacing: var(--letter-spacing-mono, -0.01em);
+  font-size: var(--scale-code-inline, 0.87em);
+  font-weight: var(--mono-font-weight, 420);
   padding: var(--inline-code-padding);
+  margin: 0 0.08em;
   border: var(--inline-code-border);
   border-radius: var(--inline-code-border-radius);
   background-color: var(--color-inline-code-bg);
@@ -15,6 +16,8 @@ code {
   vertical-align: baseline;
   overflow-wrap: anywhere;
   word-break: break-word;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 pre {
@@ -23,12 +26,12 @@ pre {
   border-radius: var(--pre-border-radius);
   overflow: hidden;
   padding: var(--pre-padding);
-  margin: 1.25rem 0 1.45rem;
+  margin: 1rem 0 1.1rem;
   max-width: 100%;
   overflow-x: auto;
   position: relative;
   box-shadow: var(--pre-box-shadow);
-  font-size: 0.82em;
+  font-size: var(--scale-code-block, 0.87em);
   line-height: var(--pre-line-height);
   tab-size: 2;
   contain: layout paint;
@@ -58,13 +61,15 @@ pre:has(.code-line):not(:has(.code-gutter)) {
   opacity: 0.75;
   min-width: 2.75em;
   font-family: var(--font-mono);
+  font-weight: var(--mono-font-weight, 420);
+  letter-spacing: var(--letter-spacing-mono, -0.01em);
   box-sizing: border-box;
 }
 
 .code-gutter-line {
   display: block;
-  height: var(--pre-line-height, 1.45em);
-  line-height: var(--pre-line-height, 1.45em);
+  height: calc(var(--pre-line-height, 1.44) * 1em);
+  line-height: var(--pre-line-height, 1.44);
   cursor: pointer;
   transition:
     color var(--dur-micro) var(--ease-out),
@@ -78,13 +83,13 @@ pre:has(.code-line):not(:has(.code-gutter)) {
 
 .code-gutter-line.focused-line {
   color: var(--color-accent) !important;
-  font-weight: 500;
+  font-weight: var(--mono-emphasis-font-weight, 520);
   opacity: 1;
 }
 
 .code-gutter-line.highlighted-line {
   color: var(--color-accent) !important;
-  font-weight: 500;
+  font-weight: var(--mono-emphasis-font-weight, 520);
   opacity: 1;
 }
 
@@ -101,14 +106,15 @@ pre code,
 pre code.hljs {
   background: transparent !important;
   padding: 0;
+  margin: 0;
   color: var(--color-code-text);
   border: none;
   font-size: 1em;
   line-height: inherit;
   display: block;
   font-family: var(--font-mono);
-  font-weight: 500;
-  letter-spacing: var(--letter-spacing-mono, -0.02em);
+  font-weight: var(--mono-font-weight, 420);
+  letter-spacing: var(--letter-spacing-mono, -0.01em);
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -120,8 +126,8 @@ pre code.hljs {
 .code-scroll-area .code-line {
   display: block;
   white-space: pre;
-  height: var(--pre-line-height, 1.45em);
-  line-height: var(--pre-line-height, 1.45em);
+  height: calc(var(--pre-line-height, 1.44) * 1em);
+  line-height: var(--pre-line-height, 1.44);
   min-width: max-content;
   padding: 0 0.5rem 0 0;
 }
@@ -185,7 +191,7 @@ pre:focus-within .copy-btn {
 .hljs-type,
 .hljs-literal {
   color: var(--code-keyword);
-  font-weight: 500;
+  font-weight: var(--mono-emphasis-font-weight, 520);
 }
 .token.string,
 .hljs-string,
@@ -274,5 +280,5 @@ pre:not(:has(.code-gutter)) .code-line.highlighted-line {
 }
 
 .hljs-strong {
-  font-weight: 500;
+  font-weight: var(--mono-emphasis-font-weight, 520);
 }

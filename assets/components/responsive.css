@@ -11,6 +11,20 @@
 @media (max-width: 1199px) {
   :root {
     --font-size-body: var(--font-size-body-mobile);
+    --font-body:
+      "Studio Feixen Sans", "Noto Sans Sinhala Mobile", -apple-system, BlinkMacSystemFont,
+      "SF Pro Text", "SF Pro", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-heading: var(--font-body);
+    --font-sinhala: var(--font-body);
+    --font-mono: "Geist Mono", "Noto Sans Sinhala Mobile", monospace;
+    --line-height-body: var(--line-height-body-mobile);
+    --line-height-para: var(--line-height-para-mobile);
+    --spacing-list-item: var(--spacing-list-item-mobile);
+    --body-font-weight: var(--body-font-weight-mobile);
+    --strong-font-weight: var(--strong-font-weight-mobile);
+    --heading-font-weight: var(--heading-font-weight-mobile);
+    --mono-font-weight: var(--mono-font-weight-mobile);
+    --mono-emphasis-font-weight: var(--mono-emphasis-font-weight-mobile);
     --toggle-size: 2.25rem;
     /* Shared gutter: body padding and full-bleed bands (code) derive from
        the same token so edges always agree across rotations and zooms. */
@@ -22,7 +36,6 @@
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    line-height: max(23px, 1.5em);
   }
 
   header,
@@ -70,32 +83,32 @@
   }
 
   h2 {
-    margin-top: 1.75rem;
-    margin-bottom: 0.75rem;
+    margin-top: 1.35rem;
+    margin-bottom: 0.6rem;
   }
 
   h3 {
-    margin-top: 1.5rem;
-    margin-bottom: 0.65rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0.55rem;
   }
 
   h4 {
-    margin-top: 1.25rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 0.4rem;
   }
 
   h5 {
-    margin-top: 1.15rem;
-    margin-bottom: 0.5rem;
+    margin-top: 0.95rem;
+    margin-bottom: 0.4rem;
   }
 
   h6 {
-    margin-top: 1rem;
-    margin-bottom: 0.45rem;
+    margin-top: 0.85rem;
+    margin-bottom: 0.35rem;
   }
 
   pre {
-    margin: 1.25rem 0;
+    margin: 1rem 0;
     border-radius: var(--pre-border-radius);
     border: 1px solid var(--color-border);
     max-width: 100%;
@@ -194,7 +207,7 @@
   }
 
   table {
-    margin: 1.25rem 0 1.5rem;
+    margin: 1rem 0 1.1rem;
     border-width: 1px !important;
   }
 
@@ -204,7 +217,7 @@
   }
 
   .table-scroll-container {
-    margin: 1.25rem 0 1.5rem;
+    margin: 1rem 0 1.1rem;
   }
 
   .table-wrapper {
@@ -428,7 +441,7 @@
    ========================================= */
 @media (max-width: 768px) {
   pre {
-    margin: 1.25rem 0;
+    margin: 1rem 0;
     max-width: 100%;
     border-radius: var(--pre-border-radius);
     border: 1px solid var(--color-border);
