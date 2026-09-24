@@ -79,6 +79,8 @@ The variable fonts are **Studio Feixen Sans**, **Geist Mono**, and **Noto Sans S
 
 Text rendering and optical sizing use the browser defaults; no platform-specific smoothing or legibility overrides are applied.
 
+The Appearance panel includes a persistent **Weight Adjustment** control for the Latin sans and monospace roles. Enter a value from -100 to +100, or use the stepper buttons, to shift the typographic roles together. For example, -30 changes the desktop 400 body weight to 370 while preserving the relative differences between body, emphasis, headings, and monospace text.
+
 The four original variable-font binaries are packaged directly (one WOFF2 and three TTFs). Each binary is encoded once in the exported HTML; a short script creates shared in-memory font URLs before the document body loads. This keeps the export self-contained without repeating the Sinhala binary for every weight mapping. No per-weight font cuts are generated. The Geist Mono and Noto Sans Sinhala OFL licenses are included beside their source binaries; the Studio Feixen Sans file comes from the user's local font collection.
 
 ### Markdown formatting
@@ -109,6 +111,7 @@ Old saved choices migrate to a supported theme automatically.
 Floating controls and the appearance panel use solid, contrast-optimized surfaces. Reduced-transparency
 and increased-contrast preferences use reinforced borders. Typography uses Sans 400/550/600,
 Mono 420/520, and Noto Sans Sinhala 400/540/580 on desktop and mobile.
+Touch controls request short haptic pulses through the Vibration API when the browser and device support it; unsupported browsers, including Safari on iOS, keep the full visual and assistive feedback without vibration. Reading time is calculated from Pandoc prose at 238 words per minute, excluding code, math, diagram source, image alt text, and generated reader controls.
 Code, math, and diagram libraries load only when the Markdown needs them. Plain documents make
 no requests for those libraries; diagram controls and diagram palettes are omitted from those exports.
 

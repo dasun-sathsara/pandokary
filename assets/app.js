@@ -3,6 +3,7 @@ const StorageManager = (() => {
   const preferenceKeys = Object.freeze({
     theme: "theme",
     fontSizeAdjust: "font-size-adjust",
+    fontWeightAdjustment: "font-weight-adjustment",
     layoutMaxWidth: "layout-max-width",
     tocCollapsed: "tocCollapsed",
   });
@@ -100,6 +101,64 @@ function isCompactLayout() {
   return window.innerWidth < COMPACT_LAYOUT_BREAKPOINT;
 }
 
+const HapticFeedback = (() => {
+  const patterns = Object.freeze({ selection: 8, impact: 12, success: [10, 30, 14] });
+  const interactiveSelector =
+    'button, input[type="checkbox"], input[type="radio"], [role="button"], [role="switch"]';
+  const debounceMs = 40;
+  let lastPulseAt = Number.NEGATIVE_INFINITY;
+
+  function trigger(kind = "selection") {
+    if (typeof navigator === "undefined" || typeof navigator.vibrate !== "function") {
+      return false;
+    }
+    const now = Date.now();
+    if (now - lastPulseAt < debounceMs) return false;
+    lastPulseAt = now;
+    try {
+      return navigator.vibrate(patterns[kind] || patterns.selection) !== false;
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function isDisabled(target) {
+    return (
+      target.disabled === true ||
+      target.matches?.(":disabled") === true ||
+      target.getAttribute?.("aria-disabled") === "true"
+    );
+  }
+
+  function resolveTarget(node) {
+    const label = node?.closest?.("label");
+    const associatedControl = label?.control || label?.querySelector?.(interactiveSelector);
+    if (associatedControl && !isDisabled(associatedControl)) return associatedControl;
+    const target = node?.closest?.(interactiveSelector);
+    return target && !isDisabled(target) ? target : null;
+  }
+
+  function init() {
+    document.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (event.pointerType !== "touch" || event.isPrimary === false) return;
+        const target = resolveTarget(event.target);
+        if (!target) return;
+        const kind =
+          target.matches?.('input[type="checkbox"], input[type="radio"]') ||
+          target.getAttribute?.("role") === "switch"
+            ? "impact"
+            : "selection";
+        trigger(kind);
+      },
+      { passive: true },
+    );
+  }
+
+  return { init, resolveTarget, trigger };
+})();
+
 const UIComponentFactory = (() => {
   const ICONS = Object.freeze({
     copy: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-copy"><path d="M216,32H88A16,16,0,0,0,72,48V72H48A16,16,0,0,0,32,88V216a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V184h24a16,16,0,0,0,16-16V48A16,16,0,0,0,216,32ZM176,216H48V88H176V216Zm40-40H192V88a16,16,0,0,0-16-16H88V48H216V176Z"/></svg>',
@@ -122,8 +181,6 @@ const UIComponentFactory = (() => {
     bookOpen:
       '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256" class="ph ph-book-open"><path d="M224,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h64a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48ZM96,192H32V64H96a24,24,0,0,1,24,24V192A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></svg>',
     link: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-link anchor-icon"><path d="M136,176a8,8,0,0,1-5.66-2.34l-40-40a8,8,0,0,1,11.32-11.32l40,40A8,8,0,0,1,136,176Zm76.69-124.69a48,48,0,0,0-67.89,0L112,84.69a8,8,0,0,0,11.31,11.31l32.8-32.8a32,32,0,0,1,45.26,45.25L168.57,141.26a8,8,0,1,0,11.31,11.31l32.8-32.8A48,48,0,0,0,212.69,51.31ZM132.12,187.58a8,8,0,0,0-11.31-11.31L88,209.07a32,32,0,0,1-45.25-45.26L75.54,131a8,8,0,0,0-11.31-11.31L31.43,152.51a48,48,0,0,0,67.88,67.88Z"/></svg>',
-    clock:
-      '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-clock reading-time-icon"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"/></svg>',
     image:
       '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="ph ph-image"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.07a16,16,0,0,0-22.63,0L128,172,99.31,143.31a16,16,0,0,0-22.62,0L40,179.31V56ZM40,200l48-48,39.31,39.31a16,16,0,0,0,22.63,0L192,149.31,216,173.31V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></svg>',
   });
@@ -193,11 +250,14 @@ const UIComponentFactory = (() => {
       ".lightbox-backdrop.active",
     ].join(",");
     const hasTOC = Boolean(document.querySelector(".toc-sidebar"));
-    const mobileTOC =
-      hasTOC && isCompactLayout() && document.documentElement.classList.contains("toc-open");
+    const compact = isCompactLayout();
+    const mobileTOC = hasTOC && compact && document.documentElement.classList.contains("toc-open");
+    const mobileSettings =
+      window.matchMedia?.("(max-width: 768px)").matches &&
+      document.querySelector(".settings-popover.active") !== null;
     document.body.classList.toggle(
       "scroll-locked",
-      Boolean(document.querySelector(modalSelector)) || mobileTOC,
+      Boolean(document.querySelector(modalSelector)) || mobileTOC || mobileSettings,
     );
   }
 
@@ -215,7 +275,10 @@ const UIComponentFactory = (() => {
       branch = branch.parentElement
     ) {
       for (const sibling of branch.parentElement.children) {
-        if (sibling === branch || sibling.matches(".modal-backdrop,.toc-backdrop,script,style"))
+        if (
+          sibling === branch ||
+          sibling.matches(".modal-backdrop,.toc-backdrop,.settings-backdrop,script,style")
+        )
           continue;
         siblings.push([sibling, sibling.inert]);
         sibling.inert = true;
@@ -252,7 +315,7 @@ const UIComponentFactory = (() => {
       ?.focus({ preventScroll: true });
   }
 
-  function releaseDialog(container) {
+  function releaseDialog(container, restoreFocus = true) {
     const state = dialogStates.get(container);
     if (!state) return;
     container.removeEventListener("keydown", state.trap);
@@ -266,7 +329,9 @@ const UIComponentFactory = (() => {
     }
     container.removeAttribute("aria-modal");
     dialogStates.delete(container);
-    if (state.previousFocus?.isConnected) state.previousFocus.focus({ preventScroll: true });
+    if (restoreFocus && state.previousFocus?.isConnected) {
+      state.previousFocus.focus({ preventScroll: true });
+    }
   }
 
   function openModal(container) {
@@ -767,7 +832,16 @@ const TableModule = (() => {
 })();
 
 const SettingsModule = (() => {
-  const { ICONS, requestFrame } = UIComponentFactory;
+  const { ICONS, focusDialog, releaseDialog, updateScrollLock } = UIComponentFactory;
+  const FONT_WEIGHT_ADJUSTMENT_MIN = -100;
+  const FONT_WEIGHT_ADJUSTMENT_MAX = 100;
+  const FONT_WEIGHT_ROLE_BASES = Object.freeze({
+    "body-font-weight": Object.freeze({ desktop: 400, mobile: 430 }),
+    "strong-font-weight": Object.freeze({ desktop: 550, mobile: 580 }),
+    "heading-font-weight": Object.freeze({ desktop: 600, mobile: 630 }),
+    "mono-font-weight": Object.freeze({ desktop: 420, mobile: 450 }),
+    "mono-emphasis-font-weight": Object.freeze({ desktop: 520, mobile: 550 }),
+  });
   const DEFAULT_THEMES = Object.freeze([
     { id: "porcelain", name: "Porcelain" },
     { id: "lumina", name: "Lumina" },
@@ -807,6 +881,23 @@ const SettingsModule = (() => {
     return Array.isArray(window.PDY_THEME_MANIFEST) && window.PDY_THEME_MANIFEST.length
       ? window.PDY_THEME_MANIFEST
       : DEFAULT_THEMES;
+  }
+
+  function getAdjustedFontWeights(adjustment, compact = isCompactLayout()) {
+    const layout = compact ? "mobile" : "desktop";
+    return Object.fromEntries(
+      Object.entries(FONT_WEIGHT_ROLE_BASES).map(([role, weights]) => [
+        role,
+        weights[layout] + adjustment,
+      ]),
+    );
+  }
+
+  function applyFontWeightAdjustment(adjustment) {
+    document.documentElement.style.setProperty("--font-weight-adjustment", String(adjustment));
+    for (const [role, weight] of Object.entries(getAdjustedFontWeights(adjustment))) {
+      document.documentElement.style.setProperty(`--${role}`, String(weight));
+    }
   }
 
   function createPanel() {
@@ -854,6 +945,14 @@ const SettingsModule = (() => {
             <button type="button" class="stepper-btn inc-font-size" aria-label="Increase font size">+</button>
           </div>
         </div>
+        <div class="control-row">
+          <label class="control-name" for="font-weight-adjustment">Weight Adjustment</label>
+          <div class="stepper-control">
+            <button type="button" class="stepper-btn dec-font-weight" aria-label="Make font weight lighter">−</button>
+            <input id="font-weight-adjustment" type="number" min="-100" max="100" step="1" value="0" class="stepper-val font-weight-input" aria-live="polite" inputmode="numeric">
+            <button type="button" class="stepper-btn inc-font-weight" aria-label="Make font weight heavier">+</button>
+          </div>
+        </div>
       </div>
       <div class="settings-section layout-section">
         <div class="settings-label">Layout</div>
@@ -873,6 +972,9 @@ const SettingsModule = (() => {
   function bindPanelVisibility(panel, toggle) {
     const closeButton = panel.querySelector(".close-settings");
     const backdrop = document.createElement("div");
+    const phoneMedia = window.matchMedia("(max-width: 768px)");
+    let dialogActive = false;
+    let focusSequence = 0;
     backdrop.className = "settings-backdrop";
     backdrop.addEventListener("touchmove", (event) => event.preventDefault(), { passive: false });
     document.body.append(backdrop);
@@ -897,15 +999,56 @@ const SettingsModule = (() => {
         .querySelectorAll(focusableSelector)
         .forEach(visible ? restoreTabindex : disableTabindex);
     };
+    const focusVisiblePanel = () => {
+      const sequence = focusSequence;
+      let fallbackTimer;
+      const finish = () => {
+        if (sequence !== focusSequence) return;
+        window.clearTimeout(fallbackTimer);
+        panel.removeEventListener("transitionend", handleTransitionEnd);
+        if (!panel.classList.contains("active")) return;
+        if (phoneMedia.matches) {
+          focusDialog(panel, "Appearance settings");
+          dialogActive = true;
+        } else {
+          closeButton?.focus({ preventScroll: true });
+        }
+      };
+      const handleTransitionEnd = (event) => {
+        if (event.target === panel && event.propertyName === "visibility") finish();
+      };
+      panel.addEventListener("transitionend", handleTransitionEnd);
+      fallbackTimer = window.setTimeout(finish, 400);
+    };
+    const syncDialogMode = () => {
+      if (!panel.classList.contains("active")) return;
+      if (phoneMedia.matches) {
+        if (!dialogActive) {
+          focusDialog(panel, "Appearance settings");
+          dialogActive = true;
+        }
+      } else if (dialogActive) {
+        releaseDialog(panel, false);
+        dialogActive = false;
+        closeButton?.focus({ preventScroll: true });
+      }
+      updateScrollLock();
+    };
     const show = (visible, restoreFocus = false) => {
+      focusSequence += 1;
+      if (!visible && dialogActive) {
+        releaseDialog(panel, restoreFocus);
+        dialogActive = false;
+      }
       panel.classList.toggle("active", visible);
       backdrop.classList.toggle("active", visible);
       toggle.classList.toggle("active", visible);
       toggle.setAttribute("aria-expanded", String(visible));
       panel.setAttribute("aria-hidden", String(!visible));
       setFocusability(visible);
-      if (visible) requestFrame(() => closeButton?.focus());
-      else if (restoreFocus) toggle.focus();
+      updateScrollLock();
+      if (visible) focusVisiblePanel();
+      else if (restoreFocus) toggle.focus({ preventScroll: true });
       else if (panel.contains(document.activeElement)) document.activeElement.blur();
     };
     backdrop.addEventListener("click", () => show(false));
@@ -926,6 +1069,7 @@ const SettingsModule = (() => {
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && panel.classList.contains("active")) show(false, true);
     });
+    phoneMedia.addEventListener("change", syncDialogMode);
     show(false);
   }
 
@@ -987,6 +1131,37 @@ const SettingsModule = (() => {
     update();
   }
 
+  function bindFontWeightControls(panel) {
+    const stored = Number.parseInt(StorageManager.getPreference("fontWeightAdjustment", "0"), 10);
+    let adjustment = Number.isFinite(stored)
+      ? Math.max(FONT_WEIGHT_ADJUSTMENT_MIN, Math.min(FONT_WEIGHT_ADJUSTMENT_MAX, stored))
+      : 0;
+    const decrease = panel.querySelector(".dec-font-weight");
+    const increase = panel.querySelector(".inc-font-weight");
+    const input = panel.querySelector(".font-weight-input");
+    const update = (requested, persist = true) => {
+      const parsed = Number.parseInt(requested, 10);
+      adjustment = Number.isFinite(parsed)
+        ? Math.max(FONT_WEIGHT_ADJUSTMENT_MIN, Math.min(FONT_WEIGHT_ADJUSTMENT_MAX, parsed))
+        : 0;
+      applyFontWeightAdjustment(adjustment);
+      input.value = String(adjustment);
+      decrease.disabled = adjustment <= FONT_WEIGHT_ADJUSTMENT_MIN;
+      increase.disabled = adjustment >= FONT_WEIGHT_ADJUSTMENT_MAX;
+      if (persist) StorageManager.setPreference("fontWeightAdjustment", adjustment);
+    };
+    decrease.addEventListener("click", () => update(adjustment - 1));
+    increase.addEventListener("click", () => update(adjustment + 1));
+    input.addEventListener("change", () => update(input.value));
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") update(input.value);
+    });
+    window.matchMedia("(max-width: 1199px)").addEventListener("change", () => {
+      applyFontWeightAdjustment(adjustment);
+    });
+    update(adjustment);
+  }
+
   function bindLayoutControls(panel) {
     const widths = [800, 920, 1040, 1160, 1280, 1400];
     let width = Number.parseInt(StorageManager.getPreference("layoutMaxWidth", "1040"), 10);
@@ -1017,11 +1192,12 @@ const SettingsModule = (() => {
     bindPanelVisibility(settings.panel, settings.toggle);
     bindThemeControls(settings.panel);
     bindFontSizeControls(settings.panel);
+    bindFontWeightControls(settings.panel);
     bindLayoutControls(settings.panel);
     return settings;
   }
 
-  return { init, loadFonts };
+  return { init, loadFonts, getAdjustedFontWeights };
 })();
 
 const TOCModule = (() => {
@@ -1711,15 +1887,6 @@ const ReaderExtrasModule = (() => {
         update();
       }).observe(document.body);
     update();
-
-    const main = document.querySelector("main");
-    const header = document.querySelector("header");
-    if (!main || !header) return;
-    const words = main.textContent.trim().split(/\s+/).filter(Boolean).length;
-    const label = document.createElement("p");
-    label.className = "reading-time";
-    label.innerHTML = `${ICONS.clock} <strong>${Math.ceil(words / 200)} min</strong> read`;
-    header.append(label);
   }
 
   function openLightbox(image) {
@@ -2195,6 +2362,7 @@ const ReaderExtrasModule = (() => {
 window.updateScrollLock = UIComponentFactory.updateScrollLock;
 window.pdyFocusDialog = UIComponentFactory.focusDialog;
 window.pdyReleaseDialog = UIComponentFactory.releaseDialog;
+window.pdyHapticFeedback = HapticFeedback;
 
 function reportModuleError(moduleName, error) {
   console.error(`${moduleName} initialization failed`, error);
@@ -2208,6 +2376,11 @@ async function main() {
       StorageManager.init();
     } catch (error) {
       reportModuleError("StorageManager", error);
+    }
+    try {
+      HapticFeedback.init();
+    } catch (error) {
+      reportModuleError("HapticFeedback", error);
     }
     try {
       // Fold first: it wraps raw Pandoc blocks so later modules keep working inside groups.

@@ -238,12 +238,14 @@
 :root {
   --body-background: var(--color-bg);
   /* One variable-font weight scale is shared by desktop and mobile. */
+  --font-weight-adjustment: 0;
   --body-font-weight-desktop: 400;
   --body-font-weight-mobile: 430;
   --body-font-weight: var(--body-font-weight-desktop);
 
-  --strong-font-weight: 550;
+  --strong-font-weight-desktop: 550;
   --strong-font-weight-mobile: 580;
+  --strong-font-weight: var(--strong-font-weight-desktop);
 
   --heading-font-weight-desktop: 600;
   --heading-font-weight-mobile: 630;

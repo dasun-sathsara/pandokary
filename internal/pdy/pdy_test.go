@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -117,6 +118,159 @@ func TestReaderLoadsOnlyRequiredLibraries(t *testing.T) {
 	}
 }
 
+func TestReadingTimeCountsPandocProse(t *testing.T) {
+	dir := t.TempDir()
+	input := filepath.Join(dir, "reading-time.md")
+	prose := strings.TrimSpace(strings.Repeat("word ", 239))
+	code := strings.TrimSpace(strings.Repeat("const ignoredToken = true; ", 100))
+	markdown := prose + "\n\n```javascript\n" + code + "\n```\n"
+	if err := os.WriteFile(input, []byte(markdown), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := Run(Options{
+		InputPath: input, Export: true, ExportName: filepath.Join(dir, "reading-time.html"),
+		AssetMode: "cdn", FormatMarkdown: false,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(result.OutputPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	html := string(data)
+	if !strings.Contains(html, `data-reading-minutes="2"`) {
+		t.Error("reading time must use prose words and exclude generated/code-only tokens")
+	}
+	if strings.Contains(html, `main.textContent.trim().split`) {
+		t.Error("reading time must not be recalculated from enhanced DOM text")
+	}
+	if strings.Contains(html, `label.className = "reading-time"`) {
+		t.Error("reading-time UI must be present in the initial HTML rather than appended after load")
+	}
+	if !strings.Contains(html, `class="ph ph-timer reading-time-icon"`) {
+		t.Error("reading time must use the Phosphor Timer icon")
+	}
+}
+
+func TestReadingTimeIgnoresFrontMatter(t *testing.T) {
+	cases := []struct {
+		name, markdown string
+		minutes        int
+	}{
+		{
+			name: "boundary",
+			markdown: "---\ntitle: Extra\nauthor: Someone\nreading-minutes: 99\n---\n\n" +
+				strings.TrimSpace(strings.Repeat("word ", 238)) + "\n",
+			minutes: 1,
+		},
+		{
+			name:     "title only",
+			markdown: "---\ntitle: Extra\nauthor: Someone\nreading-minutes: 99\n---\n",
+		},
+		{
+			name: "code only",
+			markdown: "---\ntitle: Extra\nauthor: Someone\nreading-minutes: 99\n---\n\n" +
+				"```javascript\nconst ignoredToken = true;\n```\n",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			input := filepath.Join(dir, "document.md")
+			if err := os.WriteFile(input, []byte(tc.markdown), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			result, err := Run(Options{
+				InputPath: input, Export: true, ExportName: filepath.Join(dir, "document.html"),
+				AssetMode: "cdn", FormatMarkdown: false,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			data, err := os.ReadFile(result.OutputPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			hasReadingTime := regexp.MustCompile(`<main[^>]*data-reading-minutes`).Match(data)
+			if hasReadingTime != (tc.minutes > 0) {
+				t.Fatalf("reading-time presence = %v, want %v", hasReadingTime, tc.minutes > 0)
+			}
+			if tc.minutes > 0 && !strings.Contains(string(data), `data-reading-minutes="`+strconv.Itoa(tc.minutes)+`"`) {
+				t.Errorf("expected data-reading-minutes=%d", tc.minutes)
+			}
+		})
+	}
+}
+
+func TestReadingTimeCountsLexicalProseOnly(t *testing.T) {
+	formatted := strings.TrimSpace(strings.Repeat("**word**, ", 100))
+	plain := strings.TrimSpace(strings.Repeat("word ", 138))
+	prose := formatted + " " + plain
+	altText := strings.TrimSpace(strings.Repeat("word ", 100))
+	cases := []struct {
+		name, markdown string
+		minutes        int
+	}{
+		{name: "formatted punctuation", markdown: prose + "\n", minutes: 1},
+		{name: "image alt text", markdown: prose + "\n\n![alt " + altText + "](image.svg)\n", minutes: 1},
+		{name: "symbols after prose", markdown: prose + " ❤️ ✈️ € ™ ।\n", minutes: 1},
+		{name: "symbols only", markdown: "❤️ ✈️ € ™ । \u1680\uFE0F\n"},
+		{name: "punctuation only", markdown: "। — ©\n"},
+		{name: "unicode whitespace only", markdown: "\u1680\n"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			input := filepath.Join(dir, "document.md")
+			if err := os.WriteFile(input, []byte(tc.markdown), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			result, err := Run(Options{
+				InputPath: input, Export: true, ExportName: filepath.Join(dir, "document.html"),
+				AssetMode: "cdn", FormatMarkdown: false,
+			})
+			if err != nil {
+				t.Fatal(err)
+			}
+			data, err := os.ReadFile(result.OutputPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			hasReadingTime := regexp.MustCompile(`<main[^>]*data-reading-minutes`).Match(data)
+			if hasReadingTime != (tc.minutes > 0) {
+				t.Fatalf("reading-time presence = %v, want %v", hasReadingTime, tc.minutes > 0)
+			}
+			if tc.minutes > 0 && !strings.Contains(string(data), `data-reading-minutes="`+strconv.Itoa(tc.minutes)+`"`) {
+				t.Errorf("expected data-reading-minutes=%d", tc.minutes)
+			}
+		})
+	}
+}
+
+func TestEmptyDocumentOmitsReadingTime(t *testing.T) {
+	dir := t.TempDir()
+	input := filepath.Join(dir, "empty.md")
+	if err := os.WriteFile(input, []byte("\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	result, err := Run(Options{
+		InputPath: input, Export: true, ExportName: filepath.Join(dir, "empty.html"),
+		AssetMode: "cdn", FormatMarkdown: false,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(result.OutputPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if regexp.MustCompile(`<main[^>]*data-reading-minutes`).Match(data) {
+		t.Error("empty documents must not show a zero-minute reading estimate")
+	}
+}
+
 func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 	tempDir := t.TempDir()
 	// Create a sample markdown file
@@ -153,9 +307,12 @@ func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 				`font-family: "Noto Sans Sinhala";`,
 				`local("StudioFeixenSansVF")`,
 				"font-weight: 100 900;",
+				"--font-weight-adjustment: 0;",
 				"--body-font-weight-desktop: 400;",
 				"--body-font-weight-mobile: 430;",
-				"--strong-font-weight: 550;",
+				"--body-font-weight: var(--body-font-weight-desktop);",
+				"--strong-font-weight-desktop: 550;",
+				"--strong-font-weight: var(--strong-font-weight-desktop);",
 				"--heading-font-weight-desktop: 600;",
 				"--heading-font-weight-mobile: 630;",
 				"--mono-font-weight-desktop: 420;",
@@ -177,8 +334,8 @@ func TestFontAssetsBundledInCDNAndOfflineModes(t *testing.T) {
 					t.Errorf("Mode %s: output HTML still contains obsolete font path %q", mode, obsolete)
 				}
 			}
-			// All role declarations retain their CSS weight mappings, while each
-			// source font is encoded only once in the HTML's font loader.
+			// Role declarations retain their CSS weight mappings, while each source
+			// font is encoded only once in the HTML's font loader.
 			fontFiles := []string{
 				"StudioFeixenSans-Variable.woff2",
 				"GeistMono-Variable.ttf",

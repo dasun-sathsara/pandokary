@@ -408,6 +408,11 @@
     padding: 0 !important;
   }
 
+  .settings-popover .font-weight-input {
+    min-width: 50px !important;
+    min-height: 44px !important;
+  }
+
   .settings-popover .stepper-btn {
     min-width: 28px !important;
     min-height: 28px !important;
@@ -510,6 +515,10 @@
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+  }
+
+  .settings-popover .font-weight-input {
+    min-height: 44px;
   }
 
   /* Hide both floating toggles when the Appearance bottom sheet is open */
