@@ -31,7 +31,7 @@ type assetLocation struct {
 	writable bool
 }
 
-var requiredAssets = []string{"template.html", "inline-assets.lua", "mathjax-config.js", "app.js", "mermaid.js", "base.css", "components/code.css", "themes/manifest.json"}
+var requiredAssets = []string{"template.html", "inline-assets.lua", "unicode-word-ranges.lua", "mathjax-config.js", "app.js", "mermaid.js", "base.css", "components/code.css", "themes/manifest.json"}
 
 // Run executes the pandokary rendering pipeline.
 func Run(options Options) (Result, error) {

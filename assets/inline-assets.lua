@@ -117,6 +117,77 @@ end
 local has_code = false
 local has_math = false
 local has_mermaid = false
+-- Mean adult silent-reading rate for English non-fiction (Brysbaert, 2019).
+local READING_WORDS_PER_MINUTE = 238
+
+local word_range_data = read_asset("unicode-word-ranges.lua")
+if not word_range_data then error("required pdy Unicode word ranges not found") end
+local word_intervals = {}
+for first_hex, last_hex in word_range_data:gmatch("(%x+)-(%x+)") do
+  local first, last = tonumber(first_hex, 16), tonumber(last_hex, 16)
+  if not first or not last then error("invalid pdy Unicode word range: " .. first_hex .. "-" .. last_hex) end
+  word_intervals[#word_intervals + 1] = { first, last }
+end
+
+local function is_word_codepoint(codepoint)
+  local low, high = 1, #word_intervals
+  while low <= high do
+    local middle = math.floor((low + high) / 2)
+    local interval = word_intervals[middle]
+    if codepoint < interval[1] then
+      high = middle - 1
+    elseif codepoint > interval[2] then
+      low = middle + 1
+    else
+      return true
+    end
+  end
+  return false
+end
+
+local function is_word(value)
+  for _, codepoint in utf8.codes(value) do
+    if is_word_codepoint(codepoint) then return true end
+  end
+  return false
+end
+
+local function count_prose_words(doc)
+  local word_count = 0
+  local body = pandoc.Pandoc(doc.blocks, {})
+  local prose = body:walk({
+    Code = function()
+      return {}
+    end,
+    Math = function()
+      return {}
+    end,
+    Image = function(image)
+      image.caption = {}
+      return image
+    end,
+    Figure = function(figure)
+      figure.caption = {}
+      return figure
+    end,
+    RawInline = function()
+      return {}
+    end,
+    CodeBlock = function()
+      return {}
+    end,
+    RawBlock = function()
+      return {}
+    end,
+  })
+  prose:walk({
+    Str = function(value)
+      if is_word(pandoc.utils.stringify(value)) then word_count = word_count + 1 end
+      return value
+    end,
+  })
+  return word_count
+end
 
 function Math()
   has_math = true
@@ -199,6 +270,11 @@ function Pandoc(doc)
   doc.meta["has-code"] = pandoc.MetaBool(has_code)
   doc.meta["has-math"] = pandoc.MetaBool(has_math)
   doc.meta["has-mermaid"] = pandoc.MetaBool(has_mermaid)
+  doc.meta["reading-minutes"] = nil
+  local word_count = count_prose_words(doc)
+  if word_count > 0 then
+    doc.meta["reading-minutes"] = math.max(1, math.ceil(word_count / READING_WORDS_PER_MINUTE))
+  end
   local css, font_loader = bundle_fonts(concatenate(stylesheet_files))
   local theme_js = build_theme_js()
 

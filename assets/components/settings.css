@@ -314,3 +314,30 @@
   text-align: center;
   user-select: none;
 }
+
+.font-weight-input {
+  flex: 0 0 50px;
+  width: 50px;
+  min-height: 28px;
+  padding: 0 4px;
+  border: 0;
+  appearance: textfield;
+  background: transparent;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-weight: inherit;
+  line-height: inherit;
+  text-align: center;
+}
+
+.font-weight-input::-webkit-inner-spin-button,
+.font-weight-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.font-weight-input:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}

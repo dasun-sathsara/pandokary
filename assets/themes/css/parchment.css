@@ -30,8 +30,6 @@
   --color-table-row-alt: #f8f1e6; /* OKLCH 0.96 0.016 80 */
   --color-table-row-hover: #f3e3d5; /* OKLCH 0.925 0.026 65 */
   --color-on-accent: #fefcfa; /* OKLCH 0.993 0.004 80 */
-  --strong-font-weight: 550;
-  --strong-font-weight-mobile: 580;
 
   --code-keyword: #7d3840; /* OKLCH 0.435 0.095 15 */
   --code-string: #2f5d4a; /* OKLCH 0.44 0.06 165 */
