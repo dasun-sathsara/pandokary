@@ -4,7 +4,7 @@ import vm from "node:vm";
 import { readReaderSource } from "./reader-source.mjs";
 
 const read = (name) => readFileSync(new URL(`../assets/${name}`, import.meta.url), "utf8");
-const baseCss = read("base.css");
+const baseCss = read("styles/base.css");
 const fontFaceBlocks = [...baseCss.matchAll(/@font-face\s*\{([^}]+)\}/g)].map(([, block]) => block);
 const expectedFaces = [
   ["Studio Feixen Sans", "fonts/StudioFeixenSans-Variable.woff2", "100 900", "normal"],
@@ -108,7 +108,7 @@ for (const filename of ["LICENSE-Geist-Mono-OFL.txt", "LICENSE-Noto-Sans-Sinhala
   assert.ok(statSync(new URL(`../assets/fonts/${filename}`, import.meta.url)).size > 1000);
 }
 
-const responsiveCss = read("components/responsive.css");
+const responsiveCss = read("styles/components/responsive.css");
 assert.doesNotMatch(responsiveCss, /font-body-phone|font-mono-phone|weight-phone/);
 for (const role of [
   "body-font-weight",
@@ -147,7 +147,7 @@ assert.match(baseCss, /--scale-code-inline: 0\.87em;/);
 assert.match(baseCss, /--scale-code-block: 0\.87em;/);
 assert.match(baseCss, /--letter-spacing-mono: -0\.01em;/);
 const appJs = readReaderSource();
-const templateHtml = read("template.html");
+const templateHtml = read("templates/reader.html");
 assert.match(appJs, /type="number"[^>]*min="-100"[^>]*max="100"[^>]*font-weight-input/);
 assert.match(
   appJs,
@@ -179,10 +179,10 @@ assert.match(fontLoader, /\[420, 520\]/);
 assert.match(fontLoader, /\[400, 420, 520, 540, 550, 580, 600\]/);
 assert.doesNotMatch(fontLoader, /window\.matchMedia|Android Trial|Mobile Trial/);
 assert.match(templateHtml, /<html lang="\$if\(lang\)\$\$lang\$\$else\$en\$endif\$"/);
-const inlineFilter = read("inline-assets.lua");
-const unicodeWordRanges = read("unicode-word-ranges.lua");
+const inlineFilter = read("filters/inline-assets.lua");
+const unicodeWordRanges = read("filters/unicode-word-ranges.lua");
 assert.match(inlineFilter, /bundle_fonts\(concatenate\(stylesheet_files\)\)/);
-assert.match(inlineFilter, /read_asset\("unicode-word-ranges\.lua"\)/);
+assert.match(inlineFilter, /read_asset\("filters\/unicode-word-ranges\.lua"\)/);
 assert.match(inlineFilter, /math\.floor\(\(low \+ high\) \/ 2\)/);
 assert.match(unicodeWordRanges, /^-- Unicode data version: 16\.0\.0\./m);
 assert.match(unicodeWordRanges, /30-39,41-5A,61-7A/);
@@ -198,7 +198,7 @@ assert.match(inlineFilter, /"font\/woff2"/);
 assert.match(inlineFilter, /"font\/ttf"/);
 assert.match(inlineFilter, /required pdy font not found/);
 
-const readerCss = read("components/reader.css");
+const readerCss = read("styles/components/reader.css");
 const kbdRule = readerCss.match(/(?:^|\n)kbd\s*\{([\s\S]*?)\n\}/)?.[1];
 assert.ok(kbdRule, "keyboard shortcut rule exists");
 assert.match(kbdRule, /font-family:\s*var\(--font-mono\)/);
@@ -206,7 +206,7 @@ assert.match(kbdRule, /font-size:\s*var\(--scale-code-inline,\s*0\.87em\)/);
 assert.match(kbdRule, /font-weight:\s*var\(--mono-font-weight,\s*420\)/);
 assert.match(kbdRule, /letter-spacing:\s*var\(--letter-spacing-mono,\s*-0\.01em\)/);
 
-const mermaidJs = read("mermaid.js");
+const mermaidJs = read("scripts/modules/mermaid.js");
 const renderError = mermaidJs.match(
   /function createRenderError\(error\)\s*\{([\s\S]*?)\n {2}\}/,
 )?.[1];

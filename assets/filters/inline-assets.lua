@@ -117,7 +117,7 @@ local themes = decoded_manifest.themes or decoded_manifest
 -- Mean adult silent-reading rate for English non-fiction (Brysbaert, 2019).
 local READING_WORDS_PER_MINUTE = 238
 
-local word_range_data = read_asset("unicode-word-ranges.lua")
+local word_range_data = read_asset("filters/unicode-word-ranges.lua")
 if not word_range_data then error("required pdy Unicode word ranges not found") end
 local word_intervals = {}
 for first_hex, last_hex in word_range_data:gmatch("(%x+)-(%x+)") do
@@ -202,22 +202,22 @@ end
 
 
 local stylesheet_files = {
-  "base.css",
-  "components/code.css",
-  "components/tables.css",
-  "components/settings.css",
-  "components/mermaid.css",
-  "components/reader.css",
-  "components/loading.css",
-  "components/headings.css",
-  "components/lightbox.css",
-  "components/footer.css",
+  "styles/base.css",
+  "styles/components/code.css",
+  "styles/components/tables.css",
+  "styles/components/settings.css",
+  "styles/components/mermaid.css",
+  "styles/components/reader.css",
+  "styles/components/loading.css",
+  "styles/components/headings.css",
+  "styles/components/lightbox.css",
+  "styles/components/footer.css",
 }
 for _, theme in ipairs(themes) do
   table.insert(stylesheet_files, "themes/css/" .. theme.id .. ".css")
 end
-table.insert(stylesheet_files, "components/responsive.css")
-table.insert(stylesheet_files, "components/surfaces.css")
+table.insert(stylesheet_files, "styles/components/responsive.css")
+table.insert(stylesheet_files, "styles/components/surfaces.css")
 
 local function build_theme_js()
   local m_parts = {}
@@ -231,11 +231,11 @@ local function build_theme_js()
 end
 
 local function build_reader_js()
-  local manifest = require_asset("reader-scripts.json")
+  local manifest = require_asset("scripts/manifest.json")
   local scripts = pandoc.json.decode(manifest)
   -- Diagram controllers use the shared runtime and UI modules, then register
   -- their hooks before app.js starts reader initialization.
-  if has_mermaid then table.insert(scripts, #scripts, "mermaid.js") end
+  if has_mermaid then table.insert(scripts, #scripts, "scripts/modules/mermaid.js") end
   return concatenate(scripts)
 end
 
@@ -276,7 +276,7 @@ function Pandoc(doc)
   doc.meta["inline-font-loader"] = raw_html(font_loader)
   doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. build_reader_js())
   if has_math then
-    doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
+    doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "scripts/mathjax-config.js" }))
   end
   return doc
 end

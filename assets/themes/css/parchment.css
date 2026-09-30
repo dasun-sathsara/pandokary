@@ -2,7 +2,7 @@
   /* Warm ivory, walnut ink and oxblood. Muted bronze and pine syntax accents.
      OKLCH anchors converted to sRGB with chroma reduced at fixed lightness/hue.
      Neutral backgrounds and accent colors have independent ramps.
-     Palette rationale and sources: docs/theme-palettes.md */
+  */
 
   --color-bg: #fcf6ed; /* OKLCH 0.975 0.014 80 */
   --color-surface: #f7f0e5; /* OKLCH 0.958 0.016 80 */

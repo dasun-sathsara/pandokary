@@ -217,7 +217,7 @@ try {
 
     $installAssetsDir = Join-Path $InstallDir "assets"
     New-Item -ItemType Directory -Path $installAssetsDir -Force | Out-Null
-    Copy-Item -Path (Join-Path $RepoDir "assets\*") -Destination $installAssetsDir -Recurse -Force
+    Copy-Item -Path (Join-Path $RepoDir "assets\*") -Destination $installAssetsDir -Exclude "*.go" -Recurse -Force
 } finally {
     Pop-Location
 }

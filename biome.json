@@ -6,7 +6,13 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["assets/**/*.js", "assets/**/*.css", "scripts/**/*.mjs", "*.json"]
+    "includes": [
+      "assets/**/*.js",
+      "assets/**/*.css",
+      "assets/**/*.json",
+      "tests/**/*.mjs",
+      "*.json"
+    ]
   },
   "formatter": {
     "enabled": true,

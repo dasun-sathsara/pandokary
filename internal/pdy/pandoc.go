@@ -37,11 +37,11 @@ func pandocArgs(options Options, assets, output string) []string {
 	args := []string{
 		"--from", "markdown+tex_math_dollars+tex_math_single_backslash",
 		options.InputPath,
-		"--template", filepath.Join(assets, "template.html"),
+		"--template", filepath.Join(assets, "templates", "reader.html"),
 		"--standalone",
 		"--resource-path", resourcePath,
 		"--syntax-highlighting=none", "--mathjax",
-		"--lua-filter", filepath.Join(assets, "inline-assets.lua"),
+		"--lua-filter", filepath.Join(assets, "filters", "inline-assets.lua"),
 		"--metadata=assetMode:" + options.AssetMode,
 	}
 	base := directoryFileURL(filepath.Dir(options.InputPath))

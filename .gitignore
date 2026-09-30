@@ -4,7 +4,6 @@
 # Local build/test outputs
 bin/
 /pdy
-.firecrawl/
 node_modules/
 *.tmp
 *.log
@@ -13,11 +12,10 @@ node_modules/
 coverage.out
 coverage.html
 *.html
-!assets/template.html
+!assets/templates/reader.html
 
 # Editor and OS metadata
 .idea/
 .vscode/
 Thumbs.db
 *.png
-handoff_notes.md

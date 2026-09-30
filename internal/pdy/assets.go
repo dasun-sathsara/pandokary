@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	pandokary "pdy"
+	"pdy/assets"
 )
 
 type assetLocation struct {
@@ -17,9 +17,9 @@ type assetLocation struct {
 }
 
 var requiredAssets = []string{
-	"template.html", "inline-assets.lua", "unicode-word-ranges.lua",
-	"mathjax-config.js", "mermaid.js", "base.css", "components/code.css",
-	"themes/manifest.json", "reader-scripts.json",
+	"templates/reader.html", "filters/inline-assets.lua", "filters/unicode-word-ranges.lua",
+	"scripts/mathjax-config.js", "scripts/modules/mermaid.js", "styles/base.css", "styles/components/code.css",
+	"themes/manifest.json", "scripts/manifest.json",
 }
 
 func (assets assetLocation) close() {
@@ -50,7 +50,7 @@ func resolveAssets() (assetLocation, error) {
 	if dir, err := findAssetsFromCWD(); err == nil {
 		return assetLocation{dir: dir}, nil
 	}
-	dir, cleanup, err := pandokary.ExtractEmbeddedAssets()
+	dir, cleanup, err := assets.Extract()
 	if err != nil {
 		return assetLocation{}, fmt.Errorf("extract embedded assets: %w", err)
 	}
@@ -62,7 +62,7 @@ func resolveAssets() (assetLocation, error) {
 }
 
 func checkAssets(dir string) error {
-	data, err := os.ReadFile(filepath.Join(dir, "reader-scripts.json"))
+	data, err := os.ReadFile(filepath.Join(dir, "scripts/manifest.json"))
 	if err != nil {
 		return fmt.Errorf("read reader script manifest: %w", err)
 	}

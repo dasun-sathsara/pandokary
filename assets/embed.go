@@ -1,5 +1,5 @@
-// Package pandokary provides embedded runtime assets for pdy.
-package pandokary
+// Package assets bundles the reader's runtime files.
+package assets
 
 import (
 	"embed"
@@ -8,21 +8,17 @@ import (
 	"path/filepath"
 )
 
-//go:embed assets/*
+//go:embed filters fonts scripts styles templates themes
 var embeddedAssets embed.FS
 
-// ExtractEmbeddedAssets writes bundled runtime assets to a temporary directory.
-func ExtractEmbeddedAssets() (string, func(), error) {
-	sub, err := fs.Sub(embeddedAssets, "assets")
-	if err != nil {
-		return "", nil, err
-	}
+// Extract writes bundled runtime assets to a temporary directory.
+func Extract() (string, func(), error) {
 	dir, err := os.MkdirTemp("", "pdy-assets-*")
 	if err != nil {
 		return "", nil, err
 	}
 	cleanup := func() { _ = os.RemoveAll(dir) }
-	err = fs.WalkDir(sub, ".", func(name string, entry fs.DirEntry, walkErr error) error {
+	err = fs.WalkDir(embeddedAssets, ".", func(name string, entry fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
@@ -30,7 +26,7 @@ func ExtractEmbeddedAssets() (string, func(), error) {
 		if entry.IsDir() {
 			return os.MkdirAll(target, 0o755)
 		}
-		data, err := fs.ReadFile(sub, name)
+		data, err := fs.ReadFile(embeddedAssets, name)
 		if err != nil {
 			return err
 		}

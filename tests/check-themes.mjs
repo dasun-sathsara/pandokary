@@ -8,7 +8,7 @@ const declarations = (css) =>
   Object.fromEntries(
     [...css.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]),
   );
-const defaults = declarations(read("base.css"));
+const defaults = declarations(read("styles/base.css"));
 let checks = 0;
 const ids = manifest.themes.map((theme) => theme.id).sort();
 assert.deepEqual(ids, [

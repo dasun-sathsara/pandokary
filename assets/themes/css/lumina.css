@@ -2,7 +2,7 @@
   /* Pale mineral, graphite ink and deep teal. Copper and slate-blue syntax accents.
      OKLCH anchors converted to sRGB with chroma reduced at fixed lightness/hue.
      Neutral backgrounds and accent colors have independent ramps.
-     Palette rationale and sources: docs/theme-palettes.md */
+  */
 
   --color-bg: #f7fbfa; /* OKLCH 0.985 0.004 180 */
   --color-surface: #f1f6f5; /* OKLCH 0.97 0.006 180 */

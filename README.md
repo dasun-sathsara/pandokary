@@ -2,10 +2,28 @@
 
 `pandokary` wraps Pandoc with project-aware defaults and a reproducible set of HTML assets so Markdown notes render consistently across environments.
 
-- **CLI entry point**: `cmd/pdy/main.go` parses flags and calls the rendering pipeline in `internal/pdy/`.
-- **Rendering pipeline**: `internal/pdy/` separates asset lookup, source formatting, Pandoc arguments, and staged output.
-- **Assets**: `assets/` contains the HTML template, CSS, browser modules, and Lua filter embedded into the binary.
-- **Samples**: `testdata/` stores example Markdown inputs for manual and automated checks.
+## Repository Layout
+
+```text
+cmd/pdy/             CLI entry point and flag tests
+internal/pdy/        Rendering pipeline and Go regression tests
+assets/
+  embed.go           Embedded runtime asset package
+  filters/           Pandoc Lua filters and Unicode word data
+  fonts/             Bundled fonts and licenses
+  scripts/           Browser startup, library configuration, and script manifest
+    modules/         Reader features, including the Mermaid viewer
+  styles/            Base CSS and component styles
+  templates/         Pandoc HTML template
+  themes/            Theme manifest, CSS palettes, and Mermaid palettes
+scripts/             Unix and Windows installers, with installer tests
+tests/               JavaScript reader, theme, and browser checks
+testdata/            Shared Markdown and image fixtures
+```
+
+Go tests stay beside the packages they exercise. JavaScript checks share the
+fixtures in `testdata/` and run through the npm commands below. Local build output
+lives in the ignored `bin/` directory.
 
 ## Requirements
 
@@ -66,7 +84,7 @@ The compiled binary looks for assets in this order:
 - `./assets/` found by walking up from the current working directory
 - embedded assets shipped inside the binary
 
-You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a complete copy of the `assets/` directory, including its subdirectories and `reader-scripts.json`.
+You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a complete copy of the runtime directories under `assets/`, including `scripts/manifest.json`. The Go source `assets/embed.go` is only needed when building the binary. Refresh older asset overrides to match this layout.
 
 Exports are staged beside their destination and saved only after Pandoc succeeds.
 A failed conversion leaves an existing export intact and removes temporary output.
@@ -120,7 +138,6 @@ The six themes are **Lumina** (pale mineral, deep teal accent), **Porcelain** (w
 neutral light, blue accent), **Parchment** (warm ivory, oxblood accent), **Obsidian**
 (warm charcoal, muted apricot accent), **Midnight Fjord** (neutral slate, mist-blue accent),
 and **Evergreen** (soft charcoal, muted sage accent and warm gray text).
-See [the palette notes](docs/theme-palettes.md) for the color research and contrast measurements.
 Old saved choices migrate to a supported theme automatically.
 
 Floating controls and the appearance panel use solid, contrast-optimized surfaces. Reduced-transparency
@@ -138,8 +155,22 @@ the document in the embedded view and pans in the expanded view; Control or
 Command plus wheel zooms around the pointer. Focus a diagram to use arrow keys,
 plus or minus, and `0` or Home to reset. Theme changes and resizing preserve the
 view, and closing an expanded diagram restores its previous embedded view.
-See [the Mermaid investigation](docs/mermaid-viewer.md) for research, failure
-handling, and the dedicated `npm run check:mermaid` browser checks.
+Malformed diagrams show their original source in an expandable error panel and
+disable zoom controls. If the Mermaid library fails to load, the original code
+blocks remain available.
+
+Run the existing browser checks with Go, Pandoc, and `agent-browser` available:
+
+```sh
+npm run check:mermaid
+npm run check:mermaid -- --offline
+```
+
+These checks live in `tests/check-mermaid-browser.mjs` and use
+`testdata/mermaid-audit.md`. They cover rendering, zoom, dragging, fullscreen,
+theme changes, and cleanup in Chromium. They run separately from `npm test`
+because they require a browser driver. Mobile gestures use viewport emulation
+and synthetic pointer events.
 
 Regenerate existing HTML exports to pick up style changes, since exports include their CSS.
 
@@ -150,8 +181,9 @@ Consider adding samples under `testdata/` when covering new scenarios.
 - Format Go code with `gofmt` (or `goimports`) before committing.
 - Group imports by standard library, third-party, then local packages.
 - Run `go vet ./...` and `golangci-lint run` when the linter is available. The configuration uses the golangci-lint v2 schema.
-- Browser features live in `assets/modules/`; `assets/app.js` coordinates startup. Keep their dependency order in `assets/reader-scripts.json`. The Lua filter and reader checks use the same manifest to assemble the source.
-- Shared browser utilities live in `modules/runtime.js`, and each feature exposes its interface through `PDY`. Optional feature failures are reported without interrupting other reader controls.
+- Browser features live in `assets/scripts/modules/`; `assets/scripts/app.js` coordinates startup. Keep their dependency order in `assets/scripts/manifest.json`. The Lua filter and reader checks use the same manifest to assemble the source.
+- Shared browser utilities live in `assets/scripts/modules/runtime.js`, and each feature exposes its interface through `PDY`. Optional feature failures are reported without interrupting other reader controls.
+- Asset embedding lives in `assets/embed.go`. It packages only the runtime directories; update its embed directive if a new runtime directory is added.
 
 ## Contributing
 

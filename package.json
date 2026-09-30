@@ -12,14 +12,14 @@
   "license": "MIT",
   "scripts": {
     "test": "npm run check && npm run check:themes && npm run check:reader",
-    "check:themes": "node scripts/check-themes.mjs",
-    "check:mermaid": "node scripts/check-mermaid-browser.mjs",
+    "check:themes": "node tests/check-themes.mjs",
+    "check:mermaid": "node tests/check-mermaid-browser.mjs",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
     "format": "biome format --write .",
     "check": "biome check .",
     "check:fix": "biome check --write .",
-    "check:reader": "node scripts/check-reader.mjs && node scripts/check-reader-safety.mjs"
+    "check:reader": "node tests/check-reader.mjs && node tests/check-reader-safety.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.5"

@@ -2,7 +2,7 @@
   /* Near-neutral charcoal with muted sage accents and warm gray text.
      Softened in OKLCH: background chroma reduced 70%, accent chroma 40%.
      Lightness is retained; colors are gamut-mapped and rounded to sRGB.
-     Palette rationale and sources: docs/theme-palettes.md */
+  */
 
   --color-bg: #151816; /* OKLCH 0.205 0.0048 155 */
   --color-surface: #1d201e; /* OKLCH 0.24 0.0054 155 */
