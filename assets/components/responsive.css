@@ -190,22 +190,6 @@
     border-width: 1px !important;
   }
 
-  .mermaid-viewport svg .edgePath .path {
-    stroke-width: 1.2px !important;
-  }
-
-  .mermaid-viewport svg .edgeLabel p,
-  .mermaid-viewport svg .edgeLabel span,
-  .mermaid-viewport svg .edgeLabel text {
-    stroke-width: 3px !important;
-  }
-
-  .mermaid-viewport svg g.cluster > .label,
-  .mermaid-viewport svg g.cluster > text,
-  .mermaid-viewport svg .cluster-label {
-    stroke-width: 3px !important;
-  }
-
   table {
     margin: 1rem 0 1.1rem;
     border-width: 1px !important;

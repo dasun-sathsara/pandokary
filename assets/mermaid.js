@@ -1,5 +1,5 @@
 PDY.MermaidModule = (() => {
-  const { clamp, requestFrame, cancelFrame, runFeature } = PDY;
+  const { clamp, requestFrame, cancelFrame, runFeature, PHONE_MEDIA_QUERY } = PDY;
 
   function getMermaidAPI() {
     const api = window.mermaid;
@@ -15,12 +15,10 @@ PDY.MermaidModule = (() => {
   }
   const { createButton, setButtonTitle, updateScrollLock, focusDialog, releaseDialog } =
     PDY.UIComponentFactory;
-  const FONT_FAMILY = '"Geist Mono", monospace';
-  const MIN_SCALE = 0.05;
+  const FONT_FAMILY = '"Geist Mono", "Noto Sans Sinhala", monospace';
   const MAX_SCALE = 15;
-  const NOTE_PADDING = 50;
+  const VIEW_PADDING = 24;
   const MODAL_TRANSITION_MS = 350;
-  const WHEEL_SETTLE_MS = 180;
   const DARK_THEME_IDS = new Set(["obsidian", "midnight-fjord", "evergreen"]);
   const controllers = new Set();
   const controllerByContainer = new WeakMap();
@@ -33,6 +31,7 @@ PDY.MermaidModule = (() => {
 
   const MERMAID_DEFAULTS = {
     startOnLoad: false,
+    htmlLabels: false,
     look: "classic",
     fontFamily: FONT_FAMILY,
     flowchart: {
@@ -80,6 +79,7 @@ PDY.MermaidModule = (() => {
       ...MERMAID_DEFAULTS,
       ...selectedConfig,
       startOnLoad: false,
+      htmlLabels: false,
       look: "classic",
       fontFamily: FONT_FAMILY,
       flowchart: {
@@ -148,6 +148,12 @@ PDY.MermaidModule = (() => {
 
     const viewport = document.createElement("div");
     viewport.className = "mermaid-viewport";
+    viewport.tabIndex = 0;
+    viewport.setAttribute("role", "region");
+    viewport.setAttribute(
+      "aria-label",
+      "Diagram. Drag to pan; use arrow keys to move and plus or minus to zoom.",
+    );
     const content = document.createElement("div");
     content.className = "mermaid-content";
     viewport.append(content);
@@ -174,7 +180,7 @@ PDY.MermaidModule = (() => {
       ?.trim()
       .split(/[\s,]+/)
       .map(Number);
-    if (values?.length === 4 && values.every(Number.isFinite)) {
+    if (values?.length === 4 && values.every(Number.isFinite) && values[2] > 0 && values[3] > 0) {
       return { width: values[2], height: values[3] };
     }
     return null;
@@ -182,7 +188,7 @@ PDY.MermaidModule = (() => {
 
   function parseSvgLength(value) {
     const parsed = Number.parseFloat(value || "");
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+    return !value?.includes("%") && Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   }
 
   function getSvgDimensions(svg) {
@@ -193,38 +199,22 @@ PDY.MermaidModule = (() => {
     };
   }
 
-  function getTextWidth(text) {
+  function getSvgBounds(svg, dimensions) {
     try {
-      return text.getBBox().width;
+      const bounds = svg.getBBox();
+      const viewBox = svg.viewBox.baseVal;
+      if (bounds.width > 0 && bounds.height > 0 && viewBox.width > 0 && viewBox.height > 0) {
+        return {
+          x: bounds.x - viewBox.x,
+          y: bounds.y - viewBox.y,
+          width: bounds.width,
+          height: bounds.height,
+        };
+      }
     } catch (_error) {
-      return 0;
+      // A hidden or unsupported SVG still has its declared dimensions.
     }
-  }
-
-  function adjustSequenceNotePadding(svg) {
-    const updates = [];
-    for (const rectangle of svg.querySelectorAll("rect.note")) {
-      const parent = rectangle.parentElement;
-      const texts = parent ? parent.querySelectorAll("text.noteText") : [];
-      let maximumTextWidth = 0;
-      for (const text of texts) {
-        maximumTextWidth = Math.max(maximumTextWidth, getTextWidth(text));
-      }
-
-      const currentWidth = parseSvgLength(rectangle.getAttribute("width"));
-      const currentX = Number.parseFloat(rectangle.getAttribute("x") || "");
-      const neededWidth = maximumTextWidth + NOTE_PADDING;
-      if (!currentWidth || !Number.isFinite(currentX) || neededWidth <= currentWidth) {
-        continue;
-      }
-
-      updates.push({ rectangle, neededWidth, x: currentX - (neededWidth - currentWidth) / 2 });
-    }
-
-    for (const update of updates) {
-      update.rectangle.setAttribute("width", String(update.neededWidth));
-      update.rectangle.setAttribute("x", String(update.x));
-    }
+    return { x: 0, y: 0, ...dimensions };
   }
 
   function getErrorMessage(error) {
@@ -272,25 +262,6 @@ PDY.MermaidModule = (() => {
     return box;
   }
 
-  function mapClientPoint(clientX, clientY, rectangle, isRotated) {
-    const screenX = clientX - rectangle.left;
-    const screenY = clientY - rectangle.top;
-    if (isRotated) {
-      return { x: screenY, y: rectangle.width - screenX };
-    }
-    return { x: screenX, y: screenY };
-  }
-
-  function getLogicalViewportSize(rectangle, isRotated) {
-    return isRotated
-      ? { width: rectangle.height, height: rectangle.width }
-      : { width: rectangle.width, height: rectangle.height };
-  }
-
-  function getPointerDistance(first, second) {
-    return Math.hypot(first.clientX - second.clientX, first.clientY - second.clientY);
-  }
-
   function getPointerMidpoint(first, second) {
     return {
       clientX: (first.clientX + second.clientX) / 2,
@@ -298,17 +269,9 @@ PDY.MermaidModule = (() => {
     };
   }
 
-  function getWheelScaleFactor(event, rectangle) {
-    let deltaY = event.deltaY;
-    if (!event.ctrlKey) {
-      if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
-        deltaY *= 16;
-      } else if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
-        deltaY *= rectangle.height;
-      }
-      deltaY = clamp(deltaY, -120, 120);
-    }
-    return Math.exp(-deltaY * 0.0015);
+  function getWheelDelta(event, height) {
+    const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? height : 1;
+    return { x: event.deltaX * unit, y: event.deltaY * unit };
   }
 
   class MermaidController {
@@ -325,17 +288,19 @@ PDY.MermaidModule = (() => {
       this.activePointers = new Map();
       this.diagramWidth = 800;
       this.diagramHeight = 600;
+      this.diagramBounds = { x: 0, y: 0, width: 800, height: 600 };
       this.scale = 1;
       this.x = 0;
       this.y = 0;
-      this.cachedRectangle = null;
+      this.viewSize = null;
+      this.isFitted = true;
+      this.inlineView = null;
       this.dragStart = null;
       this.pinchStart = null;
       this.isDragging = false;
       this.hasDiagram = false;
       this.transformFrame = 0;
       this.resetTimer = 0;
-      this.wheelTimer = 0;
       this.modalTimer = 0;
       this.modalFrame = 0;
       this.modalBackdrop = null;
@@ -348,24 +313,69 @@ PDY.MermaidModule = (() => {
     }
 
     isRotated() {
-      return this.container.classList.contains("rotated-landscape");
+      return (
+        this.container.classList.contains("rotated-landscape") &&
+        window.matchMedia(PHONE_MEDIA_QUERY).matches
+      );
     }
 
-    getRectangle() {
-      if (!this.cachedRectangle) {
-        const rectangle = this.viewport.getBoundingClientRect();
-        this.cachedRectangle = {
-          left: rectangle.left,
-          top: rectangle.top,
-          width: rectangle.width,
-          height: rectangle.height,
-        };
-      }
-      return this.cachedRectangle;
+    getViewportSize() {
+      return { width: this.viewport.clientWidth, height: this.viewport.clientHeight };
     }
 
-    invalidateRectangle() {
-      this.cachedRectangle = null;
+    mapClientPoint(clientX, clientY) {
+      // clientWidth/Height are untransformed. The bounding rectangle includes
+      // modal animation and the mobile rotation, so undo both here.
+      const rectangle = this.viewport.getBoundingClientRect();
+      const size = this.getViewportSize();
+      if (!rectangle.width || !rectangle.height) return { x: 0, y: 0 };
+      const x = (clientX - rectangle.left) / rectangle.width;
+      const y = (clientY - rectangle.top) / rectangle.height;
+      return this.isRotated()
+        ? { x: y * size.width, y: (1 - x) * size.height }
+        : { x: x * size.width, y: y * size.height };
+    }
+
+    getFitScale(size) {
+      return Math.max(
+        Number.EPSILON,
+        Math.min(
+          Math.max(1, size.width - VIEW_PADDING * 2) / this.diagramWidth,
+          Math.max(1, size.height - VIEW_PADDING * 2) / this.diagramHeight,
+          1,
+        ),
+      );
+    }
+
+    captureView() {
+      if (!this.hasDiagram || !this.viewSize) return { fitted: true };
+      const { width, height } = this.viewSize;
+      return {
+        fitted: this.isFitted,
+        zoom: this.scale / this.getFitScale(this.viewSize),
+        centerX: (width / 2 - this.x) / (this.scale * this.diagramWidth),
+        centerY: (height / 2 - this.y) / (this.scale * this.diagramHeight),
+      };
+    }
+
+    restoreView(view) {
+      const size = this.getViewportSize();
+      if (!this.hasDiagram || size.width <= 0 || size.height <= 0) return;
+      this.viewSize = size;
+      this.isFitted = view.fitted;
+      const fit = this.getFitScale(size);
+      this.scale = view.fitted ? fit : clamp(fit * view.zoom, fit * 0.25, MAX_SCALE);
+      this.x = size.width / 2 - this.diagramWidth * this.scale * (view.fitted ? 0.5 : view.centerX);
+      this.y =
+        size.height / 2 - this.diagramHeight * this.scale * (view.fitted ? 0.5 : view.centerY);
+      this.scheduleTransform();
+    }
+
+    updateLayout() {
+      const size = this.getViewportSize();
+      if (size.width === this.viewSize?.width && size.height === this.viewSize?.height) return;
+      this.clearPointers();
+      this.restoreView(this.captureView());
     }
 
     scheduleTransform() {
@@ -379,48 +389,63 @@ PDY.MermaidModule = (() => {
     }
 
     applyTransform() {
-      this.content.style.transform = `translate3d(${this.x}px, ${this.y}px, 0) scale(${this.scale})`;
+      if (this.hasDiagram && this.viewSize) {
+        // Keep graphics visible, including SVGs with large viewBox padding.
+        const bounds = this.diagramBounds;
+        const visible = Math.min(
+          VIEW_PADDING,
+          bounds.width * this.scale,
+          bounds.height * this.scale,
+        );
+        this.x = clamp(
+          this.x,
+          visible - (bounds.x + bounds.width) * this.scale,
+          this.viewSize.width - visible - bounds.x * this.scale,
+        );
+        this.y = clamp(
+          this.y,
+          visible - (bounds.y + bounds.height) * this.scale,
+          this.viewSize.height - visible - bounds.y * this.scale,
+        );
+        // Resize the SVG's native viewport so text and paths are painted at
+        // the requested resolution. CSS scaling a composited layer blurs it.
+        this.content.style.width = `${this.diagramWidth * this.scale}px`;
+        this.content.style.height = `${this.diagramHeight * this.scale}px`;
+      }
+      this.content.style.transform = `translate(${this.x}px, ${this.y}px)`;
     }
 
     zoomAtPoint(pointX, pointY, factor) {
-      if (!Number.isFinite(factor) || factor <= 0) {
+      if (!this.hasDiagram || !Number.isFinite(factor) || factor <= 0) {
         return;
       }
-      const nextScale = clamp(this.scale * factor, MIN_SCALE, MAX_SCALE);
+      const nextScale = clamp(
+        this.scale * factor,
+        this.getFitScale(this.getViewportSize()) * 0.25,
+        MAX_SCALE,
+      );
       const diagramX = (pointX - this.x) / this.scale;
       const diagramY = (pointY - this.y) / this.scale;
       this.x = pointX - diagramX * nextScale;
       this.y = pointY - diagramY * nextScale;
       this.scale = nextScale;
+      this.isFitted = false;
       this.scheduleTransform();
     }
 
     zoomAtCenter(factor) {
-      this.invalidateRectangle();
-      const rectangle = this.getRectangle();
-      const size = getLogicalViewportSize(rectangle, this.isRotated());
+      const size = this.getViewportSize();
       this.zoomAtPoint(size.width / 2, size.height / 2, factor);
     }
 
     resetView() {
-      this.invalidateRectangle();
-      const rectangle = this.getRectangle();
-      const size = getLogicalViewportSize(rectangle, this.isRotated());
-      if (!this.hasDiagram || size.width <= 0 || size.height <= 0) {
-        return;
-      }
-
-      const widthScale = size.width / this.diagramWidth;
-      const heightScale = size.height / this.diagramHeight;
-      this.scale = clamp(Math.min(widthScale, heightScale) * 0.9, MIN_SCALE, MAX_SCALE);
-      this.x = (size.width - this.diagramWidth * this.scale) / 2;
-      this.y = (size.height - this.diagramHeight * this.scale) / 2;
-      this.scheduleTransform();
+      this.clearPointers();
+      this.restoreView({ fitted: true });
     }
 
-    queueReset(delay = 0) {
+    queueLayout(delay = 0) {
       window.clearTimeout(this.resetTimer);
-      this.resetTimer = window.setTimeout(() => this.resetView(), delay);
+      this.resetTimer = window.setTimeout(() => this.updateLayout(), delay);
     }
 
     bindControls() {
@@ -457,8 +482,9 @@ PDY.MermaidModule = (() => {
         passive: false,
         signal,
       });
+      this.viewport.addEventListener("keydown", (event) => this.handleKey(event), { signal });
       window.addEventListener("blur", () => this.clearPointers(), { signal });
-      window.addEventListener("resize", () => this.invalidateRectangle(), {
+      window.addEventListener("resize", () => this.queueLayout(50), {
         passive: true,
         signal,
       });
@@ -469,29 +495,25 @@ PDY.MermaidModule = (() => {
         return;
       }
       this.resizeObserver = new ResizeObserver(() => {
-        this.invalidateRectangle();
         if (this.hasDiagram) {
           const resetDelay = this.container.classList.contains("maximized")
             ? MODAL_TRANSITION_MS
             : 50;
-          this.queueReset(resetDelay);
+          this.queueLayout(resetDelay);
         }
       });
       this.resizeObserver.observe(this.viewport);
     }
 
     handlePointerDown(event) {
-      if (!this.container.classList.contains("maximized")) {
+      if (!this.hasDiagram || event.target.closest?.("a,button")) {
         return;
       }
-      if (event.pointerType === "mouse" && event.button !== 0) {
-        return;
-      }
+      // Embedded diagrams retain one-finger page scrolling. Touch interaction
+      // belongs to the expanded viewer, whose viewport has touch-action: none.
+      if (!this.acceptsPointer(event)) return;
       event.preventDefault();
-      if (this.activePointers.size === 0) {
-        this.invalidateRectangle();
-      }
-      this.getRectangle();
+      this.viewport.focus({ preventScroll: true });
       this.activePointers.set(event.pointerId, {
         clientX: event.clientX,
         clientY: event.clientY,
@@ -502,6 +524,16 @@ PDY.MermaidModule = (() => {
         console.debug("Pointer capture was unavailable", error);
       }
 
+      this.startGesture();
+    }
+
+    acceptsPointer(event) {
+      return event.pointerType === "mouse"
+        ? event.button === 0
+        : this.container.classList.contains("maximized");
+    }
+
+    startGesture() {
       if (this.activePointers.size === 1) {
         this.startDrag();
       } else if (this.activePointers.size === 2) {
@@ -512,9 +544,6 @@ PDY.MermaidModule = (() => {
     }
 
     handlePointerMove(event) {
-      if (!this.container.classList.contains("maximized")) {
-        return;
-      }
       const pointer = this.activePointers.get(event.pointerId);
       if (!pointer) {
         return;
@@ -535,8 +564,7 @@ PDY.MermaidModule = (() => {
         return;
       }
       this.dragStart = {
-        clientX: pointer.clientX,
-        clientY: pointer.clientY,
+        point: this.mapClientPoint(pointer.clientX, pointer.clientY),
         x: this.x,
         y: this.y,
       };
@@ -550,15 +578,10 @@ PDY.MermaidModule = (() => {
       if (!start) {
         return;
       }
-      const deltaX = pointer.clientX - start.clientX;
-      const deltaY = pointer.clientY - start.clientY;
-      if (this.isRotated()) {
-        this.x = start.x + deltaY;
-        this.y = start.y - deltaX;
-      } else {
-        this.x = start.x + deltaX;
-        this.y = start.y + deltaY;
-      }
+      const point = this.mapClientPoint(pointer.clientX, pointer.clientY);
+      this.x = start.x + point.x - start.point.x;
+      this.y = start.y + point.y - start.point.y;
+      this.isFitted = false;
       this.scheduleTransform();
     }
 
@@ -567,21 +590,21 @@ PDY.MermaidModule = (() => {
       if (!first || !second) {
         return;
       }
-      const rectangle = this.getRectangle();
       const midpoint = getPointerMidpoint(first, second);
-      const localPoint = mapClientPoint(
-        midpoint.clientX,
-        midpoint.clientY,
-        rectangle,
-        this.isRotated(),
-      );
+      const localPoint = this.mapClientPoint(midpoint.clientX, midpoint.clientY);
       this.pinchStart = {
-        distance: getPointerDistance(first, second),
+        distance: this.getPointerDistance(first, second),
         scale: this.scale,
         diagramX: (localPoint.x - this.x) / this.scale,
         diagramY: (localPoint.y - this.y) / this.scale,
       };
       this.stopDragging();
+    }
+
+    getPointerDistance(first, second) {
+      const a = this.mapClientPoint(first.clientX, first.clientY);
+      const b = this.mapClientPoint(second.clientX, second.clientY);
+      return Math.hypot(a.x - b.x, a.y - b.y);
     }
 
     updatePinch() {
@@ -590,28 +613,24 @@ PDY.MermaidModule = (() => {
       if (!first || !second || !start || start.distance <= 0) {
         return;
       }
-      const distance = getPointerDistance(first, second);
+      const distance = this.getPointerDistance(first, second);
       const midpoint = getPointerMidpoint(first, second);
-      const localPoint = mapClientPoint(
-        midpoint.clientX,
-        midpoint.clientY,
-        this.getRectangle(),
-        this.isRotated(),
+      const localPoint = this.mapClientPoint(midpoint.clientX, midpoint.clientY);
+      this.scale = clamp(
+        start.scale * (distance / start.distance),
+        this.getFitScale(this.getViewportSize()) * 0.25,
+        MAX_SCALE,
       );
-      this.scale = clamp(start.scale * (distance / start.distance), MIN_SCALE, MAX_SCALE);
       this.x = localPoint.x - start.diagramX * this.scale;
       this.y = localPoint.y - start.diagramY * this.scale;
+      this.isFitted = false;
       this.scheduleTransform();
     }
 
     stopDragging() {
       this.dragStart = null;
       this.isDragging = false;
-      if (this.container.classList.contains("maximized")) {
-        this.viewport.style.cursor = "grab";
-      } else {
-        this.viewport.style.cursor = "";
-      }
+      this.viewport.style.cursor = "";
     }
 
     releasePointer(pointerId) {
@@ -636,12 +655,7 @@ PDY.MermaidModule = (() => {
       if (this.activePointers.size === 0) {
         this.stopDragging();
         this.pinchStart = null;
-        this.invalidateRectangle();
-      } else if (this.activePointers.size === 1) {
-        this.startDrag();
-      } else if (this.activePointers.size === 2) {
-        this.startPinch();
-      }
+      } else this.startGesture();
     }
 
     clearPointers() {
@@ -652,32 +666,66 @@ PDY.MermaidModule = (() => {
       }
       this.stopDragging();
       this.pinchStart = null;
-      this.invalidateRectangle();
     }
 
     handleWheel(event) {
-      if (!this.container.classList.contains("maximized")) {
+      const zoom = event.ctrlKey || event.metaKey;
+      if (!this.hasDiagram || (!zoom && !this.container.classList.contains("maximized"))) {
         return;
       }
       event.preventDefault();
-      if (!this.wheelTimer) {
-        this.invalidateRectangle();
+      const delta = getWheelDelta(event, this.getViewportSize().height);
+      if (zoom) {
+        const point = this.mapClientPoint(event.clientX, event.clientY);
+        this.zoomAtPoint(point.x, point.y, Math.exp(-clamp(delta.y, -120, 120) * 0.01));
+      } else {
+        const point = this.mapClientPoint(event.clientX, event.clientY);
+        const moved = this.mapClientPoint(event.clientX - delta.x, event.clientY - delta.y);
+        this.x += moved.x - point.x;
+        this.y += moved.y - point.y;
+        this.isFitted = false;
+        this.scheduleTransform();
       }
-      const rectangle = this.getRectangle();
-      const point = mapClientPoint(event.clientX, event.clientY, rectangle, this.isRotated());
-      this.zoomAtPoint(point.x, point.y, getWheelScaleFactor(event, rectangle));
-      window.clearTimeout(this.wheelTimer);
-      this.wheelTimer = window.setTimeout(() => {
-        this.wheelTimer = 0;
-        this.invalidateRectangle();
-      }, WHEEL_SETTLE_MS);
+    }
+
+    handleKey(event) {
+      if (
+        !this.hasDiagram ||
+        event.target !== this.viewport ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey
+      )
+        return;
+      const move = {
+        ArrowLeft: [40, 0],
+        ArrowRight: [-40, 0],
+        ArrowUp: [0, 40],
+        ArrowDown: [0, -40],
+      }[event.key];
+      if (move) {
+        const [x, y] = move;
+        this.x += this.isRotated() ? y : x;
+        this.y += this.isRotated() ? -x : y;
+        this.isFitted = false;
+        this.scheduleTransform();
+      } else if (!this.handleZoomKey(event.key)) return;
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    handleZoomKey(key) {
+      if (["+", "="].includes(key)) this.zoomAtCenter(1.25);
+      else if (key === "-") this.zoomAtCenter(0.8);
+      else if (key === "0" || key === "Home") this.resetView();
+      else return false;
+      return true;
     }
 
     toggleRotation() {
-      this.container.classList.toggle("rotated-landscape");
       this.clearPointers();
-      this.invalidateRectangle();
-      this.queueReset(this.container.classList.contains("maximized") ? MODAL_TRANSITION_MS : 50);
+      this.container.classList.toggle("rotated-landscape");
+      this.updateLayout();
     }
 
     toggleModal() {
@@ -697,6 +745,8 @@ PDY.MermaidModule = (() => {
       this.modalTimer = 0;
       this.modalAbortController?.abort();
       this.modalAbortController = new AbortController();
+      this.inlineView = this.captureView();
+      this.clearPointers();
 
       const backdrop = document.createElement("div");
       backdrop.className = "modal-backdrop";
@@ -728,8 +778,8 @@ PDY.MermaidModule = (() => {
         this.container.classList.add("visible");
         backdrop.classList.add("visible");
       });
-      this.invalidateRectangle();
-      this.queueReset(MODAL_TRANSITION_MS);
+      this.resetView();
+      this.queueLayout(MODAL_TRANSITION_MS);
     }
 
     closeModal(immediate = false) {
@@ -743,6 +793,7 @@ PDY.MermaidModule = (() => {
       cancelFrame(this.modalFrame);
       this.modalFrame = 0;
       releaseDialog(this.container);
+      this.clearPointers();
       this.container.classList.remove("visible");
       backdrop?.classList.remove("visible");
       this.setMaximizeButtonState(false);
@@ -759,7 +810,9 @@ PDY.MermaidModule = (() => {
         this.viewport.style.touchAction = "";
         this.clearPointers();
         updateScrollLock();
-        this.queueReset();
+        window.clearTimeout(this.resetTimer);
+        this.restoreView(this.inlineView || { fitted: true });
+        this.inlineView = null;
       };
 
       window.clearTimeout(this.modalTimer);
@@ -777,22 +830,27 @@ PDY.MermaidModule = (() => {
       this.maximizeButton.setAttribute("aria-expanded", String(isMaximized));
     }
 
-    async render(mermaid, code) {
+    async render(mermaid, code, version) {
       const token = ++this.renderToken;
       const id = `mermaid-svg-${++mermaidIdCounter}`;
       try {
-        const { svg } = await mermaid.render(id, code);
-        if (token !== this.renderToken) {
+        const { svg, bindFunctions } = await mermaid.render(id, code);
+        if (
+          token !== this.renderToken ||
+          version !== renderVersion ||
+          !this.container.isConnected
+        ) {
           return;
         }
+        const view = this.captureView();
         this.content.innerHTML = svg;
         const renderedSvg = this.content.querySelector("svg");
         if (!renderedSvg) {
           throw new Error("Mermaid did not return an SVG diagram.");
         }
 
-        adjustSequenceNotePadding(renderedSvg);
         const dimensions = getSvgDimensions(renderedSvg);
+        this.diagramBounds = getSvgBounds(renderedSvg, dimensions);
         this.diagramWidth = dimensions.width;
         this.diagramHeight = dimensions.height;
         this.hasDiagram = true;
@@ -802,12 +860,14 @@ PDY.MermaidModule = (() => {
         renderedSvg.setAttribute("height", "100%");
         renderedSvg.style.maxWidth = "none";
         this.content.style.transformOrigin = "0 0";
-        this.queueReset();
+        bindFunctions?.(this.content);
+        this.setDiagramControls(true);
+        this.restoreView(view);
       } catch (error) {
         document.querySelectorAll(`#d${id}, #${id}`).forEach((el) => {
           el.remove();
         });
-        if (token === this.renderToken) {
+        if (token === this.renderToken && version === renderVersion) {
           this.showRenderError(error);
         }
         console.error("Failed to render Mermaid diagram", error);
@@ -815,6 +875,8 @@ PDY.MermaidModule = (() => {
     }
 
     showRenderError(error) {
+      this.clearPointers();
+      this.setDiagramControls(false);
       this.hasDiagram = false;
       this.x = 0;
       this.y = 0;
@@ -824,9 +886,23 @@ PDY.MermaidModule = (() => {
         this.transformFrame = 0;
       }
       this.content.style.width = "100%";
-      this.content.style.height = "100%";
+      this.content.style.height = "auto";
       this.content.style.transform = "none";
-      this.content.replaceChildren(createRenderError(error));
+      const message = createRenderError(error);
+      const source = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = "Diagram source";
+      const code = document.createElement("pre");
+      code.textContent = this.container.dataset.mermaidCode || "";
+      source.append(summary, code);
+      message.append(source);
+      this.content.replaceChildren(message);
+    }
+
+    setDiagramControls(enabled) {
+      for (const button of [this.zoomInButton, this.zoomOutButton, this.resetButton])
+        button.disabled = !enabled;
+      this.viewport.classList.toggle("has-diagram", enabled);
     }
 
     destroy() {
@@ -838,7 +914,6 @@ PDY.MermaidModule = (() => {
       cancelFrame(this.transformFrame);
       cancelFrame(this.modalFrame);
       window.clearTimeout(this.resetTimer);
-      window.clearTimeout(this.wheelTimer);
       window.clearTimeout(this.modalTimer);
       controllerByContainer.delete(this.container);
       controllers.delete(this);
@@ -893,11 +968,22 @@ PDY.MermaidModule = (() => {
     for (const controller of diagramControllers) controller.showRenderError(error);
   }
 
+  async function loadDiagramFonts() {
+    if (!document.fonts?.load) return;
+    await Promise.all([
+      document.fonts.load('14px "Geist Mono"'),
+      document.fonts.load('14px "Noto Sans Sinhala"', "සිංහල"),
+    ]).catch((error) => console.warn("Diagram fonts unavailable; using fallbacks", error));
+    await document.fonts.ready;
+  }
+
   async function renderControllers(theme, diagramControllers, version) {
     const mermaid = getMermaidAPI();
     if (!mermaid) return;
 
     try {
+      await loadDiagramFonts();
+      if (version !== renderVersion) return;
       mermaid.initialize(getMermaidConfig(theme));
     } catch (error) {
       showRenderErrors(diagramControllers, error);
@@ -907,7 +993,7 @@ PDY.MermaidModule = (() => {
     for (const controller of diagramControllers) {
       if (version !== renderVersion) return;
       if (!controller.container.isConnected) continue;
-      await controller.render(mermaid, controller.container.dataset.mermaidCode || "");
+      await controller.render(mermaid, controller.container.dataset.mermaidCode || "", version);
     }
   }
 
@@ -945,7 +1031,7 @@ PDY.MermaidModule = (() => {
         newControllers.push(controller);
       }
     }
-    await enqueueRender(getCurrentTheme(), newControllers);
+    if (newControllers.length) await enqueueRender(getCurrentTheme(), [...controllers]);
   }
 
   async function updateMermaidTheme() {

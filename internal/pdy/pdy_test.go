@@ -146,7 +146,7 @@ func TestReaderLoadsOnlyRequiredLibraries(t *testing.T) {
 						t.Errorf("library %s present=%v, want %v", name, !wanted, wanted)
 					}
 				}
-				if strings.Contains(html, "const MIN_SCALE") != tc.diagram {
+				if strings.Contains(html, "PDY.MermaidModule =") != tc.diagram {
 					t.Error("diagram controller must be bundled only for diagrams")
 				}
 				for _, theme := range []string{"lumina", "porcelain", "parchment", "obsidian", "midnight-fjord", "evergreen"} {

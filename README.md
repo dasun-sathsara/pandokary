@@ -132,6 +132,15 @@ no requests for those libraries; diagram controls and diagram palettes are omitt
 
 Use `testdata/reader-audit.md` to check all reader components together.
 
+Mermaid diagrams support mouse dragging in embedded and expanded views. Touch
+dragging and pinch zoom are available in the expanded viewer. Wheel input scrolls
+the document in the embedded view and pans in the expanded view; Control or
+Command plus wheel zooms around the pointer. Focus a diagram to use arrow keys,
+plus or minus, and `0` or Home to reset. Theme changes and resizing preserve the
+view, and closing an expanded diagram restores its previous embedded view.
+See [the Mermaid investigation](docs/mermaid-viewer.md) for research, failure
+handling, and the dedicated `npm run check:mermaid` browser checks.
+
 Regenerate existing HTML exports to pick up style changes, since exports include their CSS.
 
 Consider adding samples under `testdata/` when covering new scenarios.

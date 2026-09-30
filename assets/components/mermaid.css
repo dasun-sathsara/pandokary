@@ -1,52 +1,6 @@
 /* =========================================
    Mermaid Diagrams & Pan/Zoom Viewer
    ========================================= */
-/* Edge label background transparency & text knockout halo */
-.mermaid-viewport svg .edgeLabel,
-.mermaid-viewport svg .edgeLabel div,
-.mermaid-viewport svg .edgeLabel p,
-.mermaid-viewport svg .edgeLabel span {
-  background: transparent !important;
-  background-color: transparent !important;
-  fill: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-.mermaid-viewport svg .edgeLabel p,
-.mermaid-viewport svg .edgeLabel span,
-.mermaid-viewport svg .edgeLabel text {
-  paint-order: stroke fill;
-  stroke: var(--color-code-bg);
-  stroke-width: 4px;
-  stroke-linejoin: round;
-}
-
-/* Subgraph cluster translucent hatch & label knockout */
-.mermaid-viewport svg g.cluster path,
-.mermaid-viewport svg .cluster rect,
-.mermaid-viewport svg g.cluster rect {
-  opacity: 0.2;
-}
-
-.mermaid-viewport svg g.cluster g.node,
-.mermaid-viewport svg g.cluster .node,
-.mermaid-viewport svg g.cluster g.label,
-.mermaid-viewport svg g.cluster text,
-.mermaid-viewport svg g.node * {
-  opacity: 1 !important;
-}
-
-.mermaid-viewport svg g.cluster > .label,
-.mermaid-viewport svg g.cluster > text,
-.mermaid-viewport svg .cluster-label,
-.mermaid-viewport svg g.cluster div,
-.mermaid-viewport svg g.cluster span {
-  paint-order: stroke fill;
-  stroke: var(--color-code-bg);
-  stroke-width: 4px;
-  stroke-linejoin: round;
-}
 .mermaid-container {
   margin: 1.5rem 0;
   border: 1px solid var(--surface-border);
@@ -187,6 +141,11 @@
   color: var(--color-accent);
 }
 
+.mermaid-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .mermaid-viewport {
   flex: 1;
   position: relative;
@@ -198,6 +157,16 @@
   background-color: var(--color-code-bg);
   transition: background-color var(--dur-panel) var(--ease-standard);
   touch-action: pan-y;
+}
+
+.mermaid-viewport.has-diagram {
+  cursor: grab;
+  user-select: none;
+}
+
+.mermaid-viewport:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -3px;
 }
 
 .mermaid-container.maximized .mermaid-viewport {
@@ -212,7 +181,6 @@
   align-items: center;
   justify-content: center;
   transform-origin: 0 0;
-  will-change: transform;
 }
 
 .mermaid-content svg {
@@ -233,39 +201,22 @@
 .mermaid-container.maximized .mermaid-viewport:active {
   cursor: grabbing;
 }
-.mermaid-viewport svg text,
-.mermaid-viewport svg .label,
-.mermaid-viewport svg .label span,
-.mermaid-viewport svg .labelText,
-.mermaid-viewport svg .nodeLabel,
-.mermaid-viewport svg .edgeLabel,
-.mermaid-viewport svg .cluster-label,
-.mermaid-viewport svg .actorText,
-.mermaid-viewport svg tspan {
-  font-family: var(--font-mono), monospace !important;
-  font-size: 0.87em !important;
-  font-weight: var(--mono-font-weight, 420);
-  letter-spacing: var(--letter-spacing-mono, -0.01em);
-}
-
-/* Mermaid renders node labels as HTML inside foreignObject. The document
-   prose rules (justified text, paragraph margins) must not leak in here:
-   labels stay centered with no extra spacing. */
-.mermaid-viewport svg div,
-.mermaid-viewport svg p,
-.mermaid-viewport svg span {
+/* Keep the SVG's generated typography and source-defined styles intact.
+   HTML labels, when enabled by a document, must not inherit prose formatting. */
+.mermaid-content svg foreignObject div,
+.mermaid-content svg foreignObject p,
+.mermaid-content svg foreignObject span {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
   text-align: center;
-  text-wrap: balance;
+  text-wrap: wrap;
 }
 
-.mermaid-viewport svg p {
+.mermaid-content svg foreignObject p {
   margin: 0 !important;
-  line-height: 1.45;
-}
-
-.mermaid-viewport strong,
-.mermaid-viewport b {
-  font-weight: var(--strong-font-weight, 550);
+  line-height: inherit;
 }
 
 @media (max-width: 768px) {
@@ -277,55 +228,6 @@
   }
 }
 
-/* Subgraph Cluster Backgrounds */
-.mermaid-viewport svg .cluster rect,
-.mermaid-viewport svg .cluster polygon,
-.mermaid-viewport svg g.cluster > rect,
-.mermaid-viewport svg g.cluster > polygon {
-  fill: var(--color-surface-alt) !important;
-  stroke: var(--color-border) !important;
-}
-
-/* Dark Mode Overrides for Mermaid Diagrams */
-.mermaid-viewport svg tspan,
-.mermaid-viewport svg .label,
-.mermaid-viewport svg .label span,
-.mermaid-viewport svg .labelText,
-.mermaid-viewport svg .nodeLabel,
-.mermaid-viewport svg .edgeLabel {
-  fill: var(--mermaid-text-color) !important;
-  color: var(--mermaid-text-color) !important;
-}
-
-.mermaid-viewport svg .actor {
-  fill: var(--mermaid-actor-fill) !important;
-  stroke: var(--mermaid-border-color) !important;
-}
-
-.mermaid-viewport svg rect.note,
-.mermaid-viewport svg .note,
-.mermaid-viewport svg .noteBox {
-  fill: var(--mermaid-note-fill) !important;
-  stroke: var(--mermaid-note-stroke) !important;
-}
-
-.mermaid-viewport svg .note text,
-.mermaid-viewport svg .note tspan,
-.mermaid-viewport svg .noteText,
-.mermaid-viewport svg .noteText tspan {
-  fill: var(--mermaid-note-text) !important;
-}
-
-.mermaid-viewport svg .edgeLabel rect {
-  fill: transparent !important;
-  stroke: none !important;
-}
-
-.mermaid-viewport svg .grid line {
-  stroke: var(--mermaid-border-color) !important;
-  opacity: 0.3;
-}
-
-.mermaid-viewport svg .today {
-  stroke: var(--mermaid-today-stroke) !important;
+.mermaid-viewport:has(details) {
+  overflow: auto;
 }
