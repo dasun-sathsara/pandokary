@@ -43,10 +43,6 @@ pre:has(.code-gutter) {
   padding: 0;
 }
 
-pre:has(.code-line):not(:has(.code-gutter)) {
-  padding-left: 0;
-}
-
 .code-gutter {
   display: flex;
   flex-direction: column;
@@ -81,12 +77,7 @@ pre:has(.code-line):not(:has(.code-gutter)) {
   opacity: 1;
 }
 
-.code-gutter-line.focused-line {
-  color: var(--color-accent) !important;
-  font-weight: var(--mono-emphasis-font-weight, 520);
-  opacity: 1;
-}
-
+.code-gutter-line.focused-line,
 .code-gutter-line.highlighted-line {
   color: var(--color-accent) !important;
   font-weight: var(--mono-emphasis-font-weight, 520);
@@ -250,13 +241,6 @@ pre:focus-within .copy-btn {
 .hljs-meta {
   color: var(--color-text-muted) !important;
   font-style: italic;
-}
-
-/* Line Highlighting (legacy layout without gutter) */
-pre:not(:has(.code-gutter)) .code-line.highlighted-line {
-  background-color: var(--focused-line-background, rgba(253, 224, 71, 0.12)) !important;
-  border-left: 3px solid var(--color-accent) !important;
-  padding-left: calc(3.8em - 3px) !important;
 }
 
 .hljs-subst {

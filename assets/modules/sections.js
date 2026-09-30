@@ -63,14 +63,8 @@ PDY.SectionLinkModule = (() => {
     if (cursor < text.length) {
       fragment.append(document.createTextNode(text.slice(cursor)));
     }
-    node.parentNode.replaceChild(fragment, node);
+    node.replaceWith(fragment);
     return true;
-  }
-
-  function ensureHeadingIDs(headings) {
-    for (const heading of headings) {
-      if (!heading.id) TOCModule.ensureHeadingID(heading);
-    }
   }
 
   function collectCandidateNodes(main) {
@@ -95,7 +89,7 @@ PDY.SectionLinkModule = (() => {
     const main = document.querySelector("main");
     if (!main) return null;
     const headings = [...main.querySelectorAll("h1,h2,h3,h4,h5,h6")];
-    ensureHeadingIDs(headings);
+    for (const heading of headings) TOCModule.ensureHeadingID(heading);
     const sectionMap = buildSectionMap(headings);
     if (!sectionMap.size) return sectionMap;
     for (const node of collectCandidateNodes(main)) {

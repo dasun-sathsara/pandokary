@@ -36,10 +36,12 @@ globalThis.PDY = (() => {
 
   function debounce(callback, delay) {
     let timer;
-    return (...args) => {
-      window.clearTimeout(timer);
+    const invoke = (...args) => {
+      invoke.cancel();
       timer = window.setTimeout(() => callback(...args), delay);
     };
+    invoke.cancel = () => window.clearTimeout(timer);
+    return invoke;
   }
 
   function eventElement(event) {

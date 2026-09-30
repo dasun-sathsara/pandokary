@@ -1,4 +1,50 @@
 /* Shared finishes. Reading content keeps its opaque canvas and existing geometry. */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--modal-backdrop-background);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9998;
+  transition:
+    opacity var(--dur-ui) var(--ease-out),
+    visibility var(--dur-ui) !important;
+}
+
+.modal-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mermaid-container.maximized,
+.table-scroll-container.maximized {
+  position: fixed;
+  top: 7.5vh;
+  left: 5vw;
+  width: 90vw;
+  height: 85vh;
+  z-index: 9999;
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  background-color: var(--color-bg);
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity var(--dur-modal) var(--ease-out),
+    transform var(--dur-modal) var(--ease-out) !important;
+}
+
+.mermaid-container.maximized.visible,
+.table-scroll-container.maximized.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .floating-toggle,
 .settings-popover,
 .lightbox-close {
@@ -135,12 +181,6 @@
     --color-inline-code-bg: white;
     --color-inline-code-text: black;
     --color-surface-alt: #f1f1f1;
-    --mermaid-text-color: black;
-    --mermaid-actor-fill: white;
-    --mermaid-border-color: #333333;
-    --mermaid-note-fill: #f1f1f1;
-    --mermaid-note-text: black;
-    --mermaid-note-stroke: #333333;
   }
 
   *,

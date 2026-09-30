@@ -6,16 +6,23 @@ local function read_file(path, mode)
   return content
 end
 
+local assets_dir = os.getenv("PDY_ASSETS_DIR") or ""
+local path_separator = package.config:sub(1, 1)
+
 local function asset_path(name)
-  local base = os.getenv("PDY_ASSETS_DIR")
-  if not base or base == "" then return name end
-  local separator = package.config:sub(1, 1)
-  if base:sub(-1) == separator then return base .. name end
-  return base .. separator .. name
+  if assets_dir == "" then return name end
+  if assets_dir:sub(-1) == path_separator then return assets_dir .. name end
+  return assets_dir .. path_separator .. name
 end
 
 local function read_asset(name, mode)
   return read_file(asset_path(name), mode)
+end
+
+local function require_asset(name)
+  local content = read_asset(name)
+  if not content then error("required pdy asset not found: " .. name) end
+  return content
 end
 
 local function base64(data)
@@ -85,9 +92,7 @@ end
 local function concatenate(names)
   local parts = {}
   for _, name in ipairs(names) do
-    local content = read_asset(name)
-    if not content then error("required pdy asset not found: " .. name) end
-    table.insert(parts, content)
+    table.insert(parts, require_asset(name))
   end
   return table.concat(parts, "\n")
 end
@@ -106,8 +111,7 @@ end
 local has_code = false
 local has_math = false
 local has_mermaid = false
-local theme_manifest = read_asset("themes/manifest.json")
-if not theme_manifest then error("required pdy theme manifest not found") end
+local theme_manifest = require_asset("themes/manifest.json")
 local decoded_manifest = pandoc.json.decode(theme_manifest)
 local themes = decoded_manifest.themes or decoded_manifest
 -- Mean adult silent-reading rate for English non-fiction (Brysbaert, 2019).
@@ -148,13 +152,10 @@ end
 local function count_prose_words(doc)
   local word_count = 0
   local body = pandoc.Pandoc(doc.blocks, {})
+  local function drop_content() return {} end
   local prose = body:walk({
-    Code = function()
-      return {}
-    end,
-    Math = function()
-      return {}
-    end,
+    Code = drop_content,
+    Math = drop_content,
     Image = function(image)
       image.caption = {}
       return image
@@ -163,15 +164,9 @@ local function count_prose_words(doc)
       figure.caption = {}
       return figure
     end,
-    RawInline = function()
-      return {}
-    end,
-    CodeBlock = function()
-      return {}
-    end,
-    RawBlock = function()
-      return {}
-    end,
+    RawInline = drop_content,
+    CodeBlock = drop_content,
+    RawBlock = drop_content,
   })
   prose:walk({
     Str = function(value)
@@ -228,8 +223,7 @@ local function build_theme_js()
   local m_parts = {}
   for _, theme in ipairs(has_mermaid and themes or {}) do
     local path = "themes/mermaid/" .. theme.id .. ".json"
-    local json_str = read_asset(path)
-    if not json_str then error("required pdy diagram palette not found: " .. path) end
+    local json_str = require_asset(path)
     table.insert(m_parts, string.format("%q:%s", theme.id, json_str))
   end
   local mermaid_json = "{" .. table.concat(m_parts, ",") .. "}"
@@ -237,8 +231,7 @@ local function build_theme_js()
 end
 
 local function build_reader_js()
-  local manifest = read_asset("reader-scripts.json")
-  if not manifest then error("required pdy reader script manifest not found") end
+  local manifest = require_asset("reader-scripts.json")
   local scripts = pandoc.json.decode(manifest)
   -- Diagram controllers use the shared runtime and UI modules, then register
   -- their hooks before app.js starts reader initialization.

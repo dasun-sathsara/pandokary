@@ -24,10 +24,24 @@ type config struct {
 	exportName string
 }
 
+const usageText = `Usage:
+  pdy [flags] <input.md>
+  pdy -e|--export <input.md> [optional-name]
+
+Flags:
+  -e, --export              export instead of preview
+      --embed               embed all resources
+      --no-embed            do not embed resources (overrides --embed and offline mode)
+      --no-fmt              skip source Markdown formatting
+      --asset-mode <mode>   cdn (default) or offline
+      --pandoc <path>       override the Pandoc binary
+      --verbose             print resolved paths and commands
+`
+
 func main() {
 	if err := run(os.Args[1:], os.Stdout); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
-			printUsage(os.Stdout)
+			_, _ = io.WriteString(os.Stdout, usageText)
 			return
 		}
 		fmt.Fprintln(os.Stderr, err)
@@ -81,34 +95,18 @@ func parseConfig(args []string) (config, error) {
 	}
 	rest := fs.Args()
 	if len(rest) == 0 {
-		return cfg, fmt.Errorf("missing <input.md>\n\n%s", usageSynopsis())
+		return cfg, fmt.Errorf("missing <input.md>\n\n%s", usageText)
 	}
 	cfg.inputPath = rest[0]
 	if cfg.export {
 		if len(rest) > 2 {
-			return cfg, fmt.Errorf("too many export arguments\n\n%s", usageSynopsis())
+			return cfg, fmt.Errorf("too many export arguments\n\n%s", usageText)
 		}
 		if len(rest) == 2 {
 			cfg.exportName = rest[1]
 		}
 	} else if len(rest) > 1 {
-		return cfg, fmt.Errorf("unexpected argument %q\n\n%s", rest[1], usageSynopsis())
+		return cfg, fmt.Errorf("unexpected argument %q\n\n%s", rest[1], usageText)
 	}
 	return cfg, nil
-}
-
-func usageSynopsis() string {
-	var b strings.Builder
-	printUsage(&b)
-	return b.String()
-}
-func printUsage(w io.Writer) {
-	_, _ = fmt.Fprintln(w, "Usage:\n  pdy [flags] <input.md>\n  pdy -e|--export <input.md> [optional-name]\n\nFlags:")
-	_, _ = fmt.Fprintln(w, "  -e, --export              export instead of preview")
-	_, _ = fmt.Fprintln(w, "      --embed               embed all resources")
-	_, _ = fmt.Fprintln(w, "      --no-embed            do not embed resources (overrides --embed and offline mode)")
-	_, _ = fmt.Fprintln(w, "      --no-fmt              skip source Markdown formatting")
-	_, _ = fmt.Fprintln(w, "      --asset-mode <mode>   cdn (default) or offline")
-	_, _ = fmt.Fprintln(w, "      --pandoc <path>       override the Pandoc binary")
-	_, _ = fmt.Fprintln(w, "      --verbose             print resolved paths and commands")
 }

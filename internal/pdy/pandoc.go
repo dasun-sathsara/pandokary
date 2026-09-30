@@ -84,15 +84,15 @@ func runPandoc(binary string, args []string, assets string) error {
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
+		var exit *exec.ExitError
+		if !errors.As(err, &exit) {
+			return fmt.Errorf("run pandoc: %w", err)
+		}
 		message := strings.TrimSpace(stderr.String())
 		if message == "" {
 			message = err.Error()
 		}
-		var exit *exec.ExitError
-		if errors.As(err, &exit) {
-			return fmt.Errorf("pandoc exited with code %d: %s", exit.ExitCode(), message)
-		}
-		return fmt.Errorf("run pandoc: %w: %s", err, message)
+		return fmt.Errorf("pandoc exited with code %d: %s", exit.ExitCode(), message)
 	}
 	return nil
 }
@@ -111,6 +111,7 @@ func openInBrowser(path string) error {
 	}
 	return cmd.Run()
 }
+
 func quoteArgs(args []string) []string {
 	quoted := make([]string, len(args))
 	for i, arg := range args {

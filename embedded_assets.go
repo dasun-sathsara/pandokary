@@ -34,9 +34,6 @@ func ExtractEmbeddedAssets() (string, func(), error) {
 		if err != nil {
 			return err
 		}
-		if err = os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
-			return err
-		}
 		return os.WriteFile(target, data, 0o644)
 	})
 	if err != nil {

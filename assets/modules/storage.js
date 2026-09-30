@@ -1,4 +1,5 @@
 PDY.StorageManager = (() => {
+  const { debounce } = PDY;
   const fallbackStore = new Map();
   const preferenceKeys = Object.freeze({
     theme: "theme",
@@ -7,7 +8,7 @@ PDY.StorageManager = (() => {
     layoutMaxWidth: "layout-max-width",
     tocCollapsed: "tocCollapsed",
   });
-  let scrollSaveTimer;
+  const queueScrollSave = debounce(() => saveScrollPosition(), 150);
 
   function get(key, fallback = null) {
     try {
@@ -19,7 +20,7 @@ PDY.StorageManager = (() => {
     } catch (_error) {
       // The in-memory store keeps preferences usable when localStorage is restricted.
     }
-    return fallbackStore.has(key) ? fallbackStore.get(key) : fallback;
+    return fallbackStore.get(key) ?? fallback;
   }
 
   function set(key, value) {
@@ -61,7 +62,7 @@ PDY.StorageManager = (() => {
   }
 
   function flushScrollPosition() {
-    window.clearTimeout(scrollSaveTimer);
+    queueScrollSave.cancel();
     if (isScrollListenerEnabled) saveScrollPosition();
   }
 
@@ -70,8 +71,7 @@ PDY.StorageManager = (() => {
       "scroll",
       () => {
         if (!isScrollListenerEnabled) return;
-        window.clearTimeout(scrollSaveTimer);
-        scrollSaveTimer = window.setTimeout(() => saveScrollPosition(), 150);
+        queueScrollSave();
       },
       { passive: true },
     );

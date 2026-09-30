@@ -1,5 +1,8 @@
 PDY.UIComponentFactory = (() => {
-  const { isCompactLayout, PHONE_MEDIA_QUERY, requestFrame } = PDY;
+  const { isCompactLayout, PHONE_MEDIA_QUERY, requestFrame, cancelFrame } = PDY;
+  const MODAL_TRANSITION_MS = 350;
+  const MODAL_SELECTOR =
+    ".table-scroll-container.maximized,.mermaid-container.maximized,.lightbox-backdrop.active,.shortcuts-backdrop.visible";
   const ICONS = Object.freeze({
     copy: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" class="ph ph-copy"><path d="M216,32H88A16,16,0,0,0,72,48V72H48A16,16,0,0,0,32,88V216a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V184h24a16,16,0,0,0,16-16V48A16,16,0,0,0,216,32ZM176,216H48V88H176V216Zm40-40H192V88a16,16,0,0,0-16-16H88V48H216V176Z"/></svg>',
     check:
@@ -69,12 +72,6 @@ PDY.UIComponentFactory = (() => {
   }
 
   function updateScrollLock() {
-    const modalSelector = [
-      ".table-scroll-container.maximized",
-      ".mermaid-container.maximized",
-      ".lightbox-backdrop.active",
-      ".shortcuts-backdrop.visible",
-    ].join(",");
     const hasTOC = Boolean(document.querySelector(".toc-sidebar"));
     const compact = isCompactLayout();
     const mobileTOC = hasTOC && compact && document.documentElement.classList.contains("toc-open");
@@ -83,17 +80,39 @@ PDY.UIComponentFactory = (() => {
       document.querySelector(".settings-popover.active") !== null;
     document.body.classList.toggle(
       "scroll-locked",
-      Boolean(document.querySelector(modalSelector)) || mobileTOC || mobileSettings,
+      Boolean(document.querySelector(MODAL_SELECTOR)) || mobileTOC || mobileSettings,
     );
   }
 
   const dialogStates = new WeakMap();
 
+  function trapDialogFocus(container, event) {
+    if (event.key !== "Tab") return;
+    const controls = [
+      ...container.querySelectorAll(
+        'button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]',
+      ),
+    ].filter((element) => element.getClientRects().length && !element.closest("[inert]"));
+    const first = controls[0];
+    const last = controls.at(-1);
+    if (!first) {
+      event.preventDefault();
+      return;
+    }
+    const edge = event.shiftKey ? first : last;
+    if (!container.contains(document.activeElement) || document.activeElement === edge) {
+      event.preventDefault();
+      (event.shiftKey ? last : first).focus();
+    }
+  }
+
   function focusDialog(container, label) {
     if (dialogStates.has(container)) return;
     const previousFocus = document.activeElement;
-    const previousRole = container.getAttribute("role");
-    const previousLabel = container.getAttribute("aria-label");
+    const attributes = ["role", "aria-label", "aria-modal"].map((name) => [
+      name,
+      container.getAttribute(name),
+    ]);
     const siblings = [];
     for (
       let branch = container;
@@ -113,29 +132,9 @@ PDY.UIComponentFactory = (() => {
     container.setAttribute("role", "dialog");
     container.setAttribute("aria-modal", "true");
     container.setAttribute("aria-label", label);
-    const trap = (event) => {
-      if (event.key !== "Tab") return;
-      const controls = [
-        ...container.querySelectorAll(
-          'button:not(:disabled),a[href],input:not(:disabled),[tabindex="0"]',
-        ),
-      ].filter((element) => element.getClientRects().length && !element.closest("[inert]"));
-      const first = controls[0];
-      const last = controls.at(-1);
-      if (!first) {
-        event.preventDefault();
-        return;
-      }
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
+    const trap = (event) => trapDialogFocus(container, event);
     container.addEventListener("keydown", trap);
-    dialogStates.set(container, { previousFocus, previousRole, previousLabel, siblings, trap });
+    dialogStates.set(container, { previousFocus, attributes, siblings, trap });
     container
       .querySelector(".btn-maximize,.lightbox-close,a[href],button")
       ?.focus({ preventScroll: true });
@@ -146,58 +145,79 @@ PDY.UIComponentFactory = (() => {
     if (!state) return;
     container.removeEventListener("keydown", state.trap);
     for (const [element, inert] of state.siblings) element.inert = inert;
-    for (const [attribute, value] of [
-      ["role", state.previousRole],
-      ["aria-label", state.previousLabel],
-    ]) {
+    for (const [attribute, value] of state.attributes) {
       if (value === null) container.removeAttribute(attribute);
       else container.setAttribute(attribute, value);
     }
-    container.removeAttribute("aria-modal");
     dialogStates.delete(container);
     if (restoreFocus && state.previousFocus?.isConnected) {
       state.previousFocus.focus({ preventScroll: true });
     }
   }
 
-  const modalStates = new WeakMap();
+  let activeModal = null;
 
-  function openModal(container) {
-    const previous = modalStates.get(container);
-    window.clearTimeout(previous?.timer);
-    previous?.backdrop.remove();
+  function openModal(container, { label = "Expanded table", onDismiss, onClose } = {}) {
+    if (activeModal?.container === container) return activeModal.backdrop;
+    if (activeModal) closeModal(activeModal.container, true);
     container.classList.add("maximized");
     const backdrop = document.createElement("div");
     backdrop.className = "modal-backdrop";
+    const events = new AbortController();
+    const dismiss = onDismiss || (() => closeModal(container));
+    backdrop.addEventListener("click", dismiss, { signal: events.signal });
     backdrop.addEventListener("touchmove", (event) => event.preventDefault(), {
       passive: false,
+      signal: events.signal,
     });
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key !== "Escape") return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        dismiss();
+      },
+      { signal: events.signal },
+    );
     document.body.append(backdrop);
-    const state = { backdrop, timer: null };
-    modalStates.set(container, state);
-    focusDialog(container, "Expanded table");
-    requestFrame(() => {
-      if (modalStates.get(container) !== state || state.timer !== null) return;
+    const state = { container, backdrop, events, onClose, frame: 0, timer: null, observer: null };
+    activeModal = state;
+    focusDialog(container, label);
+    state.frame = requestFrame(() => {
+      state.frame = 0;
       container.classList.add("visible");
       backdrop.classList.add("visible");
     });
+    if (window.MutationObserver) {
+      state.observer = new MutationObserver(() => {
+        if (!container.isConnected) closeModal(container, true);
+      });
+      state.observer.observe(document.body, { childList: true, subtree: true });
+    }
     updateScrollLock();
     return backdrop;
   }
 
-  function closeModal(container) {
-    const state = modalStates.get(container);
-    if (!state) return;
+  function closeModal(container, immediate = false) {
+    const state = activeModal;
+    if (state?.container !== container || (state.timer !== null && !immediate)) return;
+    cancelFrame(state.frame);
+    state.events.abort();
     releaseDialog(container);
     container.classList.remove("visible");
     state.backdrop.classList.remove("visible");
     window.clearTimeout(state.timer);
-    state.timer = window.setTimeout(() => {
+    const finish = () => {
+      state.observer?.disconnect();
       container.classList.remove("maximized", "rotated-landscape");
       state.backdrop.remove();
-      modalStates.delete(container);
+      activeModal = null;
       updateScrollLock();
-    }, 350);
+      state.onClose?.();
+    };
+    if (immediate) finish();
+    else state.timer = window.setTimeout(finish, MODAL_TRANSITION_MS);
   }
 
   return {
@@ -205,7 +225,7 @@ PDY.UIComponentFactory = (() => {
     createButton,
     setButtonTitle,
     copyText,
-    requestFrame,
+    MODAL_TRANSITION_MS,
     updateScrollLock,
     openModal,
     closeModal,

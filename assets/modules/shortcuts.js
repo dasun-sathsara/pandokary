@@ -1,6 +1,6 @@
 PDY.ShortcutsModule = (() => {
-  const { SettingsModule, FoldModule, isCompactLayout, debounce } = PDY;
-  const { ICONS, requestFrame, updateScrollLock, focusDialog, releaseDialog } =
+  const { SettingsModule, FoldModule, isCompactLayout, debounce, requestFrame } = PDY;
+  const { ICONS, updateScrollLock, focusDialog, releaseDialog, MODAL_TRANSITION_MS } =
     PDY.UIComponentFactory;
 
   // Keep in sync with handleReaderShortcuts + handleFoldShortcut.
@@ -24,7 +24,7 @@ PDY.ShortcutsModule = (() => {
     releaseDialog(backdrop.querySelector(".shortcuts-panel"));
     backdrop.classList.remove("visible");
     updateScrollLock();
-    window.setTimeout(() => backdrop.remove(), 350);
+    window.setTimeout(() => backdrop.remove(), MODAL_TRANSITION_MS);
   }
 
   function openShortcuts() {

@@ -7,7 +7,8 @@ PDY.TOCModule = (() => {
     COMPACT_MEDIA_QUERY,
     fragmentTarget,
   } = PDY;
-  const { ICONS, createButton, updateScrollLock } = PDY.UIComponentFactory;
+  const { ICONS, createButton, setButtonTitle, focusDialog, releaseDialog, updateScrollLock } =
+    PDY.UIComponentFactory;
 
   function ensureHeadingID(heading) {
     if (heading.id) return heading.id;
@@ -145,20 +146,16 @@ PDY.TOCModule = (() => {
     let isOpen =
       !isCompactLayout() && StorageManager.getPreference("tocCollapsed", "false") !== "true";
     const setOpen = (value) => {
-      PDY.UIComponentFactory.releaseDialog(aside);
+      releaseDialog(aside);
       isOpen = value;
       aside.inert = !value;
       aside.setAttribute("aria-hidden", String(!value));
       toggle.setAttribute("aria-expanded", String(value));
       document.documentElement.classList.toggle("toc-open", isOpen);
       toggle.innerHTML = isOpen ? ICONS.x : ICONS.bookOpen;
-      PDY.UIComponentFactory.setButtonTitle(
-        toggle,
-        isOpen ? "Hide Table of Contents" : "Show Table of Contents",
-      );
+      setButtonTitle(toggle, isOpen ? "Hide Table of Contents" : "Show Table of Contents");
       if (!isCompactLayout()) StorageManager.setPreference("tocCollapsed", !isOpen);
-      if (isOpen && isCompactLayout())
-        PDY.UIComponentFactory.focusDialog(aside, "Table of contents");
+      if (isOpen && isCompactLayout()) focusDialog(aside, "Table of contents");
       updateScrollLock();
     };
     toggle.addEventListener("click", () => {
@@ -176,7 +173,6 @@ PDY.TOCModule = (() => {
       toggle.focus();
     });
     window.matchMedia(COMPACT_MEDIA_QUERY).addEventListener("change", () => {
-      PDY.UIComponentFactory.releaseDialog(aside);
       setOpen(
         !isCompactLayout() && StorageManager.getPreference("tocCollapsed", "false") !== "true",
       );

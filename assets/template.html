@@ -5,38 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
   <script>
-    document.documentElement.classList.add("js");
-    try {
-      var legacy = { primer: "lumina", "verdant-paper": "lumina", "lilac-frost": "lumina",
-        "studio-dark": "obsidian", "ayu-mirage": "obsidian", boreal: "midnight-fjord" };
-      var t = localStorage.getItem("theme");
-      t = legacy[t] || t;
-      document.documentElement.dataset.theme =
-        ["lumina", "porcelain", "parchment", "obsidian", "midnight-fjord", "evergreen"].includes(t) ? t : "porcelain";
-      var size = Math.max(-4, Math.min(8, parseInt(localStorage.getItem("font-size-adjust"), 10) || 0));
-      document.documentElement.style.setProperty("--font-size-adjust", size + "px");
-      var weight = Math.max(-100, Math.min(100, parseInt(localStorage.getItem("font-weight-adjustment"), 10) || 0));
-      var weightRoles = {
-        "--body-font-weight": [400, 430],
-        "--strong-font-weight": [550, 580],
-        "--heading-font-weight": [600, 630],
-        "--mono-font-weight": [420, 450],
-        "--mono-emphasis-font-weight": [520, 550]
-      };
-      var compactWeights = innerWidth < 1200 ? 1 : 0;
-      document.documentElement.style.setProperty("--font-weight-adjustment", weight + "");
-      for (var role in weightRoles)
-        document.documentElement.style.setProperty(role, (weightRoles[role][compactWeights] + weight) + "");
-      var width = parseInt(localStorage.getItem("layout-max-width"), 10);
-      if ([800, 920, 1040, 1160, 1280, 1400].includes(width))
-        document.documentElement.style.setProperty("--content-max-width", width + "px");
-      if (innerWidth >= 1200 && localStorage.getItem("tocCollapsed") !== "true")
-        document.documentElement.classList.add("toc-open");
-    } catch (e) {
-      // Restricted storage uses the default theme and typography until startup.
-    }
-    // A failed CDN or enhancement must never leave the document behind an overlay.
-    setTimeout(function () { document.getElementById("loading-overlay")?.remove(); }, 5000);
+    (() => {
+      document.documentElement.classList.add("js");
+      try {
+        const legacy = { primer: "lumina", "verdant-paper": "lumina", "lilac-frost": "lumina",
+          "studio-dark": "obsidian", "ayu-mirage": "obsidian", boreal: "midnight-fjord" };
+        const savedTheme = localStorage.getItem("theme");
+        const theme = legacy[savedTheme] || savedTheme;
+        document.documentElement.dataset.theme =
+          ["lumina", "porcelain", "parchment", "obsidian", "midnight-fjord", "evergreen"].includes(theme) ? theme : "porcelain";
+        const size = Math.max(-4, Math.min(8, parseInt(localStorage.getItem("font-size-adjust"), 10) || 0));
+        document.documentElement.style.setProperty("--font-size-adjust", size + "px");
+        const weight = Math.max(-100, Math.min(100, parseInt(localStorage.getItem("font-weight-adjustment"), 10) || 0));
+        const weightRoles = {
+          "--body-font-weight": [400, 430],
+          "--strong-font-weight": [550, 580],
+          "--heading-font-weight": [600, 630],
+          "--mono-font-weight": [420, 450],
+          "--mono-emphasis-font-weight": [520, 550]
+        };
+        const compactWeights = innerWidth < 1200 ? 1 : 0;
+        document.documentElement.style.setProperty("--font-weight-adjustment", String(weight));
+        for (const [role, weights] of Object.entries(weightRoles))
+          document.documentElement.style.setProperty(role, String(weights[compactWeights] + weight));
+        const width = parseInt(localStorage.getItem("layout-max-width"), 10);
+        if ([800, 920, 1040, 1160, 1280, 1400].includes(width))
+          document.documentElement.style.setProperty("--content-max-width", width + "px");
+        if (innerWidth >= 1200 && localStorage.getItem("tocCollapsed") !== "true")
+          document.documentElement.classList.add("toc-open");
+      } catch (e) {
+        // Restricted storage uses the default theme and typography until startup.
+      }
+      // A failed CDN or enhancement must never leave the document behind an overlay.
+      setTimeout(function () { document.getElementById("loading-overlay")?.remove(); }, 5000);
+    })();
   </script>
   <style id="pdy-inline-css">$inline-css$</style>
   <script>$inline-font-loader$</script>

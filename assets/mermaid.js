@@ -1,5 +1,5 @@
 PDY.MermaidModule = (() => {
-  const { clamp, requestFrame, cancelFrame, runFeature, PHONE_MEDIA_QUERY } = PDY;
+  const { clamp, requestFrame, cancelFrame, scheduleFrame, runFeature, PHONE_MEDIA_QUERY } = PDY;
 
   function getMermaidAPI() {
     const api = window.mermaid;
@@ -13,18 +13,18 @@ PDY.MermaidModule = (() => {
       initialMermaid.initialize({ startOnLoad: false });
     });
   }
-  const { createButton, setButtonTitle, updateScrollLock, focusDialog, releaseDialog } =
+  const { createButton, setButtonTitle, openModal, closeModal, MODAL_TRANSITION_MS } =
     PDY.UIComponentFactory;
   const FONT_FAMILY = '"Geist Mono", "Noto Sans Sinhala", monospace';
   const MAX_SCALE = 15;
+  const ZOOM_FACTOR = 1.25;
+  const MIN_RELATIVE_SCALE = 0.25;
   const VIEW_PADDING = 24;
-  const MODAL_TRANSITION_MS = 350;
   const DARK_THEME_IDS = new Set(["obsidian", "midnight-fjord", "evergreen"]);
   const controllers = new Set();
   const controllerByContainer = new WeakMap();
-  let activeModalController = null;
   let lifecycleObserver = null;
-  let lifecycleFrame = 0;
+  let fontPromise;
   let mermaidIdCounter = 0;
   let renderQueue = Promise.resolve();
   let renderVersion = 0;
@@ -217,13 +217,6 @@ PDY.MermaidModule = (() => {
     return { x: 0, y: 0, ...dimensions };
   }
 
-  function getErrorMessage(error) {
-    if (error instanceof Error) {
-      return error.message;
-    }
-    return String(error);
-  }
-
   function createRenderError(error) {
     const box = document.createElement("div");
     box.style.cssText = [
@@ -257,7 +250,7 @@ PDY.MermaidModule = (() => {
       "text-align: left",
       "white-space: pre-wrap",
     ].join(";");
-    details.textContent = getErrorMessage(error);
+    details.textContent = error instanceof Error ? error.message : String(error);
     box.append(heading, details);
     return box;
   }
@@ -297,14 +290,9 @@ PDY.MermaidModule = (() => {
       this.inlineView = null;
       this.dragStart = null;
       this.pinchStart = null;
-      this.isDragging = false;
       this.hasDiagram = false;
       this.transformFrame = 0;
-      this.resetTimer = 0;
-      this.modalTimer = 0;
-      this.modalFrame = 0;
-      this.modalBackdrop = null;
-      this.modalAbortController = null;
+      this.layoutTimer = 0;
       this.renderToken = 0;
       this.resizeObserver = null;
       this.bindControls();
@@ -347,6 +335,10 @@ PDY.MermaidModule = (() => {
       );
     }
 
+    clampScale(scale, size = this.getViewportSize()) {
+      return clamp(scale, this.getFitScale(size) * MIN_RELATIVE_SCALE, MAX_SCALE);
+    }
+
     captureView() {
       if (!this.hasDiagram || !this.viewSize) return { fitted: true };
       const { width, height } = this.viewSize;
@@ -364,7 +356,7 @@ PDY.MermaidModule = (() => {
       this.viewSize = size;
       this.isFitted = view.fitted;
       const fit = this.getFitScale(size);
-      this.scale = view.fitted ? fit : clamp(fit * view.zoom, fit * 0.25, MAX_SCALE);
+      this.scale = view.fitted ? fit : this.clampScale(fit * view.zoom, size);
       this.x = size.width / 2 - this.diagramWidth * this.scale * (view.fitted ? 0.5 : view.centerX);
       this.y =
         size.height / 2 - this.diagramHeight * this.scale * (view.fitted ? 0.5 : view.centerY);
@@ -419,11 +411,7 @@ PDY.MermaidModule = (() => {
       if (!this.hasDiagram || !Number.isFinite(factor) || factor <= 0) {
         return;
       }
-      const nextScale = clamp(
-        this.scale * factor,
-        this.getFitScale(this.getViewportSize()) * 0.25,
-        MAX_SCALE,
-      );
+      const nextScale = this.clampScale(this.scale * factor);
       const diagramX = (pointX - this.x) / this.scale;
       const diagramY = (pointY - this.y) / this.scale;
       this.x = pointX - diagramX * nextScale;
@@ -444,14 +432,16 @@ PDY.MermaidModule = (() => {
     }
 
     queueLayout(delay = 0) {
-      window.clearTimeout(this.resetTimer);
-      this.resetTimer = window.setTimeout(() => this.updateLayout(), delay);
+      window.clearTimeout(this.layoutTimer);
+      this.layoutTimer = window.setTimeout(() => this.updateLayout(), delay);
     }
 
     bindControls() {
       const signal = this.abortController.signal;
-      this.zoomInButton.addEventListener("click", () => this.zoomAtCenter(1.25), { signal });
-      this.zoomOutButton.addEventListener("click", () => this.zoomAtCenter(0.8), { signal });
+      this.zoomInButton.addEventListener("click", () => this.zoomAtCenter(ZOOM_FACTOR), { signal });
+      this.zoomOutButton.addEventListener("click", () => this.zoomAtCenter(1 / ZOOM_FACTOR), {
+        signal,
+      });
       this.resetButton.addEventListener("click", () => this.resetView(), { signal });
       this.maximizeButton.addEventListener("click", () => this.toggleModal(), { signal });
       this.rotateButton.addEventListener("click", () => this.toggleRotation(), { signal });
@@ -551,7 +541,7 @@ PDY.MermaidModule = (() => {
       event.preventDefault();
       pointer.clientX = event.clientX;
       pointer.clientY = event.clientY;
-      if (this.activePointers.size === 1 && this.isDragging) {
+      if (this.activePointers.size === 1 && this.dragStart) {
         this.updateDrag(pointer);
       } else if (this.activePointers.size === 2) {
         this.updatePinch();
@@ -569,7 +559,6 @@ PDY.MermaidModule = (() => {
         y: this.y,
       };
       this.pinchStart = null;
-      this.isDragging = true;
       this.viewport.style.cursor = "grabbing";
     }
 
@@ -616,11 +605,7 @@ PDY.MermaidModule = (() => {
       const distance = this.getPointerDistance(first, second);
       const midpoint = getPointerMidpoint(first, second);
       const localPoint = this.mapClientPoint(midpoint.clientX, midpoint.clientY);
-      this.scale = clamp(
-        start.scale * (distance / start.distance),
-        this.getFitScale(this.getViewportSize()) * 0.25,
-        MAX_SCALE,
-      );
+      this.scale = this.clampScale(start.scale * (distance / start.distance));
       this.x = localPoint.x - start.diagramX * this.scale;
       this.y = localPoint.y - start.diagramY * this.scale;
       this.isFitted = false;
@@ -629,7 +614,6 @@ PDY.MermaidModule = (() => {
 
     stopDragging() {
       this.dragStart = null;
-      this.isDragging = false;
       this.viewport.style.cursor = "";
     }
 
@@ -715,8 +699,8 @@ PDY.MermaidModule = (() => {
     }
 
     handleZoomKey(key) {
-      if (["+", "="].includes(key)) this.zoomAtCenter(1.25);
-      else if (key === "-") this.zoomAtCenter(0.8);
+      if (["+", "="].includes(key)) this.zoomAtCenter(ZOOM_FACTOR);
+      else if (key === "-") this.zoomAtCenter(1 / ZOOM_FACTOR);
       else if (key === "0" || key === "Home") this.resetView();
       else return false;
       return true;
@@ -729,7 +713,7 @@ PDY.MermaidModule = (() => {
     }
 
     toggleModal() {
-      if (this.modalBackdrop || this.modalTimer) {
+      if (this.container.classList.contains("maximized")) {
         this.closeModal();
       } else {
         this.openModal();
@@ -737,90 +721,30 @@ PDY.MermaidModule = (() => {
     }
 
     openModal() {
-      if (activeModalController && activeModalController !== this) {
-        activeModalController.closeModal(true);
-      }
-      window.clearTimeout(this.modalTimer);
-      cancelFrame(this.modalFrame);
-      this.modalTimer = 0;
-      this.modalAbortController?.abort();
-      this.modalAbortController = new AbortController();
       this.inlineView = this.captureView();
       this.clearPointers();
-
-      const backdrop = document.createElement("div");
-      backdrop.className = "modal-backdrop";
-      const signal = this.modalAbortController.signal;
-      backdrop.addEventListener(
-        "click",
-        (event) => {
-          if (event.target === backdrop) {
-            this.closeModal();
-          }
-        },
-        { signal },
-      );
-      backdrop.addEventListener("touchmove", (event) => event.preventDefault(), {
-        passive: false,
-        signal,
-      });
-
-      this.modalBackdrop = backdrop;
-      activeModalController = this;
-      this.container.classList.add("maximized");
       this.viewport.style.touchAction = "none";
-      document.body.append(backdrop);
-      this.setMaximizeButtonState(true);
-      focusDialog(this.container, "Expanded diagram");
-      updateScrollLock();
-      this.modalFrame = requestFrame(() => {
-        this.modalFrame = 0;
-        this.container.classList.add("visible");
-        backdrop.classList.add("visible");
+      openModal(this.container, {
+        label: "Expanded diagram",
+        onDismiss: () => this.closeModal(),
+        onClose: () => {
+          this.setMaximizeButtonState(false);
+          this.viewport.style.touchAction = "";
+          this.clearPointers();
+          window.clearTimeout(this.layoutTimer);
+          this.restoreView(this.inlineView || { fitted: true });
+          this.inlineView = null;
+        },
       });
+      this.setMaximizeButtonState(true);
       this.resetView();
       this.queueLayout(MODAL_TRANSITION_MS);
     }
 
     closeModal(immediate = false) {
-      const backdrop = this.modalBackdrop;
-      if (!backdrop && !this.modalTimer) {
-        return;
-      }
-      if (activeModalController === this) {
-        activeModalController = null;
-      }
-      cancelFrame(this.modalFrame);
-      this.modalFrame = 0;
-      releaseDialog(this.container);
       this.clearPointers();
-      this.container.classList.remove("visible");
-      backdrop?.classList.remove("visible");
       this.setMaximizeButtonState(false);
-
-      const finishClose = () => {
-        this.modalTimer = 0;
-        this.modalAbortController?.abort();
-        this.modalAbortController = null;
-        backdrop?.remove();
-        if (this.modalBackdrop === backdrop) {
-          this.modalBackdrop = null;
-        }
-        this.container.classList.remove("maximized", "rotated-landscape");
-        this.viewport.style.touchAction = "";
-        this.clearPointers();
-        updateScrollLock();
-        window.clearTimeout(this.resetTimer);
-        this.restoreView(this.inlineView || { fitted: true });
-        this.inlineView = null;
-      };
-
-      window.clearTimeout(this.modalTimer);
-      if (immediate) {
-        finishClose();
-      } else {
-        this.modalTimer = window.setTimeout(finishClose, MODAL_TRANSITION_MS);
-      }
+      closeModal(this.container, immediate);
     }
 
     setMaximizeButtonState(isMaximized) {
@@ -912,9 +836,7 @@ PDY.MermaidModule = (() => {
       this.clearPointers();
       this.closeModal(true);
       cancelFrame(this.transformFrame);
-      cancelFrame(this.modalFrame);
-      window.clearTimeout(this.resetTimer);
-      window.clearTimeout(this.modalTimer);
+      window.clearTimeout(this.layoutTimer);
       controllerByContainer.delete(this.container);
       controllers.delete(this);
     }
@@ -926,17 +848,13 @@ PDY.MermaidModule = (() => {
         controller.destroy();
       }
     }
+    if (!controllers.size) {
+      lifecycleObserver?.disconnect();
+      lifecycleObserver = null;
+    }
   }
 
-  function scheduleControllerCleanup() {
-    if (lifecycleFrame) {
-      return;
-    }
-    lifecycleFrame = requestFrame(() => {
-      lifecycleFrame = 0;
-      cleanDetachedControllers();
-    });
-  }
+  const scheduleControllerCleanup = scheduleFrame(cleanDetachedControllers);
 
   function ensureLifecycleObserver() {
     if (lifecycleObserver || !document.body || !("MutationObserver" in window)) {
@@ -982,7 +900,8 @@ PDY.MermaidModule = (() => {
     if (!mermaid) return;
 
     try {
-      await loadDiagramFonts();
+      fontPromise ??= loadDiagramFonts();
+      await fontPromise;
       if (version !== renderVersion) return;
       mermaid.initialize(getMermaidConfig(theme));
     } catch (error) {
@@ -1021,17 +940,14 @@ PDY.MermaidModule = (() => {
     }
 
     cleanDetachedControllers();
-    const newControllers = [];
-    for (const block of document.querySelectorAll("pre.mermaid")) {
+    const blocks = document.querySelectorAll("pre.mermaid");
+    for (const block of blocks) {
       const code = extractMermaidCode(block);
       const container = createDiagramContainer(code);
       block.replaceWith(container);
-      const controller = registerController(container);
-      if (controller) {
-        newControllers.push(controller);
-      }
+      registerController(container);
     }
-    if (newControllers.length) await enqueueRender(getCurrentTheme(), [...controllers]);
+    if (blocks.length) await enqueueRender(getCurrentTheme(), [...controllers]);
   }
 
   async function updateMermaidTheme() {
@@ -1049,17 +965,6 @@ PDY.MermaidModule = (() => {
     }
     await enqueueRender(getCurrentTheme(), diagramControllers);
   }
-
-  document.addEventListener("keydown", (event) => {
-    const isEscape =
-      event.key === "Escape" || event.code === "Escape" || event.code === "KeyEscape";
-    if (!isEscape || !activeModalController) {
-      return;
-    }
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    activeModalController.closeModal();
-  });
 
   return { init: initMermaid, updateTheme: updateMermaidTheme };
 })();

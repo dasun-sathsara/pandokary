@@ -12,8 +12,9 @@ PDY.ReaderExtrasModule = (() => {
     eventElement,
     fragmentTarget,
     runFeature,
+    requestFrame,
   } = PDY;
-  const { ICONS, copyText, requestFrame } = UIComponentFactory;
+  const { ICONS, copyText } = UIComponentFactory;
 
   function initFloatingButtonAutoHide(settings) {
     const settingsToggle = settings?.toggle || document.querySelector(".settings-toggle");
@@ -119,6 +120,7 @@ PDY.ReaderExtrasModule = (() => {
       anchor.innerHTML = ICONS.link;
       anchor.title = "Copy link to this section";
       anchor.setAttribute("aria-label", `Link to ${heading.textContent}`);
+      let feedbackTimer;
       anchor.addEventListener("click", async (event) => {
         event.preventDefault();
         try {
@@ -128,9 +130,10 @@ PDY.ReaderExtrasModule = (() => {
         }
         try {
           await copyText(window.location.href);
+          window.clearTimeout(feedbackTimer);
           anchor.innerHTML = ICONS.check;
           anchor.classList.add("copied");
-          window.setTimeout(() => {
+          feedbackTimer = window.setTimeout(() => {
             anchor.innerHTML = ICONS.link;
             anchor.classList.remove("copied");
           }, 1500);

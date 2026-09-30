@@ -468,53 +468,6 @@ kbd {
   transform: translateY(-1px);
 }
 
-/* Code block Line Numbers & Focus Highlight (legacy/fallback without .code-gutter) */
-pre:not(:has(.code-gutter)) code {
-  counter-reset: line-counter;
-}
-
-pre:not(:has(.code-gutter)) .code-line {
-  display: block !important;
-  padding-left: 3.1em !important;
-  position: relative !important;
-  line-height: var(--pre-line-height, 1.44) !important;
-  min-height: 1.44em;
-  transition: background-color var(--dur-micro) var(--ease-out);
-}
-
-pre:not(:has(.code-gutter)) .code-line::before {
-  counter-increment: line-counter;
-  content: counter(line-counter);
-  position: absolute !important;
-  left: 0 !important;
-  width: 2.4em !important;
-  text-align: right !important;
-  color: var(--color-text-muted);
-  opacity: 0.75;
-  border-right: 1px solid var(--color-code-border) !important;
-  padding-right: 0.5em !important;
-  user-select: none;
-  cursor: pointer;
-  transition:
-    color var(--dur-micro) var(--ease-out),
-    opacity var(--dur-micro) var(--ease-out);
-}
-
-pre:not(:has(.code-gutter)) .code-line:hover::before {
-  color: var(--color-text);
-  opacity: 1;
-}
-
-pre:not(:has(.code-gutter)) .code-line:hover {
-  background-color: var(--color-table-row-hover);
-}
-
-pre:not(:has(.code-gutter)) .code-line.focused-line {
-  background-color: var(--focused-line-background) !important;
-  border-left: 2px solid var(--focused-line-border) !important;
-  padding-left: calc(3.1em - 2px) !important;
-}
-
 /* Section Folding — headings stay visible, their content collapses.
    Groups animate grid rows (one-shot, one section). The main clip guard keeps
    gutter-positioned fold buttons from ever causing page-level sideways scroll. */

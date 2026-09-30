@@ -1,7 +1,14 @@
 PDY.ImageModule = (() => {
-  const { clamp } = PDY;
-  const { ICONS, createButton, requestFrame, updateScrollLock } = PDY.UIComponentFactory;
-  const UIComponentFactory = PDY.UIComponentFactory;
+  const { clamp, requestFrame, cancelFrame } = PDY;
+  const { ICONS, createButton, updateScrollLock, focusDialog, releaseDialog } =
+    PDY.UIComponentFactory;
+
+  function touchDistance(touches) {
+    return Math.hypot(
+      touches[0].clientX - touches[1].clientX,
+      touches[0].clientY - touches[1].clientY,
+    );
+  }
 
   function openLightbox(image) {
     const backdrop = document.createElement("div");
@@ -15,8 +22,8 @@ PDY.ImageModule = (() => {
     const close = createButton("lightbox-close", ICONS.x, "Close image");
     backdrop.append(close, zoomed);
     document.body.append(backdrop);
-    UIComponentFactory.focusDialog(backdrop, image.alt || "Image viewer");
-    requestFrame(() => {
+    focusDialog(backdrop, image.alt || "Image viewer");
+    const frame = requestFrame(() => {
       backdrop.classList.add("active");
       updateScrollLock();
     });
@@ -31,6 +38,7 @@ PDY.ImageModule = (() => {
     let initialScale = 1;
     let lastTap = 0;
     let pinching = false;
+    const events = new AbortController();
 
     const draw = (transition = false) => {
       zoomed.style.transition = transition ? "transform var(--dur-ui) var(--ease-out)" : "none";
@@ -62,10 +70,10 @@ PDY.ImageModule = (() => {
     const dismiss = () => {
       if (dismissed) return;
       dismissed = true;
-      UIComponentFactory.releaseDialog(backdrop);
+      cancelFrame(frame);
+      events.abort();
+      releaseDialog(backdrop);
       backdrop.classList.remove("active");
-      window.removeEventListener("mousemove", moveMouse);
-      window.removeEventListener("mouseup", stopMouseDrag);
       window.setTimeout(() => {
         backdrop.remove();
         updateScrollLock();
@@ -84,14 +92,21 @@ PDY.ImageModule = (() => {
       toggleZoom(event.clientX, event.clientY);
     });
     zoomed.addEventListener("mousedown", (event) => {
+      if (event.button !== 0) return;
       event.preventDefault();
       event.stopPropagation();
       dragging = true;
       startX = event.clientX - x;
       startY = event.clientY - y;
     });
-    window.addEventListener("mousemove", moveMouse);
-    window.addEventListener("mouseup", stopMouseDrag);
+    window.addEventListener("mousemove", moveMouse, { signal: events.signal });
+    window.addEventListener("mouseup", stopMouseDrag, { signal: events.signal });
+    window.addEventListener("blur", stopMouseDrag, { signal: events.signal });
+    zoomed.addEventListener("touchcancel", () => {
+      dragging = false;
+      pinching = false;
+      lastTap = 0;
+    });
     zoomed.addEventListener(
       "wheel",
       (event) => {
@@ -113,10 +128,7 @@ PDY.ImageModule = (() => {
         } else if (event.touches.length === 2) {
           pinching = true;
           dragging = false;
-          initialDistance = Math.hypot(
-            event.touches[0].clientX - event.touches[1].clientX,
-            event.touches[0].clientY - event.touches[1].clientY,
-          );
+          initialDistance = touchDistance(event.touches);
           initialScale = scale;
         }
       },
@@ -132,10 +144,7 @@ PDY.ImageModule = (() => {
           draw();
         } else if (event.touches.length === 2 && initialDistance > 0) {
           pinching = true;
-          const distance = Math.hypot(
-            event.touches[0].clientX - event.touches[1].clientX,
-            event.touches[0].clientY - event.touches[1].clientY,
-          );
+          const distance = touchDistance(event.touches);
           scale = clamp(initialScale * (distance / initialDistance), 0.8, 5);
           draw();
         }

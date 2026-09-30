@@ -1,5 +1,5 @@
 PDY.CodeBlockModule = (() => {
-  const { PHONE_MEDIA_QUERY, scheduleFrame, runFeature } = PDY;
+  const { PHONE_MEDIA_QUERY, scheduleFrame, runFeature, eventElement } = PDY;
   const { ICONS, copyText, createButton, setButtonTitle } = PDY.UIComponentFactory;
   // Phone query must match the ≤768px CSS section styling these classes.
   const phoneMedia = window.matchMedia ? window.matchMedia(PHONE_MEDIA_QUERY) : null;
@@ -25,15 +25,18 @@ PDY.CodeBlockModule = (() => {
   }
 
   function formatSingleCodeLine(lineContent, index, highlightedLines, isDiff) {
-    const classes = ["code-line"];
-    if (highlightedLines.has(index + 1)) classes.push("highlighted-line");
+    const line = document.createElement("div");
+    line.className = "code-line";
+    line.dataset.line = String(index + 1);
+    if (highlightedLines.has(index + 1)) line.classList.add("highlighted-line");
     if (isDiff) {
-      const stripped = lineContent.replace(/<[^>]+>/g, "").trim();
-      if (stripped.startsWith("+")) classes.push("diff-addition");
-      else if (stripped.startsWith("-")) classes.push("diff-deletion");
-      else if (stripped.startsWith("@@")) classes.push("diff-meta");
+      const stripped = lineContent.textContent.trim();
+      if (stripped.startsWith("+")) line.classList.add("diff-addition");
+      else if (stripped.startsWith("-")) line.classList.add("diff-deletion");
+      else if (stripped.startsWith("@@")) line.classList.add("diff-meta");
     }
-    return `<div class="${classes.join(" ")}" data-line="${index + 1}">${lineContent || " "}</div>`;
+    line.append(lineContent.childNodes.length ? lineContent : document.createTextNode(" "));
+    return line;
   }
 
   function getLineSpec(pre, code) {
@@ -102,9 +105,12 @@ PDY.CodeBlockModule = (() => {
   }
 
   function addCopyControl(pre, plainCode) {
+    let feedbackTimer;
     pre.append(
       createButton("copy-btn", `${ICONS.copy}<span>Copy</span>`, "Copy code", async (event) => {
         const button = event.currentTarget;
+        window.clearTimeout(feedbackTimer);
+        button.disabled = true;
         try {
           await copyText(plainCode);
           button.innerHTML = `${ICONS.check}<span>Copied!</span>`;
@@ -114,8 +120,10 @@ PDY.CodeBlockModule = (() => {
           console.error("Copy failed", error);
           button.textContent = "Copy failed";
           setButtonTitle(button, "Could not copy code");
+        } finally {
+          button.disabled = false;
         }
-        window.setTimeout(() => {
+        feedbackTimer = window.setTimeout(() => {
           button.innerHTML = `${ICONS.copy}<span>Copy</span>`;
           button.classList.remove("success");
           setButtonTitle(button, "Copy code");
@@ -124,49 +132,40 @@ PDY.CodeBlockModule = (() => {
     );
   }
 
-  function updateTagStack(line, openTags) {
-    const currentLineOpenTags = [...openTags];
-    const matches = Array.from(line.matchAll(/<\/?([a-z][a-z0-9-]*)(?:\s+[^>]*?)?>/gi));
-    for (const match of matches) {
-      const fullTag = match[0];
-      const isClosing = fullTag.startsWith("</");
-      const tagName = match[1].toLowerCase();
-      if (isClosing) {
-        if (currentLineOpenTags.length > 0 && currentLineOpenTags.at(-1).name === tagName) {
-          currentLineOpenTags.pop();
-        }
-      } else if (!fullTag.endsWith("/>")) {
-        currentLineOpenTags.push({ name: tagName, outer: fullTag });
+  function splitCodeLines(code) {
+    const lines = [document.createDocumentFragment()];
+    const parents = [];
+    const append = (node) => (parents.at(-1) || lines.at(-1)).append(node);
+    const nextLine = () => {
+      lines.push(document.createDocumentFragment());
+      // Reopen the actual ancestor nodes rather than interpreting HTML tags.
+      for (let index = 0; index < parents.length; index++) {
+        const clone = parents[index].cloneNode(false);
+        (parents[index - 1] || lines.at(-1)).append(clone);
+        parents[index] = clone;
       }
-    }
-    return currentLineOpenTags;
+    };
+    const visit = (node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const parts = node.textContent.split(/\r?\n/);
+        parts.forEach((part, index) => {
+          if (index) nextLine();
+          append(document.createTextNode(part));
+        });
+        return;
+      }
+      const clone = node.cloneNode(false);
+      append(clone);
+      parents.push(clone);
+      for (const child of node.childNodes) visit(child);
+      parents.pop();
+    };
+    for (const node of code.childNodes) visit(node);
+    if (!lines.at(-1).textContent.trim()) lines.pop();
+    return lines;
   }
 
-  function splitHTMLIntoLines(html) {
-    const rawLines = html.split(/\r?\n/);
-    const result = [];
-    const openTags = [];
-    for (let i = 0; i < rawLines.length; i++) {
-      const line = rawLines[i];
-      const prefix = openTags.map((tag) => tag.outer).join("");
-      const currentLineOpenTags = updateTagStack(line, openTags);
-      const suffix = currentLineOpenTags
-        .map((t) => `</${t.name}>`)
-        .reverse()
-        .join("");
-      result.push(prefix + line + suffix);
-      openTags.length = 0;
-      openTags.push(...currentLineOpenTags);
-    }
-    return result;
-  }
-
-  function initBlock(code) {
-    if (code.dataset.pdyCodeInitialized === "true") return;
-    code.dataset.pdyCodeInitialized = "true";
-    const pre = code.parentElement;
-    if (!pre) return;
-    const plainCode = code.textContent.replace(/\r?\n$/, "");
+  function highlightCode(code, pre) {
     const classes = [...code.classList, ...pre.classList];
     const language =
       classes.find((name) => name.startsWith("language-"))?.slice(9) ||
@@ -174,45 +173,49 @@ PDY.CodeBlockModule = (() => {
     if (language) code.classList.add(`language-${language.toLowerCase()}`);
     code.classList.add("hljs");
     // Pandoc places fence languages on <pre>. Unlabelled fences remain plain text.
-    if (language && window.hljs?.getLanguage(language)) window.hljs.highlightElement(code);
+    if (language && window.hljs?.getLanguage(language))
+      runFeature("Syntax highlighting", () => window.hljs.highlightElement(code));
+  }
+
+  function initBlock(code) {
+    if (code.dataset.pdyCodeInitialized === "true") return;
+    const pre = code.parentElement;
+    if (!pre) return;
+    code.dataset.pdyCodeInitialized = "true";
+    const plainCode = code.textContent.replace(/\r?\n$/, "");
+    highlightCode(code, pre);
 
     const highlightedLines = parseLineRange(getLineSpec(pre, code), plainCode.split("\n").length);
     const isDiff =
       code.classList.contains("language-diff") || pre.classList.contains("language-diff");
-    const lines = splitHTMLIntoLines(code.innerHTML);
-    if (
-      lines
-        .at(-1)
-        ?.replace(/<[^>]+>/g, "")
-        .trim() === ""
-    )
-      lines.pop();
+    const lines = splitCodeLines(code);
 
     const gutter = document.createElement("div");
     gutter.className = "code-gutter";
     gutter.setAttribute("aria-hidden", "true");
-    gutter.innerHTML = lines
-      .map((_, i) => {
-        const lineNum = i + 1;
-        const lineClasses = ["code-gutter-line"];
-        if (highlightedLines.has(lineNum)) lineClasses.push("highlighted-line");
-        return `<span class="${lineClasses.join(" ")}" data-line="${lineNum}">${lineNum}</span>`;
-      })
-      .join("");
+    for (let index = 0; index < lines.length; index++) {
+      const line = document.createElement("span");
+      line.className = "code-gutter-line";
+      line.dataset.line = String(index + 1);
+      line.textContent = String(index + 1);
+      if (highlightedLines.has(index + 1)) line.classList.add("highlighted-line");
+      gutter.append(line);
+    }
 
     const scrollArea = document.createElement("div");
     scrollArea.className = "code-scroll-area";
 
-    code.innerHTML = lines
-      .map((line, index) => formatSingleCodeLine(line, index, highlightedLines, isDiff))
-      .join("");
+    const formatted = document.createDocumentFragment();
+    lines.forEach((line, index) => {
+      formatted.append(formatSingleCodeLine(line, index, highlightedLines, isDiff));
+    });
+    code.replaceChildren(formatted);
 
     scrollArea.append(code);
-    pre.innerHTML = "";
-    pre.append(gutter, scrollArea);
+    pre.replaceChildren(gutter, scrollArea);
 
     pre.addEventListener("click", (event) => {
-      const target = event.target.closest(".code-line, .code-gutter-line");
+      const target = eventElement(event)?.closest(".code-line, .code-gutter-line");
       if (!target) return;
       const lineNum = target.dataset.line;
       if (!lineNum) return;

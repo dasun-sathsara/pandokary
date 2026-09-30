@@ -1,8 +1,7 @@
 PDY.TableModule = (() => {
-  const { scheduleFrame, runFeature } = PDY;
+  const { scheduleFrame, debounce, runFeature } = PDY;
   const { ICONS, closeModal, createButton, openModal, setButtonTitle } = PDY.UIComponentFactory;
   const shadowUpdaters = new Set();
-  let resizeTimer;
   let resizeBound = false;
 
   function bindResizeUpdates() {
@@ -10,14 +9,9 @@ PDY.TableModule = (() => {
     resizeBound = true;
     window.addEventListener(
       "resize",
-      () => {
-        window.clearTimeout(resizeTimer);
-        resizeTimer = window.setTimeout(() => {
-          shadowUpdaters.forEach((update) => {
-            update();
-          });
-        }, 100);
-      },
+      debounce(() => {
+        for (const update of shadowUpdaters) update();
+      }, 100),
       { passive: true },
     );
   }
@@ -27,16 +21,18 @@ PDY.TableModule = (() => {
     if (!trimmed) return false;
     return (
       /^[+-]?[$\u20AC\u00A3\u00A5]?\s*[\d,]+(?:\.\d+)?\s*(?:%|[a-z]{1,4})?$/i.test(trimmed) ||
-      /^\d{1,5}$/.test(trimmed) ||
       /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(?::\d+)?$/.test(trimmed)
     );
+  }
+
+  function cellText(cell) {
+    return cell?.textContent.trim().replace(/\s+/g, " ") || "";
   }
 
   function isCellShort(cell, maxLen = 22) {
     if (!cell) return true;
     if (cell.querySelector("br, p, ul, ol, blockquote, pre, table")) return false;
-    const text = cell.textContent.trim().replace(/\s+/g, " ");
-    return text.length <= maxLen;
+    return cellText(cell).length <= maxLen;
   }
 
   function getColumnStats(rows, colIndex) {
@@ -47,7 +43,7 @@ PDY.TableModule = (() => {
 
     for (const row of rows) {
       const cell = row.children[colIndex];
-      const text = cell?.textContent.trim().replace(/\s+/g, " ");
+      const text = cellText(cell);
       if (!text) continue;
       total += 1;
       totalLen += text.length;
@@ -60,8 +56,7 @@ PDY.TableModule = (() => {
 
   function isColumnCompact(header, stats) {
     if (stats.total === 0 || !stats.allShort) return false;
-    const headerText = header?.textContent.trim().replace(/\s+/g, " ") || "";
-    return headerText.length <= 22 && stats.avgLen <= 16;
+    return cellText(header).length <= 22 && stats.avgLen <= 16;
   }
 
   function markColumn(header, rows, index, classes) {
@@ -70,9 +65,9 @@ PDY.TableModule = (() => {
   }
 
   function autoAlignColumns(table) {
-    const rows = [...table.querySelectorAll("tbody tr")];
+    const rows = [...table.querySelectorAll(":scope > tbody > tr")];
     if (!rows.length) return;
-    const headerCells = [...table.querySelectorAll("thead th")];
+    const headerCells = [...table.querySelectorAll(":scope > thead > tr > th")];
     const colCount = rows.reduce(
       (count, row) => Math.max(count, row.children.length),
       headerCells.length,
@@ -129,18 +124,27 @@ PDY.TableModule = (() => {
       (event) => {
         const button = event.currentTarget;
         if (!container.classList.contains("maximized")) {
-          const backdrop = openModal(container);
-          backdrop.addEventListener("click", () => button.click());
-          button.innerHTML = ICONS.arrowsInSimple;
-          setButtonTitle(button, "Restore Normal View");
+          openModal(container, {
+            onDismiss: () => button.click(),
+            onClose: () => {
+              setMaximized(false);
+              updateShadows();
+            },
+          });
+          setMaximized(true);
         } else {
           closeModal(container);
-          button.innerHTML = ICONS.arrowsOutSimple;
-          setButtonTitle(button, "Toggle Fullscreen");
+          setMaximized(false);
         }
         window.setTimeout(updateShadows, 50);
       },
     );
+    const setMaximized = (expanded) => {
+      maximize.innerHTML = expanded ? ICONS.arrowsInSimple : ICONS.arrowsOutSimple;
+      maximize.setAttribute("aria-expanded", String(expanded));
+      setButtonTitle(maximize, expanded ? "Restore Normal View" : "Toggle Fullscreen");
+    };
+    setMaximized(false);
     const rotate = createButton(
       "table-btn btn-rotate",
       ICONS.arrowClockwise,

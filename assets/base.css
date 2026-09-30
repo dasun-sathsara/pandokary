@@ -163,7 +163,6 @@
     "Studio Feixen Sans", "Noto Sans Sinhala", -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "SF Pro", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-heading: var(--font-body);
-  --font-sinhala: var(--font-body);
   --font-mono: "Geist Mono", "Noto Sans Sinhala", monospace;
   --letter-spacing-mono: -0.01em;
   /* A light negative tracking: enough to close the word gaps the lighter
@@ -174,7 +173,6 @@
 
   /* Floating toggles */
   --toggle-size: 2.75rem;
-  --toggle-gap: 0.75rem;
 
   /* Font Sizes & Scale — body is the single source of truth (tuned, do not change).
      All document type derives from body so --font-size-adjust scales everything. */
@@ -182,18 +180,6 @@
   --font-size-body-mobile: 14.75px;
   --font-size-body: var(--font-size-body-desktop);
 
-  /* Heading scale (multipliers of body). Slightly restrained progression. */
-  --scale-h1: 1.7;
-  --scale-h2: 1.4;
-  --scale-h3: 1.2;
-  --scale-h4: 1.1;
-  --scale-h5: 1;
-  --scale-h6: 0.85;
-
-  /* Supporting scale (multipliers of body). Only two meta sizes exist. */
-  --scale-small: 0.85;
-  --scale-xs: 0.75;
-  --scale-table: 0.88;
   /* Code sits under the body size. The mono carries the same x-height as the
      sans at a given size, but its glyphs read larger, so inline code only needs
      a small step down while a code block wants a clear one. */
@@ -214,8 +200,7 @@
   --spacing-paragraph: 0.65em;
   --radius-std: 0;
 
-  /* Motion — one easing family, four durations. Timings marked (*) stay in
-     sync with JS timeouts in app.js (modal close 350ms, overlay fade 200ms). */
+  /* Timings marked (*) match UI modal close and reader overlay timeouts. */
   --dur-micro: 120ms;
   --dur-ui: 200ms; /* (*) matches overlay fade + copy/anchor reset pacing */
   --dur-panel: 320ms;
@@ -234,7 +219,7 @@
   }
 }
 
-/* Structural theme hooks. themes.css provides theme variable values. */
+/* Structural theme hooks. themes/css/ provides theme variable values. */
 :root {
   --body-background: var(--color-bg);
   /* One variable-font weight scale is shared by desktop and mobile. */
@@ -308,14 +293,9 @@
   --table-header-font-weight: var(--heading-font-weight);
   --table-header-border-bottom: 1px solid var(--color-border);
   --table-cell-padding: 0.7rem 0.85rem;
-  --mermaid-text-color: var(--color-text);
-  --mermaid-actor-fill: var(--color-surface);
-  --mermaid-border-color: var(--color-accent);
   --mermaid-note-fill: #fff8c5;
   --mermaid-note-stroke: #d4a72c;
   --mermaid-note-text: var(--color-text);
-  --mermaid-edge-label-fill: var(--color-code-bg);
-  --mermaid-today-stroke: #ef4444;
 }
 
 /* =========================================

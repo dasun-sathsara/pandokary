@@ -15,7 +15,6 @@
       "Studio Feixen Sans", "Noto Sans Sinhala Mobile", -apple-system, BlinkMacSystemFont,
       "SF Pro Text", "SF Pro", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --font-heading: var(--font-body);
-    --font-sinhala: var(--font-body);
     --font-mono: "Geist Mono", "Noto Sans Sinhala Mobile", monospace;
     --line-height-body: var(--line-height-body-mobile);
     --line-height-para: var(--line-height-para-mobile);

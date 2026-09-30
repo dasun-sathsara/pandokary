@@ -18,7 +18,10 @@ PDY.TaskListModule = (() => {
       checkbox.addEventListener("change", updateState);
     });
     document.querySelectorAll("main ul").forEach((list) => {
-      if ([...list.children].every((item) => item.classList.contains("task-item")))
+      if (
+        list.children.length &&
+        [...list.children].every((item) => item.classList.contains("task-item"))
+      )
         list.classList.add("task-list");
     });
   }
