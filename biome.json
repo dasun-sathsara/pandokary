@@ -53,7 +53,7 @@
       "trailingCommas": "all",
       "arrowParentheses": "always"
     },
-    "globals": ["hljs", "mermaid", "MathJax"]
+    "globals": ["hljs", "mermaid", "MathJax", "PDY"]
   },
   "css": {
     "formatter": {

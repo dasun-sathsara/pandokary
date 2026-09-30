@@ -1,17 +1,20 @@
-function getMermaidAPI() {
-  const api = window.mermaid;
-  return typeof api?.initialize === "function" && typeof api?.render === "function" ? api : null;
-}
+PDY.MermaidModule = (() => {
+  const { clamp, requestFrame, cancelFrame, runFeature } = PDY;
 
-// Disable Mermaid's built-in auto-init before DOMContentLoaded can start its render pass.
-const initialMermaid = getMermaidAPI();
-if (initialMermaid) {
-  try {
-    initialMermaid.initialize({ startOnLoad: false });
-  } catch (_error) {}
-}
+  function getMermaidAPI() {
+    const api = window.mermaid;
+    return typeof api?.initialize === "function" && typeof api?.render === "function" ? api : null;
+  }
 
-(() => {
+  // Disable Mermaid's built-in auto-init before DOMContentLoaded can start its render pass.
+  const initialMermaid = getMermaidAPI();
+  if (initialMermaid) {
+    runFeature("Mermaid auto-init suppression", () => {
+      initialMermaid.initialize({ startOnLoad: false });
+    });
+  }
+  const { createButton, setButtonTitle, updateScrollLock, focusDialog, releaseDialog } =
+    PDY.UIComponentFactory;
   const FONT_FAMILY = '"Geist Mono", monospace';
   const MIN_SCALE = 0.05;
   const MAX_SCALE = 15;
@@ -44,25 +47,6 @@ if (initialMermaid) {
     sequence: { useMaxWidth: false, boxMargin: 12, noteMargin: 12 },
     gantt: { useMaxWidth: false },
   };
-
-  function clamp(value, minimum, maximum) {
-    return Math.max(minimum, Math.min(maximum, value));
-  }
-
-  function requestFrame(callback) {
-    if (typeof window.requestAnimationFrame === "function") {
-      return window.requestAnimationFrame(callback);
-    }
-    return window.setTimeout(callback, 0);
-  }
-
-  function cancelFrame(frame) {
-    if (typeof window.cancelAnimationFrame === "function") {
-      window.cancelAnimationFrame(frame);
-      return;
-    }
-    window.clearTimeout(frame);
-  }
 
   function getCurrentTheme() {
     return document.documentElement.getAttribute("data-theme") || "porcelain";
@@ -139,16 +123,6 @@ if (initialMermaid) {
       '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="ph ph-diagram mermaid-title-icon"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>',
   };
 
-  function createMermaidButton(className, iconHtml, title) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = className;
-    button.innerHTML = iconHtml;
-    button.title = title;
-    button.setAttribute("aria-label", title);
-    return button;
-  }
-
   function createDiagramContainer(code) {
     const container = document.createElement("div");
     container.className = "mermaid-container";
@@ -164,11 +138,11 @@ if (initialMermaid) {
     const actions = document.createElement("div");
     actions.className = "mermaid-actions";
     actions.append(
-      createMermaidButton("mermaid-btn btn-zoom-out", ICONS.zoomOut, "Zoom Out"),
-      createMermaidButton("mermaid-btn btn-zoom-reset", ICONS.zoomReset, "Reset View"),
-      createMermaidButton("mermaid-btn btn-zoom-in", ICONS.zoomIn, "Zoom In"),
-      createMermaidButton("mermaid-btn btn-maximize", ICONS.maximize, "Toggle Fullscreen"),
-      createMermaidButton("mermaid-btn btn-rotate", ICONS.rotate, "Rotate Landscape"),
+      createButton("mermaid-btn btn-zoom-out", ICONS.zoomOut, "Zoom Out"),
+      createButton("mermaid-btn btn-zoom-reset", ICONS.zoomReset, "Reset View"),
+      createButton("mermaid-btn btn-zoom-in", ICONS.zoomIn, "Zoom In"),
+      createButton("mermaid-btn btn-maximize", ICONS.maximize, "Toggle Fullscreen"),
+      createButton("mermaid-btn btn-rotate", ICONS.rotate, "Rotate Landscape"),
     );
     toolbar.append(title, actions);
 
@@ -335,17 +309,6 @@ if (initialMermaid) {
       deltaY = clamp(deltaY, -120, 120);
     }
     return Math.exp(-deltaY * 0.0015);
-  }
-
-  function updateScrollLockFallback() {
-    if (typeof window.updateScrollLock === "function") {
-      window.updateScrollLock();
-      return;
-    }
-    const hasModal = document.querySelector(
-      ".mermaid-container.maximized,.table-scroll-container.maximized,.lightbox-backdrop.active",
-    );
-    document.body.classList.toggle("scroll-locked", Boolean(hasModal));
   }
 
   class MermaidController {
@@ -758,8 +721,8 @@ if (initialMermaid) {
       this.viewport.style.touchAction = "none";
       document.body.append(backdrop);
       this.setMaximizeButtonState(true);
-      window.pdyFocusDialog?.(this.container, "Expanded diagram");
-      updateScrollLockFallback();
+      focusDialog(this.container, "Expanded diagram");
+      updateScrollLock();
       this.modalFrame = requestFrame(() => {
         this.modalFrame = 0;
         this.container.classList.add("visible");
@@ -779,7 +742,7 @@ if (initialMermaid) {
       }
       cancelFrame(this.modalFrame);
       this.modalFrame = 0;
-      window.pdyReleaseDialog?.(this.container);
+      releaseDialog(this.container);
       this.container.classList.remove("visible");
       backdrop?.classList.remove("visible");
       this.setMaximizeButtonState(false);
@@ -795,7 +758,7 @@ if (initialMermaid) {
         this.container.classList.remove("maximized", "rotated-landscape");
         this.viewport.style.touchAction = "";
         this.clearPointers();
-        updateScrollLockFallback();
+        updateScrollLock();
         this.queueReset();
       };
 
@@ -810,8 +773,7 @@ if (initialMermaid) {
     setMaximizeButtonState(isMaximized) {
       const title = isMaximized ? "Restore Normal View" : "Toggle Fullscreen";
       this.maximizeButton.innerHTML = isMaximized ? ICONS.minimize : ICONS.maximize;
-      this.maximizeButton.title = title;
-      this.maximizeButton.setAttribute("aria-label", title);
+      setButtonTitle(this.maximizeButton, title);
       this.maximizeButton.setAttribute("aria-expanded", String(isMaximized));
     }
 
@@ -907,7 +869,7 @@ if (initialMermaid) {
     }
     const target = document.querySelector("main") || document.body;
     lifecycleObserver = new MutationObserver(scheduleControllerCleanup);
-    lifecycleObserver.observe(target, { childList: true });
+    lifecycleObserver.observe(target, { childList: true, subtree: true });
   }
 
   function registerController(container) {
@@ -956,7 +918,8 @@ if (initialMermaid) {
       return renderControllers(theme, diagramControllers, version);
     };
     const result = renderQueue.then(operation, operation);
-    renderQueue = result.catch(() => {});
+    // A failed render must not poison later theme changes; callers report its error.
+    renderQueue = result.catch(() => undefined);
     return result;
   }
 
@@ -1012,6 +975,5 @@ if (initialMermaid) {
     activeModalController.closeModal();
   });
 
-  window.initMermaid = initMermaid;
-  window.updateMermaidTheme = updateMermaidTheme;
+  return { init: initMermaid, updateTheme: updateMermaidTheme };
 })();

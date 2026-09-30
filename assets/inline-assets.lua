@@ -1,5 +1,5 @@
-local function read_file(path)
-  local file = io.open(path, "r")
+local function read_file(path, mode)
+  local file = io.open(path, mode or "r")
   if not file then return nil end
   local content = file:read("a")
   file:close()
@@ -14,19 +14,8 @@ local function asset_path(name)
   return base .. separator .. name
 end
 
-local function read_asset(name)
-  return read_file(asset_path(name)) or read_file(name)
-end
-
-local function read_asset_bytes(name)
-  local function read(path)
-    local file = io.open(path, "rb")
-    if not file then return nil end
-    local content = file:read("a")
-    file:close()
-    return content
-  end
-  return read(asset_path(name)) or read(name)
+local function read_asset(name, mode)
+  return read_file(asset_path(name), mode)
 end
 
 local function base64(data)
@@ -51,7 +40,7 @@ local function bundle_fonts(css)
   css = css:gsub('url%("fonts/([%w%-%._]+)"%)', function(file)
     if not files[file] then
       local path = "fonts/" .. file
-      local font = read_asset_bytes(path)
+      local font = read_asset(path, "rb")
       if not font then error("required pdy font not found: " .. path) end
       local mime = file:match("%.woff2$") and "font/woff2" or file:match("%.ttf$") and "font/ttf"
       if not mime then error("unsupported pdy font format: " .. path) end
@@ -117,6 +106,10 @@ end
 local has_code = false
 local has_math = false
 local has_mermaid = false
+local theme_manifest = read_asset("themes/manifest.json")
+if not theme_manifest then error("required pdy theme manifest not found") end
+local decoded_manifest = pandoc.json.decode(theme_manifest)
+local themes = decoded_manifest.themes or decoded_manifest
 -- Mean adult silent-reading rate for English non-fiction (Brysbaert, 2019).
 local READING_WORDS_PER_MINUTE = 238
 
@@ -224,48 +217,56 @@ local stylesheet_files = {
   "components/headings.css",
   "components/lightbox.css",
   "components/footer.css",
-  "themes/css/lumina.css",
-  "themes/css/porcelain.css",
-  "themes/css/parchment.css",
-  "themes/css/obsidian.css",
-  "themes/css/midnight-fjord.css",
-  "themes/css/evergreen.css",
-  "components/responsive.css",
-  "components/surfaces.css",
 }
-
-local mermaid_files = {
-  { id = "lumina", path = "themes/mermaid/lumina.json" },
-  { id = "porcelain", path = "themes/mermaid/porcelain.json" },
-  { id = "parchment", path = "themes/mermaid/parchment.json" },
-  { id = "obsidian", path = "themes/mermaid/obsidian.json" },
-  { id = "midnight-fjord", path = "themes/mermaid/midnight-fjord.json" },
-  { id = "evergreen", path = "themes/mermaid/evergreen.json" },
-}
+for _, theme in ipairs(themes) do
+  table.insert(stylesheet_files, "themes/css/" .. theme.id .. ".css")
+end
+table.insert(stylesheet_files, "components/responsive.css")
+table.insert(stylesheet_files, "components/surfaces.css")
 
 local function build_theme_js()
-  local manifest = read_asset("themes/manifest.json") or "[]"
   local m_parts = {}
-  for _, item in ipairs(has_mermaid and mermaid_files or {}) do
-    local json_str = read_asset(item.path)
-    if json_str then
-      table.insert(m_parts, string.format("%q:%s", item.id, json_str))
-    end
+  for _, theme in ipairs(has_mermaid and themes or {}) do
+    local path = "themes/mermaid/" .. theme.id .. ".json"
+    local json_str = read_asset(path)
+    if not json_str then error("required pdy diagram palette not found: " .. path) end
+    table.insert(m_parts, string.format("%q:%s", theme.id, json_str))
   end
   local mermaid_json = "{" .. table.concat(m_parts, ",") .. "}"
-  return string.format("window.PDY_THEME_MANIFEST = (%s).themes || %s;\nwindow.PDY_MERMAID_THEMES = %s;", manifest, manifest, mermaid_json)
+  return string.format("(() => { const manifest = %s; window.PDY_THEME_MANIFEST = manifest.themes || manifest; })();\nwindow.PDY_MERMAID_THEMES = %s;", theme_manifest, mermaid_json)
+end
+
+local function build_reader_js()
+  local manifest = read_asset("reader-scripts.json")
+  if not manifest then error("required pdy reader script manifest not found") end
+  local scripts = pandoc.json.decode(manifest)
+  -- Diagram controllers use the shared runtime and UI modules, then register
+  -- their hooks before app.js starts reader initialization.
+  if has_mermaid then table.insert(scripts, #scripts, "mermaid.js") end
+  return concatenate(scripts)
 end
 
 function Pandoc(doc)
   -- Exports and temporary previews may live outside the Markdown source folder.
   local source_base = pandoc.utils.stringify(doc.meta.pdyResourceBase or "")
-  if source_base ~= "" then
-    doc = doc:walk({ Image = function(image)
-      if not image.src:match("^[%a][%w+.-]*:") and not image.src:match("^[/#]") then
-        image.src = source_base .. image.src
+  local link_base = pandoc.utils.stringify(doc.meta.pdyLinkBase or source_base)
+  if source_base ~= "" or link_base ~= "" then
+    local function resolve_resource(path, base)
+      if base ~= "" and path ~= "" and not path:match("^[%a][%w+.-]*:") and not path:match("^[/#?]") then
+        return base .. path
       end
-      return image
-    end })
+      return path
+    end
+    doc = doc:walk({
+      Image = function(image)
+        image.src = resolve_resource(image.src, source_base)
+        return image
+      end,
+      Link = function(link)
+        link.target = resolve_resource(link.target, link_base)
+        return link
+      end,
+    })
   end
   doc.meta["has-code"] = pandoc.MetaBool(has_code)
   doc.meta["has-math"] = pandoc.MetaBool(has_math)
@@ -278,10 +279,11 @@ function Pandoc(doc)
   local css, font_loader = bundle_fonts(concatenate(stylesheet_files))
   local theme_js = build_theme_js()
 
-  doc.meta["theme-js"] = raw_html(theme_js)
   doc.meta["inline-css"] = raw_html(css)
   doc.meta["inline-font-loader"] = raw_html(font_loader)
-  doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. concatenate(has_mermaid and { "mermaid.js", "app.js" } or { "app.js" }))
-  doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
+  doc.meta["inline-js"] = raw_html(theme_js .. "\n" .. build_reader_js())
+  if has_math then
+    doc.meta["inline-mathjax-config"] = raw_html(concatenate({ "mathjax-config.js" }))
+  end
   return doc
 end

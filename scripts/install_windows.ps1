@@ -25,11 +25,25 @@ function Test-CommandAvailable {
     return $null -ne (Get-Command $Name -ErrorAction SilentlyContinue)
 }
 
+function Invoke-NativeCommand {
+    param(
+        [string]$Command,
+        [string[]]$Arguments = @()
+    )
+
+    $LASTEXITCODE = 0
+    & $Command @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Command failed with exit code $LASTEXITCODE."
+    }
+}
+
 function Refresh-ProcessPath {
     $machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
     $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $combined = @($machinePath, $userPath) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-    $env:Path = ($combined -join ";")
+    $parts = @($machinePath, $userPath, $env:Path) -join ";"
+    $env:Path = ($parts.Split(";") | ForEach-Object { $_.Trim() } |
+        Where-Object { $_ -ne "" } | Select-Object -Unique) -join ";"
 }
 
 function Install-WithManager {
@@ -42,21 +56,21 @@ function Install-WithManager {
 
     if (Test-CommandAvailable "winget") {
         Write-Info "Installing $Name with winget..."
-        & winget install --id $WingetId --exact --silent --accept-source-agreements --accept-package-agreements --disable-interactivity
+        Invoke-NativeCommand "winget" @("install", "--id", $WingetId, "--exact", "--silent", "--accept-source-agreements", "--accept-package-agreements", "--disable-interactivity")
         Refresh-ProcessPath
         return
     }
 
     if (Test-CommandAvailable "choco") {
         Write-Info "Installing $Name with Chocolatey..."
-        & choco install $ChocoId -y
+        Invoke-NativeCommand "choco" @("install", $ChocoId, "-y")
         Refresh-ProcessPath
         return
     }
 
     if (Test-CommandAvailable "scoop") {
         Write-Info "Installing $Name with Scoop..."
-        & scoop install $ScoopId
+        Invoke-NativeCommand "scoop" @("install", $ScoopId)
         Refresh-ProcessPath
         return
     }
@@ -64,22 +78,24 @@ function Install-WithManager {
     throw "No supported package manager found to install $Name. Install it manually and re-run this script."
 }
 
-function Get-GoVersionMinor {
-    if (-not (Test-CommandAvailable "go")) {
-        return -1
-    }
-
-    $raw = (& go version)
+function Test-GoVersion {
+    $raw = Invoke-NativeCommand "go" @("version")
     if ($raw -match "go(\d+)\.(\d+)") {
-        $major = [int]$Matches[1]
-        $minor = [int]$Matches[2]
-        if ($major -gt 1) {
-            return 999
-        }
-        return $minor
+        return [version]"$($Matches[1]).$($Matches[2])" -ge [version]"1.21"
     }
+    return $false
+}
 
-    return -1
+function Test-Dependency {
+    param([string]$Command, [scriptblock]$IsAvailable = $null)
+
+    if (-not (Test-CommandAvailable $Command)) {
+        return $false
+    }
+    if ($null -ne $IsAvailable) {
+        return [bool](& $IsAvailable)
+    }
+    return $true
 }
 
 function Ensure-Dependency {
@@ -89,17 +105,10 @@ function Ensure-Dependency {
         [string]$WingetId,
         [string]$ChocoId,
         [string]$ScoopId,
-        [object]$NeedsInstall = $null
+        [scriptblock]$IsAvailable = $null
     )
 
-    $needsInstall = $false
-    if ($NeedsInstall -is [scriptblock]) {
-        $needsInstall = & $NeedsInstall
-    } else {
-        $needsInstall = -not (Test-CommandAvailable $Command)
-    }
-
-    if (-not $needsInstall) {
+    if (Test-Dependency $Command $IsAvailable) {
         Write-Info "$Name already available."
         return
     }
@@ -110,12 +119,7 @@ function Ensure-Dependency {
 
     Install-WithManager -Name $Name -WingetId $WingetId -ChocoId $ChocoId -ScoopId $ScoopId
 
-    if ($NeedsInstall -is [scriptblock]) {
-        $needsInstall = & $NeedsInstall
-    } else {
-        $needsInstall = -not (Test-CommandAvailable $Command)
-    }
-    if ($needsInstall) {
+    if (-not (Test-Dependency $Command $IsAvailable)) {
         throw "$Name is still missing/outdated after installation attempt."
     }
 }
@@ -130,6 +134,7 @@ function Add-PathForCurrentUser {
     }
 
     if ($parts -contains $PathEntry) {
+        Refresh-ProcessPath
         Write-Info "Install directory already in user PATH."
         return
     }
@@ -164,16 +169,17 @@ if ([string]::IsNullOrWhiteSpace($InstallDir)) {
     $InstallDir = Join-Path $baseInstallRoot "Programs\pdy"
 }
 
+# Resolve relative paths before Push-Location changes the working directory.
+$RepoDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($RepoDir)
+$InstallDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($InstallDir)
+
 Write-Info "Repo directory: $RepoDir"
 Write-Info "Install directory: $InstallDir"
 
 Refresh-ProcessPath
 
 Ensure-Dependency -Name "Git" -Command "git" -WingetId "Git.Git" -ChocoId "git" -ScoopId "git"
-Ensure-Dependency -Name "Go (>= 1.21)" -Command "go" -WingetId "GoLang.Go" -ChocoId "golang" -ScoopId "go" -NeedsInstall {
-    $minor = Get-GoVersionMinor
-    return $minor -lt 21
-}
+Ensure-Dependency -Name "Go (>= 1.21)" -Command "go" -WingetId "GoLang.Go" -ChocoId "golang" -ScoopId "go" -IsAvailable { Test-GoVersion }
 Ensure-Dependency -Name "Pandoc" -Command "pandoc" -WingetId "JohnMacFarlane.Pandoc" -ChocoId "pandoc" -ScoopId "pandoc"
 Ensure-Dependency -Name "dprint" -Command "dprint" -WingetId "dprint.dprint" -ChocoId "dprint" -ScoopId "dprint"
 
@@ -184,7 +190,7 @@ if (-not (Test-Path $RepoDir)) {
     }
 
     Write-Info "Cloning repository..."
-    & git clone $RepoUrl $RepoDir
+    Invoke-NativeCommand "git" @("clone", $RepoUrl, $RepoDir)
 } else {
     $gitDir = Join-Path $RepoDir ".git"
     if (-not (Test-Path $gitDir)) {
@@ -193,7 +199,7 @@ if (-not (Test-Path $RepoDir)) {
 
     if ($ForcePull) {
         Write-Info "Pulling latest changes..."
-        & git -C $RepoDir pull --ff-only
+        Invoke-NativeCommand "git" @("-C", $RepoDir, "pull", "--ff-only")
     } else {
         Write-WarnMsg "Repository already exists. Use -ForcePull to update."
     }
@@ -207,7 +213,7 @@ Write-Info "Building pdy.exe..."
 New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 Push-Location $RepoDir
 try {
-    & go build -o (Join-Path $InstallDir "pdy.exe") ./cmd/pdy
+    Invoke-NativeCommand "go" @("build", "-o", (Join-Path $InstallDir "pdy.exe"), "./cmd/pdy")
 
     $installAssetsDir = Join-Path $InstallDir "assets"
     New-Item -ItemType Directory -Path $installAssetsDir -Force | Out-Null
@@ -216,10 +222,10 @@ try {
     Pop-Location
 }
 
-Add-PathForCurrentUser -PathEntry $InstallDir
-
 Write-Info "Running smoke test..."
-& (Join-Path $InstallDir "pdy.exe") --help | Out-Null
+Invoke-NativeCommand (Join-Path $InstallDir "pdy.exe") @("--help") | Out-Null
+
+Add-PathForCurrentUser -PathEntry $InstallDir
 
 Write-Host ""
 Write-Host "pdy installation complete." -ForegroundColor Green

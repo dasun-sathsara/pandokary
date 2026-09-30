@@ -2,8 +2,9 @@
 
 `pandokary` wraps Pandoc with project-aware defaults and a reproducible set of HTML assets so Markdown notes render consistently across environments.
 
-- **CLI entry point**: `cmd/pdy/main.go` parses flags, resolves assets, and shells out to Pandoc.
-- **Assets**: `assets/` contains the HTML template, CSS, and Lua filter embedded into the binary.
+- **CLI entry point**: `cmd/pdy/main.go` parses flags and calls the rendering pipeline in `internal/pdy/`.
+- **Rendering pipeline**: `internal/pdy/` separates asset lookup, source formatting, Pandoc arguments, and staged output.
+- **Assets**: `assets/` contains the HTML template, CSS, browser modules, and Lua filter embedded into the binary.
 - **Samples**: `testdata/` stores example Markdown inputs for manual and automated checks.
 
 ## Requirements
@@ -21,6 +22,7 @@ cd pandokary
 ```
 
 The script checks for `Git`, `Go >= 1.21`, `Pandoc`, and `dprint`, then builds `pdy` into `~/.local/bin` (override with `./scripts/install.sh <repo-dir> <install-dir>`).
+Relative repository and install paths resolve from the directory where you invoke the script.
 
 ## Windows Installation
 
@@ -64,7 +66,13 @@ The compiled binary looks for assets in this order:
 - `./assets/` found by walking up from the current working directory
 - embedded assets shipped inside the binary
 
-You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a directory that contains the required asset files.
+You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a complete copy of the `assets/` directory, including its subdirectories and `reader-scripts.json`.
+
+Exports are staged beside their destination and saved only after Pandoc succeeds.
+A failed conversion leaves an existing export intact and removes temporary output.
+Existing export permissions and destination symlinks are preserved. An output path
+that refers to the source file, including through a symlink or hardlink, is rejected
+before source formatting runs.
 
 ### Asset modes
 
@@ -72,6 +80,10 @@ You can override asset lookup entirely by setting `PDY_ASSETS_DIR` to a director
 
 - `cdn` (default) leaves third-party bundles (MathJax, highlight.js) on their CDNs and does **not** request `--embed-resources`, keeping exports slim. Core CSS/JS remains inline so previews work from the temp directory, but your local images/attachments stay as file references. Pass `--embed` to explicitly produce a self-contained CDN-mode export.
 - `offline` inlines CDN bundles and other embeddable resources for offline viewing; expect a much larger HTML. Use `--no-embed` to leave other embeddable resources external instead.
+
+Relative image and attachment links resolve from the Markdown source directory,
+including when a preview or export lives elsewhere. Embedding inlines images;
+attachment hyperlinks still point to their source files.
 
 #### Bundled fonts
 
@@ -86,6 +98,7 @@ The four original variable-font binaries are packaged directly (one WOFF2 and th
 ### Markdown formatting
 
 By default, `pdy` runs `dprint fmt` on the input Markdown file before passing it to Pandoc. This normalises list indentation, whitespace, and other formatting inconsistencies. Use `--no-fmt` to skip this step.
+Formatting a source symlink updates its target and preserves the symlink.
 
 ## Testing
 
@@ -97,6 +110,8 @@ npm test
 `npm test` checks browser assets and all six theme palettes, including text contrast,
 selected controls, translucent surfaces, syntax highlighting, and agreement with the Mermaid colors.
 It also checks saved-theme migration, restricted storage, heading IDs, and bounded code-line ranges.
+Safety regressions cover literal missing-image labels and reader startup when an optional library fails.
+Go regressions cover failed exports, source/destination collisions, symlink handling, and local attachment links.
 Theme colors live in `assets/themes/css/`; their accents and diagram colors are mirrored
 in `assets/themes/manifest.json` and `assets/themes/mermaid/`. The appearance swatches use
 the CSS theme colors directly.
@@ -125,7 +140,9 @@ Consider adding samples under `testdata/` when covering new scenarios.
 
 - Format Go code with `gofmt` (or `goimports`) before committing.
 - Group imports by standard library, third-party, then local packages.
-- Run `golangci-lint run` if available, otherwise `go vet ./...`.
+- Run `go vet ./...` and `golangci-lint run` when the linter is available. The configuration uses the golangci-lint v2 schema.
+- Browser features live in `assets/modules/`; `assets/app.js` coordinates startup. Keep their dependency order in `assets/reader-scripts.json`. The Lua filter and reader checks use the same manifest to assemble the source.
+- Shared browser utilities live in `modules/runtime.js`, and each feature exposes its interface through `PDY`. Optional feature failures are reported without interrupting other reader controls.
 
 ## Contributing
 

@@ -3,6 +3,7 @@ package pdy
 import (
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -12,6 +13,54 @@ import (
 	"strings"
 	"testing"
 )
+
+func TestAttachmentLinksResolveOutsideSourceFolder(t *testing.T) {
+	source := filepath.Join(t.TempDir(), "notes with spaces")
+	if err := os.MkdirAll(source, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	attachment := filepath.Join(source, "report one.txt")
+	if err := os.WriteFile(attachment, []byte("attachment"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	input := filepath.Join(source, "notes.md")
+	markdown := "# Notes {#notes}\n\n[Attachment](report%20one.txt)\n\n[Section](#notes)\n\n[Web](https://example.com/report)\n\n[CDN](//example.com/report)\n"
+	if err := os.WriteFile(input, []byte(markdown), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	for _, embed := range []bool{false, true} {
+		t.Run(fmt.Sprintf("embed=%t", embed), func(t *testing.T) {
+			result, err := Run(Options{InputPath: input, Export: true, ExportName: filepath.Join(t.TempDir(), "export.html"), EmbedResources: embed})
+			if err != nil {
+				t.Fatal(err)
+			}
+			html, err := os.ReadFile(result.OutputPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			match := regexp.MustCompile(`<a\s+href="([^"]+)"\s*>Attachment</a>`).FindStringSubmatch(string(html))
+			if len(match) != 2 {
+				t.Fatal("export is missing its attachment link")
+			}
+			u, err := url.Parse(match[1])
+			if err != nil || u.Scheme != "file" {
+				t.Fatalf("attachment must resolve to its source file, got %s", match[1])
+			}
+			path := u.Path
+			if runtime.GOOS == "windows" {
+				path = strings.TrimPrefix(path, "/")
+			}
+			if filepath.Clean(filepath.FromSlash(path)) != attachment {
+				t.Errorf("attachment resolves to %s, want %s", path, attachment)
+			}
+			for _, target := range []string{"#notes", "https://example.com/report", "//example.com/report"} {
+				if !strings.Contains(string(html), `href="`+target+`"`) {
+					t.Errorf("link target changed: %s", target)
+				}
+			}
+		})
+	}
+}
 
 func TestImagesResolveOutsideSourceFolder(t *testing.T) {
 	source := filepath.Join(t.TempDir(), "notes with spaces")

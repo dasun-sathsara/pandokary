@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import vm from "node:vm";
+import { readReaderSource } from "./reader-source.mjs";
 
 const read = (name) => readFileSync(new URL(`../assets/${name}`, import.meta.url), "utf8");
 const baseCss = read("base.css");
@@ -145,7 +146,7 @@ assert.doesNotMatch(baseCss, /(?:-webkit|-moz)-font-smoothing\s*:/);
 assert.match(baseCss, /--scale-code-inline: 0\.87em;/);
 assert.match(baseCss, /--scale-code-block: 0\.87em;/);
 assert.match(baseCss, /--letter-spacing-mono: -0\.01em;/);
-const appJs = read("app.js");
+const appJs = readReaderSource();
 const templateHtml = read("template.html");
 assert.match(appJs, /type="number"[^>]*min="-100"[^>]*max="100"[^>]*font-weight-input/);
 assert.match(
@@ -325,7 +326,7 @@ const context = vm.createContext({
   },
 });
 vm.runInContext(
-  `${read("app.js")}\nglobalThis.modules = { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule, TableModule, HapticFeedback, SettingsModule };`,
+  `${appJs}\nglobalThis.modules = { CodeBlockModule, TOCModule, SectionLinkModule, FoldModule, TableModule, HapticFeedback, SettingsModule };`,
   context,
 );
 const {

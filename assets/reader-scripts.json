@@ -1,0 +1,17 @@
+[
+  "modules/runtime.js",
+  "modules/storage.js",
+  "modules/haptics.js",
+  "modules/ui.js",
+  "modules/code.js",
+  "modules/tables.js",
+  "modules/settings.js",
+  "modules/toc.js",
+  "modules/sections.js",
+  "modules/folds.js",
+  "modules/tasks.js",
+  "modules/images.js",
+  "modules/shortcuts.js",
+  "modules/reader.js",
+  "app.js"
+]

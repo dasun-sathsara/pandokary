@@ -32,42 +32,19 @@
         document.documentElement.style.setProperty("--content-max-width", width + "px");
       if (innerWidth >= 1200 && localStorage.getItem("tocCollapsed") !== "true")
         document.documentElement.classList.add("toc-open");
-    } catch (e) {}
+    } catch (e) {
+      // Restricted storage uses the default theme and typography until startup.
+    }
     // A failed CDN or enhancement must never leave the document behind an overlay.
     setTimeout(function () { document.getElementById("loading-overlay")?.remove(); }, 5000);
   </script>
-  $if(inline-css)$
   <style id="pdy-inline-css">$inline-css$</style>
-  $if(inline-font-loader)$<script>$inline-font-loader$</script>$endif$
-  $else$
-  <link rel="stylesheet" href="base.css">
-  <link rel="stylesheet" href="components/code.css">
-  <link rel="stylesheet" href="components/tables.css">
-  <link rel="stylesheet" href="components/settings.css">
-  <link rel="stylesheet" href="components/mermaid.css">
-  <link rel="stylesheet" href="components/reader.css">
-  <link rel="stylesheet" href="components/loading.css">
-  <link rel="stylesheet" href="components/headings.css">
-  <link rel="stylesheet" href="components/lightbox.css">
-  <link rel="stylesheet" href="components/footer.css">
-  <link rel="stylesheet" href="themes/css/lumina.css">
-  <link rel="stylesheet" href="themes/css/porcelain.css">
-  <link rel="stylesheet" href="themes/css/parchment.css">
-  <link rel="stylesheet" href="themes/css/obsidian.css">
-  <link rel="stylesheet" href="themes/css/midnight-fjord.css">
-  <link rel="stylesheet" href="themes/css/evergreen.css">
-  <link rel="stylesheet" href="components/responsive.css">
-  <link rel="stylesheet" href="components/surfaces.css">
-  $endif$
+  <script>$inline-font-loader$</script>
   $if(has-code)$
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   $endif$
   $if(has-math)$
-  $if(inline-mathjax-config)$
   <script>$inline-mathjax-config$</script>
-  $else$
-  <script src="mathjax-config.js"></script>
-  $endif$
   <script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/@mathjax/mathjax-stix2-font@4.0.0/tex-mml-svg-mathjax-stix2.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   $endif$
   $if(has-mermaid)$
@@ -76,13 +53,7 @@
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.min.js" $if(assetModeCdn)$data-external="true"$endif$></script>
   $endif$
-  $if(inline-js)$
   <script>$inline-js$</script>
-  $else$
-  $if(theme-js)$<script>$theme-js$</script>$endif$
-  <script defer src="mermaid.js"></script>
-  <script defer src="app.js"></script>
-  $endif$
   $for(header-includes)$
   $header-includes$
   $endfor$

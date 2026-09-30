@@ -1,16 +1,7 @@
 version: "2"
 
-linters-settings:
-  gocritic:
-    disabled-checks:
-      - ifElseChain
-  revive:
-    rules:
-      - name: error-strings
-      - name: unused-parameter
-
 linters:
-  disable-all: true
+  default: none
   enable:
     - errcheck
     - govet
@@ -23,15 +14,22 @@ linters:
     - misspell
     - unconvert
     - unparam
-
-issues:
-  exclude-rules:
-    - source: "fmt\\.Fprint"
-      linters:
-        - errcheck
-    - linters:
-        - revive
-      text: "(should have a package comment|exported .* should have comment)"
+  settings:
+    gocritic:
+      disabled-checks:
+        - ifElseChain
+    revive:
+      rules:
+        - name: error-strings
+        - name: unused-parameter
+  exclusions:
+    rules:
+      - source: "fmt\\.Fprint"
+        linters:
+          - errcheck
+      - linters:
+          - revive
+        text: "(should have a package comment|exported .* should have comment)"
 
 run:
   timeout: 5m
