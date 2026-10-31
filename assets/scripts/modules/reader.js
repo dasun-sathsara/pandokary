@@ -151,7 +151,8 @@ PDY.ReaderExtrasModule = (() => {
       return;
     }
     const saved = StorageManager.getScrollPosition();
-    if (saved) window.scrollTo(0, saved);
+    // The stylesheet smooths scrolling; a restored position must not animate from the top.
+    if (saved) window.scrollTo({ top: saved, behavior: "instant" });
   }
 
   let loadingFinished = false;

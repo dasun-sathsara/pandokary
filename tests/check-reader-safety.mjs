@@ -107,11 +107,28 @@ function checkMathJaxIgnoresProseDollars() {
   assert.deepEqual(JSON.parse(JSON.stringify(displayMath)), [["\\[", "\\]"]]);
 }
 
+function checkSavedScrollRestoresInstantly() {
+  // The stylesheet sets scroll-behavior: smooth; a restored position must not animate from the top.
+  const scrolls = [];
+  const window = {
+    location: { hash: "" },
+    localStorage: { getItem: () => "1500", setItem() {} },
+    requestAnimationFrame: (callback) => callback(),
+    setTimeout: () => 0,
+    scrollTo: (...args) => scrolls.push(args),
+  };
+  const { reader } = readerContext({ title: "Notes", getElementById: () => null }, window);
+  reader.ReaderExtrasModule.finishLoading();
+  assert.equal(scrolls.length, 1, "the saved position is restored once");
+  assert.deepEqual(JSON.parse(JSON.stringify(scrolls[0])), [{ top: 1500, behavior: "instant" }]);
+}
+
 let failures = 0;
 for (const check of [
   checkMissingImageLabel,
   checkFailedMermaidStartup,
   checkMathJaxIgnoresProseDollars,
+  checkSavedScrollRestoresInstantly,
 ]) {
   try {
     await check();
@@ -122,5 +139,5 @@ for (const check of [
 }
 assert.equal(failures, 0, "reader safety regressions failed");
 console.log(
-  "Reader safety regressions passed: literal image labels, isolated library failures, and prose dollar signs.",
+  "Reader safety regressions passed: literal image labels, isolated library failures, prose dollar signs, and instant scroll restoration.",
 );
