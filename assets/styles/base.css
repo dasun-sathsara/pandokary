@@ -258,9 +258,10 @@
   --link-underline: color-mix(in srgb, var(--color-accent) 38%, transparent);
 
   /* Accent at reduced strength, for the few quiet touches DESIGN.md allows. */
-  --accent-marker: color-mix(in oklab, var(--color-accent) 62%, var(--color-text-muted));
-  --accent-rule: color-mix(in oklab, var(--color-accent) 42%, var(--color-border-strong));
-  --accent-hairline: color-mix(in oklab, var(--color-accent) 24%, var(--color-border));
+  --accent-marker: color-mix(in oklab, var(--color-accent) 85%, var(--color-text-muted));
+  --accent-rule: color-mix(in oklab, var(--color-accent) 60%, var(--color-border-strong));
+  --accent-hairline: color-mix(in oklab, var(--color-accent) 30%, var(--color-border));
+  --accent-wash: color-mix(in oklab, var(--color-accent) 5%, var(--color-bg));
 }
 
 @media (pointer: coarse) {
@@ -559,11 +560,11 @@ hr {
   margin: var(--space-8) 0;
 }
 
-/* Blockquote: the only left rule in the system. 1px, accent at low strength, no fill. */
+/* Blockquote: the only left rule in the system. 2px, softened accent, no fill. */
 blockquote {
   margin: var(--space-6) 0;
   padding: 0 0 0 var(--space-4);
-  border-left: 1px solid var(--accent-rule);
+  border-left: 2px solid var(--accent-rule);
   color: var(--color-text-muted);
 }
 
@@ -571,12 +572,12 @@ blockquote p {
   margin: 0 0 var(--spacing-paragraph);
 }
 
-/* Callout: a tinted block, no bar. */
+/* Callout: a faint accent wash with an accent hairline, no bar. */
 main aside,
 main .aside {
   margin: var(--space-6) 0;
   padding: var(--space-4) var(--space-6);
-  background: var(--color-surface-alt);
+  background: var(--accent-wash);
   border: 1px solid var(--accent-hairline);
   border-radius: var(--radius-lg);
   color: var(--color-text);

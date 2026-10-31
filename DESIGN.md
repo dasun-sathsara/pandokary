@@ -22,7 +22,7 @@ Rules that hold everywhere:
 - Accent at reduced strength (a `color-mix` toward neutral, tokens below) appears in exactly
   three places: list markers and ordered numbers, the blockquote rule, and the callout hairline.
   Nothing else gets a tint. Never headings, body text, table rules, code surfaces, or fills.
-- Left bars: only blockquotes have one (1px). Callouts, TOC, and lists use fills.
+- Left bars: only blockquotes have one (2px). Callouts, TOC, and lists use fills.
 - Selected state everywhere is `accent-subtle` fill plus accent text.
 - Elevation is declared once. In-flow surfaces use a border only. Floating layers (popovers,
   sheets, drawers, floating buttons, maximized views) use `--shadow-float`, which includes its
@@ -36,14 +36,14 @@ Defined in `assets/styles/base.css` (shared) and `assets/themes/css/<id>.css` (p
 | --- | --- | --- |
 | Page | `--color-bg` | Document background |
 | Raised | `--color-surface` | Popovers, sheets, floating buttons, steppers |
-| Tint | `--color-surface-alt` | Callouts, hovered controls, settings tiles |
+| Tint | `--color-surface-alt` | Hovered controls, settings tiles |
 | Hover | `--color-hover` | Row, line, and list hover |
 | Hairline | `--color-border` | Every divider and in-flow border |
 | Control edge | `--color-border-strong` | Inputs, checkboxes, diagram node borders |
 | Ink | `--color-text`, `--color-heading`, `--color-strong` | Body, headings, bold |
 | Quiet ink | `--color-text-muted` | Metadata, TOC, captions, labels, markers |
 | Accent | `--color-accent`, `-hover`, `-subtle`, `--color-on-accent` | See rules above |
-| Accent, softened | `--accent-marker` (62% accent, 38% muted ink), `--accent-rule` (42% accent, 58% control edge), `--accent-hairline` (24% accent, 76% hairline) | List markers, blockquote rule, callout border |
+| Accent, softened | `--accent-marker` (85% accent, 15% muted ink), `--accent-rule` (60% accent, 40% control edge), `--accent-hairline` (30% accent, 70% hairline), `--accent-wash` (5% accent on the page) | List markers, blockquote rule, callout border and fill |
 | Code | `--color-code-*`, `--code-*` | Recessed code and diagram surface, syntax colours |
 
 Themes keep their ids, names, and light/dark split. Neutrals are tinted to the theme hue
@@ -103,15 +103,15 @@ control is at least 44px.
   text with an icon, not a pill.
 - **Lists**: one indent (1.5em) for bullets, numbers, and tasks. Markers use `--accent-marker`. Task
   checkboxes sit in the marker column, 1em, 4px radius, accent fill when checked.
-- **Blockquote**: 1px left rule in `--accent-rule`, muted text, no fill. **Callout** (`aside`):
-  `surface-alt` fill, `--accent-hairline` border, 8px radius, no bar.
+- **Blockquote**: 2px left rule in `--accent-rule`, muted text, no fill. **Callout** (`aside`):
+  `--accent-wash` fill, `--accent-hairline` border, 8px radius, no bar.
 - **Code**: `code-bg` recessed block, hairline border, 8px radius, no shadow. Line numbers are
   quiet, with no divider. Copy is a ghost chip shown on hover. "Show More" sits below the block,
   never over its border.
 - **Tables**: no outer grid and no zebra. Row hairlines only, muted header with a stronger rule
   under it, frame on the scroll container. Expand and rotate sit above the table (inside the
   toolbar row when maximized), never over cells.
-- **Diagrams**: `code-bg` surface, one toolbar row with a muted title and ghost icon buttons.
+- **Diagrams**: label text at 14px (Mermaid's 16px default is the full body size and reads too large in Geist), `code-bg` surface, one toolbar row with a muted title and ghost icon buttons.
 - **TOC**: no panel and no band. Muted title, ghost "Expand all / Collapse all", links with one
   indent step per level, active entry on a filled row. Drawer on compact screens.
 - **Floating controls**: TOC and appearance toggles share one 44px, 8px-radius button. Open state
