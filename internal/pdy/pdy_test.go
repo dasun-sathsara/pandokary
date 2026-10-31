@@ -264,6 +264,9 @@ func TestReadingTimeCountsLexicalProseOnly(t *testing.T) {
 	}{
 		{name: "formatted punctuation", markdown: prose + "\n", minutes: 1},
 		{name: "image alt text", markdown: prose + "\n\n![alt " + altText + "](image.svg)\n", minutes: 1},
+		{name: "inline image alt text", markdown: prose + " ![alt " + altText + "](image.svg)\n", minutes: 1},
+		{name: "code spans and inline math", markdown: prose + " `" + altText + "` $" + altText + "$\n", minutes: 1},
+		{name: "raw html comment", markdown: prose + "\n\n<!-- " + altText + " -->\n", minutes: 1},
 		{name: "symbols after prose", markdown: prose + " ❤️ ✈️ € ™ ।\n", minutes: 1},
 		{name: "symbols only", markdown: "❤️ ✈️ € ™ । \u1680\uFE0F\n"},
 		{name: "punctuation only", markdown: "। — ©\n"},

@@ -165,31 +165,31 @@ local function is_word(value)
   return false
 end
 
+-- One top-down pass counts Str words. Subtrees that are not prose (code, math, raw
+-- markup, image alt text, figure captions) are skipped rather than copied out first.
 local function count_prose_words(doc)
   local word_count = 0
-  local body = pandoc.Pandoc(doc.blocks, {})
-  local function drop_content() return {} end
-  local prose = body:walk({
-    Code = drop_content,
-    Math = drop_content,
-    Image = function(image)
-      image.caption = {}
-      return image
-    end,
-    Figure = function(figure)
-      figure.caption = {}
-      return figure
-    end,
-    RawInline = drop_content,
-    CodeBlock = drop_content,
-    RawBlock = drop_content,
-  })
-  prose:walk({
+  local function skip() return nil, false end
+  local counter
+  counter = {
+    traverse = "topdown",
     Str = function(value)
-      if is_word(pandoc.utils.stringify(value)) then word_count = word_count + 1 end
-      return value
+      local text = value.text
+      -- ASCII letters and digits are always word characters; skip the interval search for them.
+      if text:find("[0-9A-Za-z]") or is_word(text) then word_count = word_count + 1 end
     end,
-  })
+    Code = skip,
+    Math = skip,
+    RawInline = skip,
+    CodeBlock = skip,
+    RawBlock = skip,
+    Image = skip,
+    Figure = function(figure)
+      figure.content:walk(counter)
+      return nil, false
+    end,
+  }
+  doc.blocks:walk(counter)
   return word_count
 end
 
