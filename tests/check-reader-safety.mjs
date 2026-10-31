@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import vm from "node:vm";
 import { readReaderSource } from "./reader-source.mjs";
 
@@ -86,8 +87,32 @@ async function checkFailedMermaidStartup() {
   assert.ok(errors.length > 0, "the optional library failure is reported");
 }
 
+function checkMathJaxIgnoresProseDollars() {
+  // Pandoc already parses dollar math and emits \(...\) and \[...\]. A "$" delimiter would
+  // make MathJax typeset ordinary prose such as "$5 and $10".
+  const window = {};
+  vm.runInNewContext(
+    readFileSync(new URL("../assets/scripts/mathjax-config.js", import.meta.url), "utf8"),
+    {
+      window,
+    },
+  );
+  const { inlineMath, displayMath } = window.MathJax.tex;
+  const delimiters = JSON.parse(JSON.stringify([...inlineMath, ...displayMath])).flat();
+  assert.ok(
+    !delimiters.some((delimiter) => delimiter.includes("$")),
+    "dollar signs are not math delimiters",
+  );
+  assert.deepEqual(JSON.parse(JSON.stringify(inlineMath)), [["\\(", "\\)"]]);
+  assert.deepEqual(JSON.parse(JSON.stringify(displayMath)), [["\\[", "\\]"]]);
+}
+
 let failures = 0;
-for (const check of [checkMissingImageLabel, checkFailedMermaidStartup]) {
+for (const check of [
+  checkMissingImageLabel,
+  checkFailedMermaidStartup,
+  checkMathJaxIgnoresProseDollars,
+]) {
   try {
     await check();
   } catch (error) {
@@ -97,5 +122,5 @@ for (const check of [checkMissingImageLabel, checkFailedMermaidStartup]) {
 }
 assert.equal(failures, 0, "reader safety regressions failed");
 console.log(
-  "Reader safety regressions passed: literal image labels and isolated library failures.",
+  "Reader safety regressions passed: literal image labels, isolated library failures, and prose dollar signs.",
 );

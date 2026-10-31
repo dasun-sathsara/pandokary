@@ -5,14 +5,10 @@ window.MathJax = {
     },
   },
   tex: {
-    inlineMath: [
-      ["$", "$"],
-      ["\\(", "\\)"],
-    ],
-    displayMath: [
-      ["$$", "$$"],
-      ["\\[", "\\]"],
-    ],
+    // Pandoc has already parsed dollar math and emits \(...\) and \[...\]. MathJax must
+    // not rescan the prose for "$", or "$5 and $10" becomes a formula.
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
     processEscapes: true,
     processEnvironments: true,
   },
