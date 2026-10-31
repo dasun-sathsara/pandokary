@@ -1,84 +1,66 @@
 /* =========================================
-   Settings Pop-over & Floating Controls
+   Floating controls and the appearance panel
+   Both toggles are the same button. Open state is a tint, never a ring.
    ========================================= */
 
 .floating-toggle {
   position: fixed;
+  z-index: 100;
+  display: grid;
+  place-items: center;
   width: var(--toggle-size);
   height: var(--toggle-size);
-  border-radius: 50%;
+  padding: 0;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  color: var(--color-text-muted);
   cursor: pointer;
-  box-shadow: var(--shadow-elevated);
   transition:
-    transform var(--dur-ui) var(--ease-spring),
-    color var(--dur-micro) var(--ease-out),
-    border-color var(--dur-micro) var(--ease-out),
-    background-color var(--dur-micro) var(--ease-out),
-    opacity var(--dur-ui) var(--ease-out);
-  z-index: 100;
+    color var(--dur-micro) var(--ease-feedback),
+    background-color var(--dur-micro) var(--ease-feedback),
+    opacity var(--dur-ui) var(--ease-reveal),
+    transform var(--dur-ui) var(--ease-reveal);
 }
 
-.floating-toggle:hover {
-  transform: scale(1.08);
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+.floating-toggle svg {
+  width: 20px;
+  height: 20px;
 }
 
-.floating-toggle:active {
-  transform: scale(0.95);
+.floating-toggle:hover,
+.settings-toggle.active {
+  background: var(--color-hover);
+  color: var(--color-text);
 }
 
 .settings-toggle {
-  bottom: 2rem;
-  right: 2rem;
+  bottom: var(--float-inset);
+  right: var(--float-inset);
 }
 
-.settings-toggle.active {
-  background: var(--color-accent-subtle);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+.toc-toggle {
+  bottom: var(--float-inset);
+  left: var(--float-inset);
 }
 
 .floating-toggle.hidden:not(:focus-visible) {
   opacity: 0;
-  transform: scale(0) rotate(-45deg);
+  transform: translateY(0.5rem);
   pointer-events: none;
 }
 
-.settings-toggle .settings-icon {
-  transition: transform var(--dur-panel) var(--ease-out);
-}
-
-.settings-toggle:hover .settings-icon {
-  transform: rotate(45deg);
-}
-
-.settings-toggle.active .settings-icon {
-  transform: rotate(90deg);
-}
-
-/* Settings Backdrop */
 .settings-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: var(--modal-backdrop-background);
+  inset: 0;
   z-index: 100;
+  background: var(--modal-backdrop-background);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
   transition:
-    opacity var(--dur-modal) var(--ease-out),
+    opacity var(--dur-modal) var(--ease-reveal),
     visibility var(--dur-modal);
 }
 
@@ -94,240 +76,215 @@
   }
 }
 
-/* Settings Popover */
+/* Panel */
 .settings-popover {
   position: fixed;
-  bottom: calc(2rem + var(--toggle-size) + 12px);
-  right: 2rem;
-  width: 336px;
-  max-width: calc(100vw - 4rem);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-panel);
-  padding: 18px;
-  box-shadow: var(--shadow-elevated);
   z-index: 101;
-  visibility: hidden;
-  max-height: calc(var(--viewport-height) - 7rem);
+  right: var(--float-inset);
+  bottom: calc(var(--float-inset) + var(--toggle-size) + var(--space-2));
+  width: 22rem;
+  max-width: calc(100vw - 3rem);
+  max-height: calc(var(--viewport-height) - 8rem);
+  padding: var(--space-4);
   overflow-y: auto;
   overscroll-behavior: contain;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  visibility: hidden;
   opacity: 0;
-  transform: scale(0.98) translateY(6px);
+  transform: translateY(6px);
   transform-origin: bottom right;
   pointer-events: none;
   transition:
-    opacity var(--dur-ui) var(--ease-out),
-    transform var(--dur-ui) var(--ease-out),
+    opacity var(--dur-ui) var(--ease-reveal),
+    transform var(--dur-ui) var(--ease-reveal),
     visibility var(--dur-ui);
 }
 
 .settings-popover.active {
   visibility: visible;
   opacity: 1;
-  transform: scale(1) translateY(0);
+  transform: none;
   pointer-events: auto;
 }
 
 .settings-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--color-border);
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
 }
 
-.settings-header h3 {
+.settings-header h3,
+.shortcuts-header h3 {
   margin: 0;
   font-size: 1em;
-  font-weight: var(--heading-font-weight, 560);
-  color: var(--color-heading);
-  letter-spacing: var(--letter-spacing-heading, -0.015em);
+  line-height: 1.3;
 }
 
 .close-settings {
-  background: none;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: var(--hit);
+  height: var(--hit);
+  margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-1)) calc(-1 * var(--space-1)) 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
   color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
+  cursor: pointer;
   transition:
-    background-color var(--dur-micro) var(--ease-out),
-    color var(--dur-micro) var(--ease-out);
+    color var(--dur-micro) var(--ease-feedback),
+    background-color var(--dur-micro) var(--ease-feedback);
 }
 
 .close-settings:hover {
-  background-color: var(--color-surface-alt);
+  background: var(--color-hover);
   color: var(--color-text);
 }
 
-.settings-section {
-  margin-bottom: 16px;
-}
-
-.settings-section:last-child {
-  margin-bottom: 0;
+.settings-section + .settings-section {
+  margin-top: var(--space-4);
 }
 
 .settings-label {
-  font-size: 0.75em;
-  font-weight: var(--body-font-weight, 380);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+  font-size: 0.8125em;
   color: var(--color-text-muted);
-  margin-bottom: 8px;
 }
 
-/* Theme Options Grid */
+/* Themes */
 .theme-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .theme-option {
-  min-width: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: var(--color-surface-alt);
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: var(--hit);
+  padding: 0 0.625rem;
+  background: transparent;
   border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   color: var(--color-text);
-  cursor: pointer;
-  font-size: 0.85em;
-  font-weight: var(--body-font-weight, 380);
-  transition:
-    color var(--dur-micro) var(--ease-out),
-    border-color var(--dur-micro) var(--ease-out),
-    background-color var(--dur-micro) var(--ease-out);
+  font-size: 0.875em;
   text-align: left;
+  cursor: pointer;
+  transition:
+    color var(--dur-micro) var(--ease-feedback),
+    border-color var(--dur-micro) var(--ease-feedback),
+    background-color var(--dur-micro) var(--ease-feedback);
 }
 
 .theme-option:hover {
-  border-color: var(--color-accent);
-  background: var(--color-surface);
+  background: var(--color-hover);
 }
 
 .theme-option.active {
-  border-color: var(--color-accent);
   background: var(--color-accent-subtle);
+  border-color: var(--color-accent);
   color: var(--color-accent);
-  font-weight: var(--strong-font-weight, 510);
 }
 
-/* Dots Preview */
+/* The swatch carries its own data-theme, so it paints that theme's colours. */
 .theme-preview-dot {
+  position: relative;
+  flex-shrink: 0;
   width: 14px;
   height: 14px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  display: inline-block;
-  position: relative;
-}
-
-/* Swatches inherit the theme tokens, so previews stay in sync with the page. */
-.theme-preview-dot {
   background: var(--color-bg);
-  box-shadow: inset 0 0 0 1px var(--color-text-muted);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
 }
 
 .theme-preview-dot::after {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+  inset: 4px;
   background: var(--color-accent);
+  border-radius: 50%;
 }
 
-/* Stepper Controls */
+/* Steppers: one width, one glyph weight, one height. */
 .control-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 12px;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.control-row + .control-row {
+  margin-top: var(--space-2);
 }
 
 .control-name {
-  font-size: 0.85em;
-  font-weight: var(--body-font-weight, 380);
+  font-size: 0.875em;
   color: var(--color-text);
 }
 
 .stepper-control {
   display: flex;
   align-items: center;
-  background: var(--color-surface-alt);
+  flex-shrink: 0;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 2px;
+  border-radius: var(--radius-md);
 }
 
 .stepper-btn {
-  background: none;
-  border: none;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85em;
-  font-weight: var(--body-font-weight, 380);
+  display: grid;
+  place-items: center;
+  width: var(--hit);
+  height: var(--hit);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
   color: var(--color-text);
+  font-size: 1.125em;
+  line-height: 1;
   cursor: pointer;
-  border-radius: 6px;
   transition:
-    background-color var(--dur-micro) var(--ease-out),
-    color var(--dur-micro) var(--ease-out),
-    transform var(--dur-micro) var(--ease-spring);
+    color var(--dur-micro) var(--ease-feedback),
+    background-color var(--dur-micro) var(--ease-feedback);
 }
 
 .stepper-btn:hover:not(:disabled) {
-  background-color: var(--color-surface);
-  color: var(--color-accent);
-}
-
-.stepper-btn:active:not(:disabled) {
-  transform: scale(0.92);
+  background: var(--color-hover);
 }
 
 .stepper-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  pointer-events: none;
+  color: var(--color-text-muted);
+  opacity: 0.45;
+  cursor: default;
 }
 
 .stepper-val {
-  font-size: 0.85em;
-  font-weight: var(--body-font-weight, 380);
-  color: var(--color-text);
-  width: 58px;
+  width: 3.5rem;
+  font-size: 0.875em;
+  font-variant-numeric: tabular-nums;
   text-align: center;
+  color: var(--color-text);
   user-select: none;
 }
 
 .font-weight-input {
-  flex: 0 0 50px;
-  width: 50px;
-  min-height: 28px;
-  padding: 0 4px;
+  flex: 0 0 3.5rem;
+  min-height: var(--hit);
+  padding: 0;
   border: 0;
+  border-radius: var(--radius-sm);
   appearance: textfield;
   background: transparent;
   font-family: inherit;
-  font-variant-numeric: tabular-nums;
   font-weight: inherit;
   line-height: inherit;
-  text-align: center;
+  user-select: auto;
 }
 
 .font-weight-input::-webkit-inner-spin-button,
@@ -337,7 +294,5 @@
 }
 
 .font-weight-input:focus-visible {
-  border-radius: 4px;
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline-offset: -2px;
 }

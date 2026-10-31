@@ -1,5 +1,6 @@
 /* =========================================
-   Mobile Responsiveness & Media Queries
+   Compact and phone layouts, reduced motion
+   Compact: below 1200px. Phone: 768px and below.
    ========================================= */
 
 @supports (height: 100dvh) {
@@ -18,23 +19,20 @@
     --font-mono: "Geist Mono", "Noto Sans Sinhala Mobile", monospace;
     --line-height-body: var(--line-height-body-mobile);
     --line-height-para: var(--line-height-para-mobile);
-    --spacing-list-item: var(--spacing-list-item-mobile);
     --body-font-weight: var(--body-font-weight-mobile);
     --strong-font-weight: var(--strong-font-weight-mobile);
     --heading-font-weight: var(--heading-font-weight-mobile);
     --mono-font-weight: var(--mono-font-weight-mobile);
     --mono-emphasis-font-weight: var(--mono-emphasis-font-weight-mobile);
-    --toggle-size: 2.25rem;
-    /* Shared gutter: body padding and full-bleed bands (code) derive from
-       the same token so edges always agree across rotations and zooms. */
+    /* One gutter drives body padding and full-bleed bands. */
     --page-gutter: clamp(1rem, 2vw + 0.5rem, 1.5rem);
+    --float-inset: max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)));
   }
 
   body {
-    padding: 1.75rem var(--page-gutter);
     width: 100%;
-    min-width: 0;
     max-width: 100%;
+    padding: var(--space-6) var(--page-gutter) 6rem;
   }
 
   header,
@@ -48,14 +46,6 @@
     max-width: 100%;
   }
 
-  /* Compact reading column: main has comfortable bottom clearance */
-  main {
-    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
-  }
-
-  /* Justification, hyphenation, and heading hyphen suppression now live in
-     base.css (section 4c) so desktop gets them too; only the narrow-screen
-     break-word guard stays viewport-specific. */
   h1,
   h2,
   h3,
@@ -66,62 +56,20 @@
     overflow-wrap: break-word;
   }
 
-  /* Cheaper indents: reclaims ~6px per nesting level for 360–412px screens. */
-  ul,
-  ol {
-    padding-left: 1.25rem;
-  }
-
-  li {
-    padding-left: 0.25rem;
-  }
-
-  h1 {
-    margin-top: 0;
-    margin-bottom: 0.85rem;
-  }
-
   h2 {
-    margin-top: 1.35rem;
-    margin-bottom: 0.6rem;
+    margin-top: 2rem;
   }
 
   h3 {
-    margin-top: 1.2rem;
-    margin-bottom: 0.55rem;
+    margin-top: 1.5rem;
   }
 
   h4 {
-    margin-top: 1rem;
-    margin-bottom: 0.4rem;
-  }
-
-  h5 {
-    margin-top: 0.95rem;
-    margin-bottom: 0.4rem;
-  }
-
-  h6 {
-    margin-top: 0.85rem;
-    margin-bottom: 0.35rem;
-  }
-
-  pre {
-    margin: 1rem 0;
-    border-radius: var(--pre-border-radius);
-    border: 1px solid var(--color-border);
-    max-width: 100%;
-  }
-
-  blockquote,
-  main aside,
-  main .aside {
-    padding: 0.75rem 1rem;
-    border-left-width: 3px !important;
+    margin-top: 1.25rem;
   }
 
   /* Folding is a desktop affordance: compact layouts keep every section open
-     with no fold chrome. Equal specificity wins here (later stylesheet). */
+     with no fold chrome. */
   .fold-btn,
   .toc-fold-actions {
     display: none !important;
@@ -139,407 +87,110 @@
     cursor: default;
   }
 
-  .code-line,
-  .code-line.focused-line,
-  .code-line.highlighted-line {
-    padding-left: 0;
-  }
-
-  /* No copy affordance on compact layouts: tap-to-copy is fiddly and the
-     button crowds narrow code blocks. Copy remains desktop-only. */
+  /* Tap-to-copy is fiddly and crowds narrow blocks; copy stays desktop-only. */
   .copy-btn {
     display: none !important;
   }
 
-  .mermaid-btn,
-  .table-btn {
-    width: 26px !important;
-    height: 26px !important;
-    min-width: 26px !important;
-    min-height: 26px !important;
-    padding: 0 !important;
-    border-radius: 5px !important;
-    border-width: 1px !important;
+  .mermaid-viewport {
+    min-height: 280px;
   }
 
-  .mermaid-btn svg,
-  .table-btn svg {
-    width: 13px !important;
-    height: 13px !important;
-    stroke-width: 2px !important;
-  }
-
-  .mermaid-toolbar {
-    padding: 0.3rem 0.6rem !important;
-    border-bottom-width: 1px !important;
-  }
-
-  .mermaid-title {
-    gap: 0.3rem !important;
-  }
-
-  .mermaid-title svg {
-    width: 13px !important;
-    height: 13px !important;
-    stroke-width: 2px !important;
-  }
-
-  .mermaid-container,
-  .table-scroll-container {
-    border-width: 1px !important;
-  }
-
-  table {
-    margin: 1rem 0 1.1rem;
-    border-width: 1px !important;
-  }
-
-  th,
-  td {
-    padding: 0.45rem 0.55rem;
-  }
-
-  .table-scroll-container {
-    margin: 1rem 0 1.1rem;
-  }
-
-  .table-wrapper {
-    margin: 0;
-    border-radius: 4px;
-  }
-
-  .scroll-shadow.left {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-  }
-
-  .scroll-shadow.right {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-  }
-
-  .table-wrapper th,
-  .table-wrapper td {
-    padding: 0.45rem 0.6rem;
-    min-width: auto;
-    max-width: none;
-  }
-
-  hr {
-    width: 100%;
-  }
-
-  .floating-toggle {
-    bottom: max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)));
-  }
-
-  .toc-toggle {
-    left: max(1.25rem, calc(0.75rem + env(safe-area-inset-left, 0px)));
-  }
-
-  .settings-toggle {
-    bottom: max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)));
-    right: max(1.25rem, calc(0.75rem + env(safe-area-inset-right, 0px)));
-    border-width: 1px !important;
-  }
-
-  .settings-toggle svg {
-    width: 15px;
-    height: 15px;
-    stroke-width: 2px !important;
-  }
-
-  .settings-popover {
-    bottom: calc(
-      max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px))) +
-      var(--toggle-size) +
-      8px
-    );
-    right: max(1.25rem, calc(0.75rem + env(safe-area-inset-right, 0px)));
-    /* Dock right at a capped width instead of stretching edge to edge: the
-       full-bleed panel reads as a second page on phones. */
-    left: auto;
-    width: min(300px, calc(100vw - 3rem));
-    max-width: none;
-    transform-origin: bottom center;
-    padding: 10px;
-    border-width: 1px !important;
-    /* Slightly smaller on compact layouts: every inner label, option, and
-       stepper row sizes in em, so one knob scales the whole panel while the
-       44px coarse-pointer touch targets stay intact. */
-    font-size: 0.9em;
-  }
-
-  .settings-header {
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-  }
-
-  .settings-section {
-    margin-bottom: 8px;
-  }
-
-  .settings-label {
-    margin-bottom: 4px;
-  }
-
-  .theme-grid {
-    gap: 5px;
-  }
-
-  .theme-option {
-    padding: 5px 8px;
-    gap: 6px;
-    border-radius: 5px;
-    border-width: 1px !important;
-  }
-
-  .theme-preview-dot {
-    width: 10px;
-    height: 10px;
-  }
-
-  .theme-preview-dot::after {
-    width: 4px;
-    height: 4px;
-  }
-
-  .control-row {
-    margin-top: 6px;
-  }
-
-  .stepper-control {
-    border-radius: 5px;
-    padding: 1px;
-    border-width: 1px !important;
-  }
-
-  .stepper-btn {
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
-  }
-
-  .stepper-val {
-    width: 42px;
-  }
-
-  .mermaid-container.maximized,
-  .table-scroll-container.maximized {
-    top: 5vh !important;
-    left: 2.5vw !important;
-    width: 95vw !important;
-    height: 90vh !important;
-    border-radius: 5px !important;
-    border-width: 1px !important;
-  }
-
-  .table-scroll-container.maximized .table-wrapper {
-    height: 90vh !important;
-    border-radius: 5px !important;
+  /* Expanded views: inset on tablets, edge to edge on phones (below). */
+  html .mermaid-container.maximized,
+  html .table-scroll-container.maximized {
+    top: 5vh;
+    left: 2.5vw;
+    width: 95vw;
+    height: 90vh;
   }
 
   .maximized .mermaid-btn.btn-rotate,
   .maximized .table-btn.btn-rotate {
-    display: flex !important;
+    display: inline-flex;
   }
 
-  /* Rotated Landscape mode on mobile */
-  .mermaid-container.maximized.rotated-landscape,
-  .table-scroll-container.maximized.rotated-landscape {
-    top: 50% !important;
-    left: 50% !important;
-    width: 90vh !important;
-    height: 95vw !important;
-    transform: translate(-50%, -50%) rotate(90deg) !important;
-    border-radius: 5px !important;
-  }
-
-  .mermaid-container.maximized.rotated-landscape .mermaid-viewport {
-    height: calc(95vw - 30px) !important;
-  }
-  .table-scroll-container.maximized.rotated-landscape .table-wrapper {
-    height: 95vw !important;
+  .mermaid-container.maximized.visible.rotated-landscape,
+  .table-scroll-container.maximized.visible.rotated-landscape {
+    top: 50%;
+    left: 50%;
+    width: 90vh;
+    height: 95vw;
+    transform: translate(-50%, -50%) rotate(90deg);
   }
 }
 
 @media (pointer: coarse) {
-  .floating-toggle {
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .copy-btn,
-  .lightbox-close {
-    min-width: 44px !important;
-    min-height: 44px !important;
-  }
-
-  .theme-option,
-  .toc-link {
-    min-height: 44px;
-  }
-
-  /* Compact controls stay proportional: 44px blanket blows up toolbar rows.
-     26px-34px comfortably exceeds the WCAG 2.5.8 target size exception for inline/clustered controls. */
-  .mermaid-btn,
-  .table-btn {
-    width: 26px !important;
-    height: 26px !important;
-    min-width: 26px !important;
-    min-height: 26px !important;
-    padding: 0 !important;
-  }
-
-  .settings-popover .font-weight-input {
-    min-width: 50px !important;
-    min-height: 44px !important;
-  }
-
-  .settings-popover .stepper-btn {
-    min-width: 28px !important;
-    min-height: 28px !important;
-  }
-
-  .settings-popover .close-settings,
-  .toc-header-bar .toc-close {
-    min-width: 28px !important;
-    min-height: 28px !important;
-  }
-
-  .settings-popover .theme-option {
-    min-height: 34px;
-  }
-
   .copy-btn {
     opacity: 1;
   }
 
-  .mermaid-actions,
-  .table-actions {
-    flex-wrap: nowrap;
-    gap: 0.25rem;
+  .toc-link {
+    min-height: var(--hit);
+    display: flex;
+    align-items: center;
+  }
+
+  .settings-popover .font-weight-input {
+    min-width: 3.5rem;
+    min-height: 44px;
   }
 }
 
 /* =========================================
-   Phone (Pixel-class widths and below)
-   Contained code blocks, bottom sheet settings, edge-aligned footer.
-   The compact (≤1199px) rules above still apply; these refine ≤768px.
+   Phone
    ========================================= */
 @media (max-width: 768px) {
-  pre {
-    margin: 1rem 0;
-    max-width: 100%;
-    border-radius: var(--pre-border-radius);
-    border: 1px solid var(--color-border);
-  }
-
-  .code-scroll-area {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-x: contain;
-  }
-
-  /* Horizontal-scroll affordances on the scroll area (consistent with tables) */
-  .code-scroll-area.is-scrollable,
-  pre.is-scrollable {
-    background-image:
-      linear-gradient(to right, var(--scroll-shadow-color), transparent),
-      linear-gradient(to left, var(--scroll-shadow-color), transparent);
-    background-size:
-      15px 100%,
-      15px 100%;
-    background-position:
-      left center,
-      right center;
-    background-repeat: no-repeat;
-  }
-
-  .code-scroll-area.is-scrollable.at-left,
-  pre.is-scrollable.at-left {
-    background-image: linear-gradient(to left, var(--scroll-shadow-color), transparent);
-    background-size: 15px 100%;
-    background-position: right center;
-  }
-
-  .code-scroll-area.is-scrollable.at-right,
-  pre.is-scrollable.at-right {
-    background-image: linear-gradient(to right, var(--scroll-shadow-color), transparent);
-    background-size: 15px 100%;
-    background-position: left center;
-  }
-
-  /* Bottom sheet Appearance modal on phone viewports */
+  /* Appearance panel becomes a bottom sheet. */
   .settings-popover {
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
     max-width: 100%;
-    border-radius: 16px 16px 0 0;
-    border: 1px solid var(--color-border);
-    border-bottom: none;
-    padding: 16px 20px max(20px, env(safe-area-inset-bottom, 0px));
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
-    transform-origin: bottom center;
+    max-height: calc(var(--viewport-height) - 3rem);
+    padding: var(--space-4) var(--space-4) max(var(--space-6), env(safe-area-inset-bottom, 0px));
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     transform: translateY(100%);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    transform-origin: bottom center;
     transition:
-      transform var(--dur-panel) var(--ease-spring),
-      opacity var(--dur-ui) var(--ease-out),
+      transform var(--dur-panel) var(--ease-reveal),
+      opacity var(--dur-ui) var(--ease-reveal),
       visibility var(--dur-ui);
-    z-index: 101;
   }
 
   .settings-popover.active {
-    transform: translateY(0);
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+    transform: none;
   }
 
-  .settings-popover .font-weight-input {
-    min-height: 44px;
-  }
-
-  /* Hide both floating toggles when the Appearance bottom sheet is open */
-  html:has(.settings-popover.active) .floating-toggle,
-  .settings-toggle.active {
+  /* Both floating buttons give way to the open sheet. */
+  html:has(.settings-popover.active) .floating-toggle {
     opacity: 0;
     pointer-events: none;
   }
 
-  /* Hide layout max-width control on phones: screen width is fixed < 768px */
+  /* Screen width is fixed here, so the max-width control does nothing. */
   .settings-section.layout-section {
     display: none;
   }
 
-  /* Maximized diagrams and tables: full edge-to-edge view on phone screens */
-  .mermaid-container.maximized,
-  .table-scroll-container.maximized {
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: var(--viewport-height, 100vh) !important;
-    border-radius: 0 !important;
-    border: none !important;
+  html .mermaid-container.maximized,
+  html .table-scroll-container.maximized {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: var(--viewport-height);
+    border-radius: 0;
   }
 
-  .mermaid-container.maximized .mermaid-viewport {
-    height: calc(100% - 42px) !important;
+  html .table-scroll-container.maximized .table-wrapper {
+    border-radius: 0;
   }
 
-  .table-scroll-container.maximized .table-wrapper {
-    height: calc(100% - 42px) !important;
-    border-radius: 0 !important;
-  }
-
-  /* Footer text stays cleanly centered across all viewports */
-  footer .footer-credits {
-    text-align: center;
-    justify-content: center;
+  .mermaid-container.maximized.visible.rotated-landscape,
+  .table-scroll-container.maximized.visible.rotated-landscape {
+    width: var(--viewport-height);
+    height: 100vw;
   }
 
   figcaption {
@@ -547,8 +198,8 @@
   }
 }
 
-/* Keep scrolling and all component motion quiet when motion is reduced.
-   Durations collapse via the shared tokens; the spinner and pulse freeze. */
+/* Reduced motion: durations collapse through the shared tokens; the spinner
+   and the footer pulse stop. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -559,16 +210,12 @@
     scroll-behavior: auto !important;
   }
 
-  .loading-spinner {
-    animation: none !important;
-    border-top-color: var(--color-border);
-  }
-
+  .loading-spinner,
   .footer-credits:hover .heart-beat {
     animation: none !important;
   }
 
-  html {
-    scroll-behavior: auto;
+  .loading-spinner {
+    border-top-color: var(--color-border);
   }
 }

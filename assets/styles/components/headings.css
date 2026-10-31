@@ -1,7 +1,4 @@
-/* =========================================
-   Heading Anchors
-   ========================================= */
-
+/* Heading anchors: a muted link icon that appears on hover or focus. */
 .heading-with-anchor {
   position: relative;
 }
@@ -10,36 +7,35 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin-left: var(--space-2);
   vertical-align: middle;
-  margin-left: 0.5rem;
-  font-size: 0.8em;
+  font-size: 0.75em;
   color: var(--color-text-muted);
+  text-decoration: none;
   opacity: 0;
-  transition:
-    opacity var(--dur-micro) var(--ease-out),
-    transform var(--dur-micro) var(--ease-spring),
-    color var(--dur-micro) var(--ease-out);
-  text-decoration: none !important;
-  border: none !important;
   cursor: pointer;
+  transition:
+    opacity var(--dur-micro) var(--ease-feedback),
+    color var(--dur-micro) var(--ease-feedback);
 }
 
 .heading-anchor svg {
-  width: 0.9em;
-  height: 0.9em;
+  width: 1em;
+  height: 1em;
   flex-shrink: 0;
 }
+
 .heading-with-anchor:hover .heading-anchor,
-.heading-with-anchor:focus-within .heading-anchor {
+.heading-with-anchor:focus-within .heading-anchor,
+.heading-anchor:focus-visible {
   opacity: 1;
 }
 
 .heading-anchor:hover {
-  opacity: 1 !important;
-  transform: scale(1.15);
+  color: var(--color-text);
 }
 
 .heading-anchor.copied {
-  opacity: 1 !important;
-  color: var(--color-accent) !important;
+  opacity: 1;
+  color: var(--color-accent);
 }

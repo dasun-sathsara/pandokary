@@ -125,7 +125,7 @@ PDY.SettingsModule = (() => {
         <div class="control-row">
           <span class="control-name">Text Size</span>
           <div class="stepper-control">
-            <button type="button" class="stepper-btn dec-font-size" aria-label="Decrease font size">—</button>
+            <button type="button" class="stepper-btn dec-font-size" aria-label="Decrease font size">−</button>
             <span class="stepper-val font-size-val" aria-live="polite">100%</span>
             <button type="button" class="stepper-btn inc-font-size" aria-label="Increase font size">+</button>
           </div>
@@ -144,7 +144,7 @@ PDY.SettingsModule = (() => {
         <div class="control-row">
           <span class="control-name">Max Width</span>
           <div class="stepper-control">
-            <button type="button" class="stepper-btn dec-layout-width" aria-label="Decrease layout width">—</button>
+            <button type="button" class="stepper-btn dec-layout-width" aria-label="Decrease layout width">−</button>
             <span class="stepper-val layout-width-val" aria-live="polite">1040px</span>
             <button type="button" class="stepper-btn inc-layout-width" aria-label="Increase layout width">+</button>
           </div>

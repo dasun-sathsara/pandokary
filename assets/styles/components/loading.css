@@ -1,21 +1,16 @@
-/* =========================================
-   Loading Overlay & Spinner
-   ========================================= */
-
+/* Loading overlay: shown only when JS runs, removed after startup. */
 #loading-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: var(--viewport-height);
+  inset: 0;
   z-index: 99999;
-  background-color: var(--color-bg);
   display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.25rem;
-  transition: opacity var(--dur-ui) var(--ease-out);
+  gap: var(--space-4);
+  height: var(--viewport-height);
+  background: var(--color-bg);
+  transition: opacity var(--dur-ui) var(--ease-reveal);
 }
 
 #loading-overlay.fade-out {
@@ -23,10 +18,14 @@
   pointer-events: none;
 }
 
+.js #loading-overlay {
+  display: flex;
+}
+
 .loading-spinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--color-border);
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--color-border);
   border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 0.9s linear infinite;
@@ -39,13 +38,7 @@
 }
 
 .loading-text {
-  font-family: var(--font-body);
-  font-size: 0.85em;
-  color: var(--color-text-muted);
   margin: 0;
-  letter-spacing: 0.02em;
-}
-
-.js #loading-overlay {
-  display: flex;
+  font-size: 0.875em;
+  color: var(--color-text-muted);
 }

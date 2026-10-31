@@ -1,33 +1,29 @@
-/* =========================================
-   Animated Footer
-   ========================================= */
-
 footer {
-  margin-top: 2.5rem;
-  margin-bottom: 2rem;
+  margin-top: var(--space-12);
+}
+
+footer hr {
+  margin: 0;
 }
 
 .footer-credits {
-  text-align: center;
-  font-family: var(--font-body);
-  font-size: 0.85em;
-  color: var(--color-text-muted);
-  letter-spacing: 0.02em;
-  margin: 1rem 0 0 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
   gap: 0.3em;
+  margin: var(--space-4) 0 0;
+  font-size: 0.875em;
+  color: var(--color-text-muted);
+  text-align: center;
 }
 
 .heart-beat {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  vertical-align: middle;
   line-height: 1;
-  color: #e05252;
+  color: var(--color-danger);
 }
 
 .heart-icon {
@@ -36,13 +32,10 @@ footer {
   height: 14px;
   overflow: visible;
   fill: currentColor;
-  color: #e05252;
 }
 
 .footer-name {
-  font-weight: inherit;
-  color: var(--color-text-muted);
-  display: inline-block;
+  color: inherit;
 }
 
 @keyframes heart-pulse {
@@ -56,5 +49,5 @@ footer {
 }
 
 .footer-credits:hover .heart-beat {
-  animation: heart-pulse 1.5s ease-in-out 1;
+  animation: heart-pulse 1.5s var(--ease-feedback) 1;
 }

@@ -1,172 +1,66 @@
 /* =========================================
-   Tables & Scroll Containers
+   Tables
+   Row hairlines only: no outer grid, no zebra. The frame lives on the scroll
+   wrapper; the expand and rotate buttons sit above it, never over cells.
    ========================================= */
 
 main table {
   display: block;
-  width: var(--table-width);
-  min-width: 100%;
+  width: 100%;
   max-width: 100%;
-  border-collapse: var(--table-border-collapse);
+  margin: var(--space-6) 0;
+  overflow-x: auto;
+  border-collapse: collapse;
   border-spacing: 0;
-  margin: 1.25rem 0;
-  font-size: 0.88em;
+  font-size: 0.9em;
   line-height: var(--line-height-body, 1.48);
-  border: 1px solid var(--color-border);
-  border-radius: var(--table-border-radius);
-  overflow-x: var(--table-overflow-x);
-  overflow-y: var(--table-overflow-y);
-  box-shadow: var(--table-box-shadow);
 }
 
 main th,
 main td {
-  padding: var(--table-cell-padding);
+  padding: var(--space-3) var(--space-4);
   text-align: left;
   vertical-align: top;
-  border-right: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
 }
 
-main th:last-child,
-main td:last-child {
-  border-right: none;
-}
-
 main th {
-  font-family: var(--font-body);
-  color: var(--table-header-color);
-  font-weight: var(--table-header-font-weight);
-  background: var(--table-header-background);
-  border-bottom: var(--table-header-border-bottom);
+  font-family: var(--font-heading);
+  font-weight: var(--heading-font-weight, 560);
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border-bottom-color: var(--color-border-strong);
 }
 
 main tbody tr:last-child td {
   border-bottom: none;
 }
 
-main tbody tr:nth-child(even) {
-  background-color: var(--color-table-row-alt);
-}
-
 main tbody tr:hover {
-  background-color: var(--color-table-row-hover);
+  background: var(--color-hover);
 }
 
 .table-scroll-container {
   position: relative;
   width: 100%;
-  margin: 1.25rem 0;
-  border: 1px solid var(--surface-border);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  background-color: var(--color-surface);
-  contain: layout paint;
+  margin: calc(var(--hit) + var(--space-2)) 0 var(--space-6);
 }
 
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
-  margin: 0;
-  background-color: var(--color-surface);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
-}
-
-.table-scroll-container.maximized .table-wrapper {
-  height: 85vh;
-  border: none;
-}
-
-.table-actions {
-  position: absolute;
-  top: 0.45rem;
-  right: 0.55rem;
-  z-index: 10;
-  display: flex;
-  gap: 0.35rem;
-  opacity: 0;
-  transition: opacity var(--dur-micro) var(--ease-out);
-}
-
-.table-scroll-container:hover .table-actions,
-.table-scroll-container:focus-within .table-actions,
-.table-scroll-container.maximized .table-actions {
-  opacity: 1;
-}
-
-@media (hover: none) {
-  .table-actions {
-    opacity: 0.75;
-  }
-}
-
-/* Custom scrollbars */
-::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover);
-}
-
-html,
-body,
-pre,
-.table-wrapper,
-.toc-sidebar,
-.toc-sidebar-body,
-.code-scroll-area,
-.settings-popover {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
-}
-
-.scroll-shadow {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 15px;
-  pointer-events: none;
-  transition: opacity var(--dur-micro) var(--ease-out);
-  opacity: 0;
-  z-index: 5;
-}
-
-.scroll-shadow.left {
-  left: 0;
-  background: linear-gradient(to right, var(--scroll-shadow-color), transparent);
-  border-bottom-left-radius: 8px;
-}
-
-.scroll-shadow.right {
-  right: 0;
-  background: linear-gradient(to left, var(--scroll-shadow-color), transparent);
-  border-bottom-right-radius: 8px;
 }
 
 .table-wrapper table {
   display: table;
   width: 100%;
   min-width: 100%;
-  border-collapse: collapse;
-  border: none;
   margin: 0;
-  border-spacing: 0;
+  overflow: visible;
   table-layout: auto;
 }
 
@@ -177,29 +71,14 @@ pre,
 
 .table-wrapper th,
 .table-wrapper td {
-  padding: 0.8rem 1rem;
-  line-height: var(--line-height-body, 1.48);
-  border-bottom: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
   word-break: normal;
   overflow-wrap: break-word;
-  vertical-align: top;
-}
-
-.table-wrapper th:last-child,
-.table-wrapper td:last-child {
-  border-right: none;
-}
-
-.table-wrapper tbody tr:last-child td {
-  border-bottom: none;
 }
 
 .table-wrapper th {
-  font-family: var(--font-heading);
-  color: var(--color-heading);
-  font-weight: var(--heading-font-weight, 560);
-  background-color: var(--color-surface-alt);
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 .col-compact,
@@ -216,4 +95,52 @@ td[align="right"],
 .table-wrapper td.col-numeric {
   text-align: right !important;
   font-variant-numeric: tabular-nums;
+}
+
+/* Actions float in the gap above the table; pointer users see them on hover. */
+.table-actions {
+  position: absolute;
+  top: calc(-1 * var(--hit) - var(--space-1));
+  right: 0;
+  z-index: 10;
+  display: flex;
+  gap: var(--space-1);
+  opacity: 0;
+  transition: opacity var(--dur-micro) var(--ease-feedback);
+}
+
+.table-scroll-container:hover .table-actions,
+.table-scroll-container:focus-within .table-actions,
+.table-scroll-container.maximized .table-actions {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .table-actions {
+    opacity: 1;
+  }
+}
+
+/* Scroll hints: a soft edge where more columns hide. JS sets the opacity. */
+.scroll-shadow {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 12px;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-micro) var(--ease-feedback);
+}
+
+.scroll-shadow.left {
+  left: 1px;
+  background: linear-gradient(to right, var(--scroll-shadow-color), transparent);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.scroll-shadow.right {
+  right: 1px;
+  background: linear-gradient(to left, var(--scroll-shadow-color), transparent);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
 }
