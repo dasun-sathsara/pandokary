@@ -128,7 +128,7 @@ npm test
 `npm test` checks browser assets and all six theme palettes, including text contrast,
 selected controls, translucent surfaces, syntax highlighting, and agreement with the Mermaid colors.
 It also checks saved-theme migration, restricted storage, heading IDs, and bounded code-line ranges.
-Safety regressions cover literal missing-image labels and reader startup when an optional library fails.
+Safety regressions cover literal missing-image labels, reader startup when an optional library fails, prose dollar signs staying out of MathJax, and instant scroll restoration.
 Go regressions cover failed exports, source/destination collisions, symlink handling, and local attachment links.
 Theme colors live in `assets/themes/css/`; their accents and diagram colors are mirrored
 in `assets/themes/manifest.json` and `assets/themes/mermaid/`. The appearance swatches use
