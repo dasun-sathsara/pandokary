@@ -16,9 +16,13 @@ Rules that hold everywhere:
 
 - Headings are ink-coloured, never accent-coloured. No rules under headings.
 - Body text is left-aligned, never justified.
-- Accent appears only for: links, the current TOC entry, the selected theme, checked tasks,
-  focus rings, the progress bar, and diagram note borders.
-- Left bars: only blockquotes have one (1px, neutral). Callouts, TOC, and lists use fills.
+- Accent at full strength appears only for: links, the current TOC entry, the selected theme,
+  checked tasks, focus rings, the progress bar, diagram note borders, and the fold chevron and
+  heading anchor while hovered.
+- Accent at reduced strength (a `color-mix` toward neutral, tokens below) appears in exactly
+  three places: list markers and ordered numbers, the blockquote rule, and the callout hairline.
+  Nothing else gets a tint. Never headings, body text, table rules, code surfaces, or fills.
+- Left bars: only blockquotes have one (1px). Callouts, TOC, and lists use fills.
 - Selected state everywhere is `accent-subtle` fill plus accent text.
 - Elevation is declared once. In-flow surfaces use a border only. Floating layers (popovers,
   sheets, drawers, floating buttons, maximized views) use `--shadow-float`, which includes its
@@ -39,6 +43,7 @@ Defined in `assets/styles/base.css` (shared) and `assets/themes/css/<id>.css` (p
 | Ink | `--color-text`, `--color-heading`, `--color-strong` | Body, headings, bold |
 | Quiet ink | `--color-text-muted` | Metadata, TOC, captions, labels, markers |
 | Accent | `--color-accent`, `-hover`, `-subtle`, `--color-on-accent` | See rules above |
+| Accent, softened | `--accent-marker` (62% accent, 38% muted ink), `--accent-rule` (42% accent, 58% control edge), `--accent-hairline` (24% accent, 76% hairline) | List markers, blockquote rule, callout border |
 | Code | `--color-code-*`, `--code-*` | Recessed code and diagram surface, syntax colours |
 
 Themes keep their ids, names, and light/dark split. Neutrals are tinted to the theme hue
@@ -65,7 +70,9 @@ checkboxes), `--radius-lg` 8px (code, tables, diagrams, callouts, popovers, floa
 Everything collapses under `prefers-reduced-motion`.
 
 **Icons**: Phosphor line style, 16px in controls, 14px in text, `currentColor`; stroke icons
-are normalised to 1.6px. **Hit targets**: pointer UI may be 32px; on `pointer: coarse` every
+are normalised to 1.6px. An icon set beside text is centred on the text's first line box and
+raised by `--icon-lift` (0.035em) to the cap centre. The fold chevron and heading anchor are as
+tall as the heading's line box (`1lh`), so they follow every heading level, text size, and weight. **Hit targets**: pointer UI may be 32px; on `pointer: coarse` every
 control is at least 44px.
 
 ## Components
@@ -74,10 +81,10 @@ control is at least 44px.
   frozen heading weight at every level. Anchor and fold controls are muted icons that appear on hover.
 - **Header**: title, then one muted line: author, date, reading time. Reading time is plain
   text with an icon, not a pill.
-- **Lists**: one indent (1.5em) for bullets, numbers, and tasks. Markers are muted. Task
+- **Lists**: one indent (1.5em) for bullets, numbers, and tasks. Markers use `--accent-marker`. Task
   checkboxes sit in the marker column, 1em, 4px radius, accent fill when checked.
-- **Blockquote**: 1px neutral left rule, muted text, no fill. **Callout** (`aside`): `surface-alt`
-  fill, hairline border, 8px radius, no bar.
+- **Blockquote**: 1px left rule in `--accent-rule`, muted text, no fill. **Callout** (`aside`):
+  `surface-alt` fill, `--accent-hairline` border, 8px radius, no bar.
 - **Code**: `code-bg` recessed block, hairline border, 8px radius, no shadow. Line numbers are
   quiet, with no divider. Copy is a ghost chip shown on hover. "Show More" sits below the block,
   never over its border.
@@ -90,7 +97,8 @@ control is at least 44px.
 - **Floating controls**: TOC and appearance toggles share one 44px, 8px-radius button. Open state
   is a tint, never a ring.
 - **Appearance panel**: sentence-case muted section labels, theme tiles with a swatch, steppers
-  of one width with the same minus glyph.
+  of one width with the same minus glyph. The value column is `7ch`, `nowrap`, tabular numerals,
+  wide enough for "1160px", so values never wrap. Button hover fills follow the control's inner radius.
 - **Lightbox, shortcuts, maximized views**: `--modal-backdrop-background`, `--shadow-float`.
 - **Footer**: hairline, muted credit line.
 - **Print**: light tokens, chrome hidden, folds opened, code wraps, tables fit.

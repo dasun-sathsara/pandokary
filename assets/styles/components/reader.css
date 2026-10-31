@@ -290,7 +290,7 @@ html.fold-instant .fold-group {
 }
 
 .fold-btn:hover {
-  color: var(--color-text);
+  color: var(--color-accent);
 }
 
 .fold-btn > svg {

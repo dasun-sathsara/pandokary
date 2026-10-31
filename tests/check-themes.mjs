@@ -96,6 +96,19 @@ for (const theme of manifest.themes) {
       `inline code on ${surface}`,
     );
   }
+  // List markers are text-like: accent softened toward muted ink must stay legible.
+  // The CSS mixes in OKLab; blending in sRGB here is a close, slightly conservative stand-in.
+  const [accentShare] = (defaults["--accent-marker"].match(/accent\)\s+(\d+)%/) ?? [])
+    .slice(1)
+    .map((n) => Number(n) / 100);
+  assert.ok(accentShare > 0, "base.css: --accent-marker must mix accent with muted ink");
+  const marker = color("--color-accent")
+    .map((v, i) => v * accentShare + color("--color-text-muted")[i] * (1 - accentShare))
+    .slice(0, 3)
+    .concat(1);
+  for (const surface of ["bg", "surface-alt"]) {
+    check(marker, color(`--color-${surface}`), `list marker on ${surface}`);
+  }
   // Test headings on primary content surfaces.
   for (const surface of ["bg", "surface", "surface-alt"]) {
     check(color("--color-heading"), color(`--color-${surface}`), `heading on ${surface}`);

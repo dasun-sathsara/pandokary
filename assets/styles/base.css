@@ -256,6 +256,11 @@
   --scrollbar-thumb: var(--color-border-strong);
   --scrollbar-thumb-hover: var(--color-text-muted);
   --link-underline: color-mix(in srgb, var(--color-accent) 38%, transparent);
+
+  /* Accent at reduced strength, for the few quiet touches DESIGN.md allows. */
+  --accent-marker: color-mix(in oklab, var(--color-accent) 62%, var(--color-text-muted));
+  --accent-rule: color-mix(in oklab, var(--color-accent) 42%, var(--color-border-strong));
+  --accent-hairline: color-mix(in oklab, var(--color-accent) 24%, var(--color-border));
 }
 
 @media (pointer: coarse) {
@@ -554,11 +559,11 @@ hr {
   margin: var(--space-8) 0;
 }
 
-/* Blockquote: the only left rule in the system. 1px, neutral, no fill. */
+/* Blockquote: the only left rule in the system. 1px, accent at low strength, no fill. */
 blockquote {
   margin: var(--space-6) 0;
   padding: 0 0 0 var(--space-4);
-  border-left: 1px solid var(--color-border-strong);
+  border-left: 1px solid var(--accent-rule);
   color: var(--color-text-muted);
 }
 
@@ -572,7 +577,7 @@ main .aside {
   margin: var(--space-6) 0;
   padding: var(--space-4) var(--space-6);
   background: var(--color-surface-alt);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--accent-hairline);
   border-radius: var(--radius-lg);
   color: var(--color-text);
 }
@@ -622,7 +627,7 @@ li:last-child {
 }
 
 li::marker {
-  color: var(--color-text-muted);
+  color: var(--accent-marker);
 }
 
 main li > :where(ul, ol) {
