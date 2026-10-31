@@ -566,7 +566,9 @@ try {
       pass:
         document.querySelectorAll(".mermaid-content svg").length === 10 &&
         [...document.querySelectorAll(".mermaid-content svg")].every((svg) =>
-          svg.querySelector("style")?.textContent.includes("#24272a"),
+          svg
+            .querySelector("style")
+            ?.textContent.includes(window.PDY_MERMAID_THEMES.porcelain.themeVariables.textColor),
         ),
     };
   });

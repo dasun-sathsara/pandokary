@@ -130,14 +130,14 @@ for (const theme of manifest.themes) {
     background: "--color-code-bg",
     primaryColor: "--color-surface",
     primaryTextColor: "--color-text",
-    primaryBorderColor: "--color-accent",
+    primaryBorderColor: "--color-border-strong",
     secondaryColor: "--color-surface-alt",
     secondaryTextColor: "--color-text",
     noteBkgColor: "--mermaid-note-fill",
     noteBorderColor: "--mermaid-note-stroke",
     noteTextColor: "--mermaid-note-text",
     actorBkg: "--color-surface",
-    actorBorder: "--color-accent",
+    actorBorder: "--color-border-strong",
     actorTextColor: "--color-text",
   })) {
     assert.equal(diagram[key], resolve(token), `${theme.id}: Mermaid ${key} differs from ${token}`);
