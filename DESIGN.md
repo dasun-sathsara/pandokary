@@ -85,7 +85,9 @@ cubic-bezier(0.16, 1, 0.3, 1) for anything that enters or leaves.
   TOC drawer slide. Maximized views and the lightbox image fade in from 97 to 98% scale.
 - Ghost and floating buttons squeeze to 96% while pressed. Stepper buttons only change fill.
 - A copied code block or link settles its check icon in (opacity, 70% scale).
-- Switching theme adds `.theme-fade` to `html` for one `--dur-panel`, so colours cross-fade.
+- Switching theme adds `.theme-fade` to `html` for one `--dur-panel`, so colours cross-fade. The
+  page chrome and the blocks within a screen of the viewport fade (`.theme-fade-block`); blocks
+  further away switch at once.
 - `prefers-reduced-motion` collapses every duration token, stops keyframes, and removes the
   press squeeze. `html.fold-instant` (expand all, collapse all) skips the section animation.
 

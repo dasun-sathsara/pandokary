@@ -279,11 +279,38 @@ PDY.SettingsModule = (() => {
   // switches and cross-fade (see .theme-fade in surfaces.css).
   let themeReady = false;
   let themeFadeTimer;
+  const fadedBlocks = new Set();
+
+  function markFadeBlock(element) {
+    element.classList.add("theme-fade-block");
+    fadedBlocks.add(element);
+  }
+
+  // Starting a colour transition on every element of a long document costs seconds of
+  // style work. Only blocks near the viewport can be seen fading, so only they get
+  // .theme-fade-block (see surfaces.css); the rest switch colours while out of sight.
+  function markVisibleBlocks(container, top, bottom) {
+    for (const child of container.children) {
+      const rect = child.getBoundingClientRect();
+      if (rect.bottom < top || rect.top > bottom) continue;
+      if (child.matches(".fold-group, .fold-group-inner")) markVisibleBlocks(child, top, bottom);
+      else markFadeBlock(child);
+    }
+  }
+
   function fadeThemeColors() {
     const root = document.documentElement;
+    for (const child of document.body.children) {
+      if (child.localName === "main") markVisibleBlocks(child, -innerHeight, innerHeight * 2);
+      else markFadeBlock(child);
+    }
     root.classList.add("theme-fade");
     window.clearTimeout(themeFadeTimer);
-    themeFadeTimer = window.setTimeout(() => root.classList.remove("theme-fade"), 360);
+    themeFadeTimer = window.setTimeout(() => {
+      root.classList.remove("theme-fade");
+      for (const block of fadedBlocks) block.classList.remove("theme-fade-block");
+      fadedBlocks.clear();
+    }, 360);
   }
 
   function applyTheme(requested, panel = document.getElementById("appearance-panel")) {

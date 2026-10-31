@@ -110,12 +110,27 @@
   animation: icon-in var(--dur-ui) var(--ease-reveal);
 }
 
-/* Theme switch: the script sets .theme-fade for one panel duration so colours
-   cross-fade together instead of snapping surface by surface. */
+/* Theme switch: the script sets .theme-fade on html for one panel duration so colours
+   cross-fade together instead of snapping surface by surface. The page background
+   fades through html and body. Each fading surface carries .theme-fade-block (set by
+   settings.js on the page chrome and on the blocks near the viewport); blocks far
+   off-screen switch at once, which nobody can see. Colour is never transitioned on html,
+   body or main: it is inherited, so animating it there would restyle the whole document
+   on every frame. */
 html.theme-fade,
-html.theme-fade *,
-html.theme-fade *::before,
-html.theme-fade *::after {
+html.theme-fade body {
+  transition-property: background-color !important;
+  transition-duration: var(--dur-panel) !important;
+  transition-timing-function: var(--ease-feedback) !important;
+  transition-delay: 0s !important;
+}
+
+html .theme-fade-block,
+html .theme-fade-block *,
+html .theme-fade-block::before,
+html .theme-fade-block::after,
+html .theme-fade-block *::before,
+html .theme-fade-block *::after {
   transition-property: color, background-color, border-color, fill, stroke !important;
   transition-duration: var(--dur-panel) !important;
   transition-timing-function: var(--ease-feedback) !important;
