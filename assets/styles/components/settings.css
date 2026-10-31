@@ -93,7 +93,7 @@
   box-shadow: var(--shadow-float);
   visibility: hidden;
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(6px) scale(0.98);
   transform-origin: bottom right;
   pointer-events: none;
   transition:
@@ -137,7 +137,8 @@
   cursor: pointer;
   transition:
     color var(--dur-micro) var(--ease-feedback),
-    background-color var(--dur-micro) var(--ease-feedback);
+    background-color var(--dur-micro) var(--ease-feedback),
+    transform var(--dur-micro) var(--ease-feedback);
 }
 
 .close-settings:hover {

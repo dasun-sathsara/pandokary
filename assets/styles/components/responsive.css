@@ -79,8 +79,10 @@
     grid-template-rows: 1fr;
   }
 
-  .fold-group-inner {
+  .fold-group-inner,
+  .fold-group.collapsed > .fold-group-inner {
     overflow: visible;
+    opacity: 1;
   }
 
   .foldable {
@@ -210,8 +212,23 @@
   }
 
   .loading-spinner,
-  .footer-credits:hover .heart-beat {
+  .footer-credits:hover .heart-beat,
+  .copy-btn.success svg,
+  .heading-anchor.copied svg {
     animation: none !important;
+  }
+
+  :is(
+    .floating-toggle,
+    .close-settings,
+    .mermaid-btn,
+    .table-btn,
+    .lightbox-close,
+    .toc-fold-btn,
+    .code-toggle-btn,
+    .copy-btn
+  ):active:not(:disabled) {
+    transform: none;
   }
 
   .loading-spinner {

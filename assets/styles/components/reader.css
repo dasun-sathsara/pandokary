@@ -56,7 +56,8 @@
   cursor: pointer;
   transition:
     color var(--dur-micro) var(--ease-feedback),
-    background-color var(--dur-micro) var(--ease-feedback);
+    background-color var(--dur-micro) var(--ease-feedback),
+    transform var(--dur-micro) var(--ease-feedback);
 }
 
 .toc-fold-btn:hover {
@@ -153,7 +154,7 @@
     bottom: 0;
     left: 0;
     z-index: 10002;
-    display: none;
+    display: flex;
     flex-direction: column;
     width: min(20rem, 85vw);
     height: var(--viewport-height);
@@ -162,12 +163,15 @@
     background: var(--color-surface);
     border-radius: 0 var(--radius-xl) var(--radius-xl) 0;
     box-shadow: var(--shadow-float);
+    visibility: hidden;
     transform: translateX(-100%);
-    transition: transform var(--dur-panel) var(--ease-reveal);
+    transition:
+      transform var(--dur-panel) var(--ease-reveal),
+      visibility var(--dur-panel);
   }
 
   html.toc-open .toc-sidebar {
-    display: flex;
+    visibility: visible;
     transform: none;
   }
 
@@ -248,6 +252,17 @@ html.fold-instant .fold-group {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  transition: opacity var(--dur-ui) var(--ease-feedback);
+}
+
+/* Content fades as the section closes. Compact layouts never collapse, so
+   they override this below in responsive.css. */
+.fold-group.collapsed > .fold-group-inner {
+  opacity: 0;
+}
+
+html.fold-instant .fold-group-inner {
+  transition: none !important;
 }
 
 .foldable {
@@ -335,7 +350,7 @@ html.fold-instant .fold-group {
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-float);
-  transform: translateY(6px);
+  transform: translateY(6px) scale(0.98);
   transition: transform var(--dur-modal) var(--ease-reveal);
 }
 

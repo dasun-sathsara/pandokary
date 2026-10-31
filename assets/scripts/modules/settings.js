@@ -275,10 +275,22 @@ PDY.SettingsModule = (() => {
     boreal: "midnight-fjord",
   });
 
+  // The first applyTheme call only syncs the saved theme; later ones are user
+  // switches and cross-fade (see .theme-fade in surfaces.css).
+  let themeReady = false;
+  let themeFadeTimer;
+  function fadeThemeColors() {
+    const root = document.documentElement;
+    root.classList.add("theme-fade");
+    window.clearTimeout(themeFadeTimer);
+    themeFadeTimer = window.setTimeout(() => root.classList.remove("theme-fade"), 360);
+  }
+
   function applyTheme(requested, panel = document.getElementById("appearance-panel")) {
     const candidate = LEGACY_THEMES[requested] || requested;
     const theme = getThemes().some((entry) => entry.id === candidate) ? candidate : "porcelain";
     const changed = document.documentElement.dataset.theme !== theme;
+    if (changed && themeReady) fadeThemeColors();
     document.documentElement.dataset.theme = theme;
     StorageManager.setPreference("theme", theme);
     panel?.querySelectorAll(".theme-option").forEach((button) => {
@@ -300,6 +312,7 @@ PDY.SettingsModule = (() => {
       button.addEventListener("click", () => applyTheme(button.dataset.themeKey, panel));
     });
     applyTheme(StorageManager.getPreference("theme", "porcelain"), panel);
+    themeReady = true;
   }
 
   function bindFontSizeControls(panel) {

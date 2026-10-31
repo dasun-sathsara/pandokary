@@ -65,9 +65,29 @@ blocks 1rem, block separation 1.5rem, sections 2.25rem above a heading and 0.75r
 checkboxes), `--radius-lg` 8px (code, tables, diagrams, callouts, popovers, floating buttons),
 `--radius-xl` 12px (sheets and drawers).
 
-**Motion**: `--ease-feedback` cubic-bezier(0.2, 0, 0, 1) for hover and press at 120ms;
-`--ease-reveal` cubic-bezier(0.16, 1, 0.3, 1) for panels at 200-350ms. No springs, no bounce.
-Everything collapses under `prefers-reduced-motion`.
+**Motion**: calm and short. Hover, press, and colour changes are quick; panels settle; nothing
+bounces, springs, or staggers. Only `transform`, `opacity`, and colour animate, with two
+one-shot exceptions on click: section height (`grid-template-rows`) and the Show More height.
+Nothing animates on first paint or scroll restoration.
+
+| Token | Duration | Use |
+| --- | --- | --- |
+| `--dur-micro` | 120ms | Hover, press, colour, chevron and anchor fades, copy confirmation |
+| `--dur-ui` | 200ms | Settings panel, section content fade, backdrop, icon settle |
+| `--dur-panel` | 320ms | TOC drawer, section height, Show More, theme cross-fade |
+| `--dur-modal` | 350ms | Lightbox, maximized views, shortcuts. Matches the JS close timeouts |
+
+`--ease-feedback` cubic-bezier(0.2, 0, 0, 1) for hover and press; `--ease-reveal`
+cubic-bezier(0.16, 1, 0.3, 1) for anything that enters or leaves.
+
+- Fold chevron rotates 90 degrees; the section's content fades while its height collapses.
+- Settings panel fades and rises 6px from the toggle corner at 98% scale; the phone sheet and the
+  TOC drawer slide. Maximized views and the lightbox image fade in from 97 to 98% scale.
+- Ghost and floating buttons squeeze to 96% while pressed. Stepper buttons only change fill.
+- A copied code block or link settles its check icon in (opacity, 70% scale).
+- Switching theme adds `.theme-fade` to `html` for one `--dur-panel`, so colours cross-fade.
+- `prefers-reduced-motion` collapses every duration token, stops keyframes, and removes the
+  press squeeze. `html.fold-instant` (expand all, collapse all) skips the section animation.
 
 **Icons**: Phosphor line style, 16px in controls, 14px in text, `currentColor`; stroke icons
 are normalised to 1.6px. An icon set beside text is centred on the text's first line box and

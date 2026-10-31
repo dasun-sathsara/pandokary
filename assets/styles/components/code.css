@@ -155,7 +155,8 @@ pre code.hljs {
   transition:
     opacity var(--dur-micro) var(--ease-feedback),
     color var(--dur-micro) var(--ease-feedback),
-    background-color var(--dur-micro) var(--ease-feedback);
+    background-color var(--dur-micro) var(--ease-feedback),
+    transform var(--dur-micro) var(--ease-feedback);
 }
 
 .copy-btn svg {
@@ -227,7 +228,8 @@ pre:focus-within .copy-btn,
   cursor: pointer;
   transition:
     color var(--dur-micro) var(--ease-feedback),
-    background-color var(--dur-micro) var(--ease-feedback);
+    background-color var(--dur-micro) var(--ease-feedback),
+    transform var(--dur-micro) var(--ease-feedback);
 }
 
 .code-toggle-btn svg {
