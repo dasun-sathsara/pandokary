@@ -25,16 +25,32 @@ local function require_asset(name)
   return content
 end
 
+local BASE64_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+-- Every 12-bit group maps to two characters, so three input bytes cost two table
+-- lookups. The fonts are about 1.6 MB, which makes per-character work visible.
+local BASE64_PAIRS = {}
+for high = 0, 63 do
+  for low = 0, 63 do
+    BASE64_PAIRS[high * 64 + low] = BASE64_ALPHABET:sub(high + 1, high + 1) .. BASE64_ALPHABET:sub(low + 1, low + 1)
+  end
+end
+
 local function base64(data)
-  local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-  local encoded = {}
-  for i = 1, #data, 3 do
-    local a, b, c = data:byte(i, i + 2)
-    local value = a * 65536 + (b or 0) * 256 + (c or 0)
-    encoded[#encoded + 1] = alphabet:sub(math.floor(value / 262144) % 64 + 1, math.floor(value / 262144) % 64 + 1)
-    encoded[#encoded + 1] = alphabet:sub(math.floor(value / 4096) % 64 + 1, math.floor(value / 4096) % 64 + 1)
-    encoded[#encoded + 1] = b and alphabet:sub(math.floor(value / 64) % 64 + 1, math.floor(value / 64) % 64 + 1) or "="
-    encoded[#encoded + 1] = c and alphabet:sub(value % 64 + 1, value % 64 + 1) or "="
+  local encoded, count = {}, 0
+  local whole = #data - #data % 3
+  for i = 1, whole, 3 do
+    local value = string.unpack(">I3", data, i)
+    encoded[count + 1] = BASE64_PAIRS[value >> 12]
+    encoded[count + 2] = BASE64_PAIRS[value & 4095]
+    count = count + 2
+  end
+  local rest = #data - whole
+  if rest == 1 then
+    encoded[count + 1] = BASE64_PAIRS[data:byte(whole + 1) << 4] .. "=="
+  elseif rest == 2 then
+    local value = string.unpack(">I2", data, whole + 1) << 8
+    local last = BASE64_ALPHABET:sub(((value >> 6) & 63) + 1, ((value >> 6) & 63) + 1)
+    encoded[count + 1] = BASE64_PAIRS[value >> 12] .. last .. "="
   end
   return table.concat(encoded)
 end
