@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestConfigEmbedResources(t *testing.T) {
 	tests := []struct {
@@ -21,5 +24,24 @@ func TestConfigEmbedResources(t *testing.T) {
 				t.Fatalf("embedResources() = %t, want %t", got, test.want)
 			}
 		})
+	}
+}
+
+func TestParseConfigRejectsFlagsAfterInput(t *testing.T) {
+	for _, args := range [][]string{
+		{"-e", "notes.md", "--embed"},
+		{"notes.md", "--no-fmt"},
+		{"-e", "notes.md", "-x"},
+	} {
+		if _, err := parseConfig(args); err == nil || !strings.Contains(err.Error(), "must come before") {
+			t.Errorf("parseConfig(%q) error = %v, want a misplaced-flag error", args, err)
+		}
+	}
+	cfg, err := parseConfig([]string{"-e", "--embed", "notes.md", "out"})
+	if err != nil || cfg.inputPath != "notes.md" || cfg.exportName != "out" || !cfg.embed {
+		t.Errorf("valid arguments: cfg = %+v, err = %v", cfg, err)
+	}
+	if _, err := parseConfig([]string{"-e", "--", "-notes.md", "-out"}); err != nil {
+		t.Errorf("-- must allow dash-prefixed names: %v", err)
 	}
 }

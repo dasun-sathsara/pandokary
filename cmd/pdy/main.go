@@ -97,6 +97,16 @@ func parseConfig(args []string) (config, error) {
 	if len(rest) == 0 {
 		return cfg, fmt.Errorf("missing <input.md>\n\n%s", usageText)
 	}
+	// Go's flag package stops at the first positional argument, so a trailing
+	// "--embed" would otherwise become the export name or be ignored. Names
+	// after an explicit "--" may begin with a dash.
+	if terminator := len(args) - len(rest) - 1; terminator < 0 || args[terminator] != "--" {
+		for _, arg := range rest {
+			if len(arg) > 1 && strings.HasPrefix(arg, "-") {
+				return cfg, fmt.Errorf("flag %q must come before <input.md>\n\n%s", arg, usageText)
+			}
+		}
+	}
 	cfg.inputPath = rest[0]
 	if cfg.export {
 		if len(rest) > 2 {
