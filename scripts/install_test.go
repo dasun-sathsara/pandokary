@@ -70,3 +70,36 @@ func TestUnixInstallerResolvesRelativePaths(t *testing.T) {
 		t.Fatalf("installer created output inside the repository: %v", err)
 	}
 }
+
+func TestUnixInstallerRejectsOldGo(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("Unix installer requires bash")
+	}
+	bash, err := exec.LookPath("bash")
+	if err != nil {
+		t.Skip("bash is unavailable")
+	}
+	script, err := filepath.Abs("install.sh")
+	if err != nil {
+		t.Fatal(err)
+	}
+	dir := t.TempDir()
+	commands := filepath.Join(dir, "commands")
+	if err := os.MkdirAll(commands, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	for name, body := range map[string]string{
+		"git": "exit 0", "pandoc": "exit 0", "dprint": "exit 0",
+		"go": "echo 'go version go1.20.14 linux/amd64'",
+	} {
+		if err := os.WriteFile(filepath.Join(commands, name), []byte("#!/bin/sh\n"+body+"\n"), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	cmd := exec.Command(bash, script, dir, filepath.Join(dir, "bin"))
+	cmd.Env = append(os.Environ(), "PATH="+commands+string(os.PathListSeparator)+"/usr/bin"+string(os.PathListSeparator)+"/bin")
+	output, err := cmd.CombinedOutput()
+	if err == nil || !strings.Contains(string(output), "Go >= 1.21 is required") {
+		t.Fatalf("installer accepted Go 1.20: %v\n%s", err, output)
+	}
+}

@@ -21,6 +21,13 @@ check_dep "Go (>= 1.21)" "go"
 check_dep "Pandoc" "pandoc"
 check_dep "dprint" "dprint"
 
+# go.mod requires Go 1.21. An unparsable development version is given the benefit of the doubt.
+read -r GO_MAJOR GO_MINOR < <(go version | sed -nE 's/.*go([0-9]+)\.([0-9]+).*/\1 \2/p') || true
+if [ -n "${GO_MAJOR:-}" ] && { [ "$GO_MAJOR" -lt 1 ] || { [ "$GO_MAJOR" -eq 1 ] && [ "$GO_MINOR" -lt 21 ]; }; }; then
+  warn "Go >= 1.21 is required (found $(go version))."
+  exit 1
+fi
+
 # Verify repo
 if [ ! -f "$REPO_DIR/go.mod" ]; then
   echo "go.mod not found in $REPO_DIR. Confirm this is the pandokary repository." >&2
