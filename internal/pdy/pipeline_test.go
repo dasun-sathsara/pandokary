@@ -29,9 +29,6 @@ func TestMain(m *testing.M) {
 			if err := os.WriteFile(os.Args[i+2], []byte("<html>converted</html>"), 0o644); err != nil {
 				os.Exit(1)
 			}
-			if mode == "warn" {
-				fmt.Fprintln(os.Stderr, "[WARNING] Could not fetch resource nope.png")
-			}
 			if mode == "fail" {
 				fmt.Fprintln(os.Stderr, "conversion failed after writing output")
 				os.Exit(23)
@@ -222,28 +219,4 @@ func TestExportPreservesDestinationSymlink(t *testing.T) {
 		t.Fatalf("export did not update the symlink target: %q, %v", data, err)
 	}
 	assertNoStagedOutput(t, dir)
-}
-
-func TestPandocWarningsAreForwardedOnSuccess(t *testing.T) {
-	dir := t.TempDir()
-	input := filepath.Join(dir, "notes.md")
-	if err := os.WriteFile(input, []byte("source\n"), 0o644); err != nil {
-		t.Fatal(err)
-	}
-	reader, writer, err := os.Pipe()
-	if err != nil {
-		t.Fatal(err)
-	}
-	original := os.Stderr
-	os.Stderr = writer
-	_, runErr := Run(Options{InputPath: input, Export: true, ExportName: filepath.Join(dir, "notes.html"), PandocPath: testProcess(t, "warn")})
-	os.Stderr = original
-	_ = writer.Close()
-	forwarded, _ := io.ReadAll(reader)
-	if runErr != nil {
-		t.Fatal(runErr)
-	}
-	if !strings.Contains(string(forwarded), "Could not fetch resource nope.png") {
-		t.Errorf("pandoc warning was dropped; stderr = %q", forwarded)
-	}
 }

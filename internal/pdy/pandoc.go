@@ -94,9 +94,6 @@ func runPandoc(binary string, args []string, assets string) error {
 		}
 		return fmt.Errorf("pandoc exited with code %d: %s", exit.ExitCode(), message)
 	}
-	// Pandoc reports unresolved resources and similar problems as warnings on a
-	// successful run; pass them on instead of leaving a broken page unexplained.
-	_, _ = os.Stderr.Write(stderr.Bytes())
 	return nil
 }
 
