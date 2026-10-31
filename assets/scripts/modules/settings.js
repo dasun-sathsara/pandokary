@@ -145,7 +145,7 @@ PDY.SettingsModule = (() => {
           <span class="control-name">Max Width</span>
           <div class="stepper-control">
             <button type="button" class="stepper-btn dec-layout-width" aria-label="Decrease layout width">−</button>
-            <span class="stepper-val layout-width-val" aria-live="polite">1040px</span>
+            <span class="stepper-val layout-width-val" aria-live="polite">1100px</span>
             <button type="button" class="stepper-btn inc-layout-width" aria-label="Increase layout width">+</button>
           </div>
         </div>
@@ -379,9 +379,10 @@ PDY.SettingsModule = (() => {
   }
 
   function bindLayoutControls(panel) {
-    const widths = [800, 920, 1040, 1160, 1280, 1400];
-    let width = Number.parseInt(StorageManager.getPreference("layoutMaxWidth", "1040"), 10);
-    if (!widths.includes(width)) width = 1040;
+    const widths = [800, 900, 1000, 1100, 1200, 1300, 1400];
+    const saved = Number.parseInt(StorageManager.getPreference("layoutMaxWidth", "1100"), 10);
+    // Widths saved under the older 120px steps snap to the nearest 100px step.
+    let width = saved >= widths[0] && saved <= widths.at(-1) ? Math.round(saved / 100) * 100 : 1100;
     const decrease = panel.querySelector(".dec-layout-width");
     const increase = panel.querySelector(".inc-layout-width");
     const value = panel.querySelector(".layout-width-val");

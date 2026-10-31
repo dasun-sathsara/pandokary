@@ -29,8 +29,8 @@
         for (const [role, weights] of Object.entries(weightRoles))
           document.documentElement.style.setProperty(role, String(weights[compactWeights] + weight));
         const width = parseInt(localStorage.getItem("layout-max-width"), 10);
-        if ([800, 920, 1040, 1160, 1280, 1400].includes(width))
-          document.documentElement.style.setProperty("--content-max-width", width + "px");
+        if (width >= 800 && width <= 1400)
+          document.documentElement.style.setProperty("--content-max-width", Math.round(width / 100) * 100 + "px");
         if (innerWidth >= 1200 && localStorage.getItem("tocCollapsed") !== "true")
           document.documentElement.classList.add("toc-open");
       } catch (e) {
