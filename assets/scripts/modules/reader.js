@@ -19,6 +19,9 @@ PDY.ReaderExtrasModule = (() => {
   function initFloatingButtonAutoHide(settings) {
     const settingsToggle = settings?.toggle || document.querySelector(".settings-toggle");
     const settingsPanel = settings?.panel || document.querySelector(".settings-popover");
+    // Looked up once: a document-wide query on every scroll frame costs more as the page grows.
+    // TOCModule.init has already run, so the toggle exists whenever the document has a TOC.
+    const tocToggle = document.querySelector(".toc-toggle");
     let lastScrollTop = 0;
     // Only a keyboard-visible focus pins a button on screen. Mouse/touch
     // activation parks DOM focus on the toggle without ever matching
@@ -48,10 +51,7 @@ PDY.ReaderExtrasModule = (() => {
         toggle?.classList.toggle("hidden", hideIt);
       };
       updateToggle(settingsToggle, settingsPanel?.classList.contains("active"));
-      updateToggle(
-        document.querySelector(".toc-toggle"),
-        document.documentElement.classList.contains("toc-open"),
-      );
+      updateToggle(tocToggle, document.documentElement.classList.contains("toc-open"));
       lastScrollTop = scrollTop;
     };
     window.addEventListener("scroll", scheduleFrame(update), { passive: true });
@@ -60,7 +60,7 @@ PDY.ReaderExtrasModule = (() => {
       debounce(() => {
         if (!isCompactLayout()) {
           settingsToggle?.classList.remove("hidden");
-          document.querySelector(".toc-toggle")?.classList.remove("hidden");
+          tocToggle?.classList.remove("hidden");
         }
       }, 100),
       { passive: true },
