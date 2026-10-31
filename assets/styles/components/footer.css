@@ -27,6 +27,8 @@ footer hr {
 }
 
 .heart-icon {
+  position: relative;
+  top: calc(-1 * var(--icon-lift));
   display: inline-block;
   width: 14px;
   height: 14px;

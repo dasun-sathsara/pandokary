@@ -228,6 +228,9 @@
   color: var(--color-text);
 }
 
+/* All three steppers share one grid: button, value, button. The value column is
+   sized in ch of its own font, wide enough for the longest value ("1400px"),
+   so it scales with text size and never wraps. */
 .stepper-control {
   display: flex;
   align-items: center;
@@ -241,10 +244,10 @@
   place-items: center;
   width: var(--hit);
   height: var(--hit);
-  padding: 0;
+  padding: 0 0 0.1em;
   background: transparent;
   border: 0;
-  border-radius: var(--radius-md);
+  border-radius: 0;
   color: var(--color-text);
   font-size: 1.125em;
   line-height: 1;
@@ -254,8 +257,25 @@
     background-color var(--dur-micro) var(--ease-feedback);
 }
 
+/* Segments follow the control's inner edge: round only the outer corners. */
+.stepper-btn:first-child {
+  border-radius: calc(var(--radius-md) - 1px) 0 0 calc(var(--radius-md) - 1px);
+}
+
+.stepper-btn:last-child {
+  border-radius: 0 calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0;
+}
+
+.stepper-btn:focus-visible {
+  outline-offset: -2px;
+}
+
 .stepper-btn:hover:not(:disabled) {
   background: var(--color-hover);
+}
+
+.stepper-btn:active:not(:disabled) {
+  background: var(--color-border);
 }
 
 .stepper-btn:disabled {
@@ -265,16 +285,17 @@
 }
 
 .stepper-val {
-  width: 3.5rem;
+  flex: 0 0 auto;
+  width: 7ch;
   font-size: 0.875em;
   font-variant-numeric: tabular-nums;
   text-align: center;
+  white-space: nowrap;
   color: var(--color-text);
   user-select: none;
 }
 
 .font-weight-input {
-  flex: 0 0 3.5rem;
   min-height: var(--hit);
   padding: 0;
   border: 0;

@@ -39,6 +39,8 @@
 }
 
 .mermaid-title svg {
+  position: relative;
+  top: calc(-1 * var(--icon-lift));
   flex-shrink: 0;
   width: 16px;
   height: 16px;

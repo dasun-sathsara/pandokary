@@ -231,6 +231,8 @@ pre:focus-within .copy-btn,
 }
 
 .code-toggle-btn svg {
+  position: relative;
+  top: calc(-1 * var(--icon-lift));
   width: 14px;
   height: 14px;
   flex-shrink: 0;

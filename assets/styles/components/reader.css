@@ -255,16 +255,22 @@ html.fold-instant .fold-group {
   cursor: pointer;
 }
 
+/* The button inherits the heading's font so 1lh is the heading's line box; it is
+   centred on that first line for every level, size, and weight. The 4px of
+   padding around the 16px icon plus the 4px offset leave an 8px visible gap,
+   the same as the heading anchor. */
 .fold-btn {
+  --fold-hit: max(1.5rem, 1lh);
   position: absolute;
   left: calc(-1 * var(--page-gutter));
-  top: 0.1em;
+  top: calc((1lh - var(--fold-hit)) / 2 - var(--icon-lift));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 1.5rem;
-  height: 1.5rem;
+  height: var(--fold-hit);
   padding: 0;
+  font: inherit;
   background: none;
   border: 0;
   border-radius: var(--radius-sm);
@@ -274,12 +280,6 @@ html.fold-instant .fold-group {
   transition:
     opacity var(--dur-micro) var(--ease-feedback),
     color var(--dur-micro) var(--ease-feedback);
-}
-
-@supports (top: 1lh) {
-  .fold-btn {
-    top: calc((1lh - 1.5rem) / 2);
-  }
 }
 
 .foldable:hover .fold-btn,
@@ -293,9 +293,10 @@ html.fold-instant .fold-group {
   color: var(--color-text);
 }
 
-.fold-btn svg {
-  width: 14px;
-  height: 14px;
+.fold-btn > svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
   transition: transform var(--dur-micro) var(--ease-feedback);
 }
 

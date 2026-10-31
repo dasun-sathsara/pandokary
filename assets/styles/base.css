@@ -237,6 +237,10 @@
   --toggle-size: 2.75rem;
   --float-inset: max(1.5rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)));
 
+  /* Optical lift: the font's cap centre sits about 0.035em above the centre of
+     its line box, so icons set beside text are raised by this much. */
+  --icon-lift: 0.035em;
+
   /* Motion. Durations marked (*) match JS timeouts (modal close, lightbox
      dismiss, copy/anchor reset); change them together. */
   --dur-micro: 120ms;
@@ -762,7 +766,7 @@ ul:not(.task-list) > li.task-item > p > label {
   flex: none;
   width: 1em;
   height: 1em;
-  margin: calc((1lh - 1em) / 2) 0 0;
+  margin: calc((1lh - 1em) / 2 - var(--icon-lift)) 0 0;
   padding: 0;
   font: inherit;
   background: var(--color-bg);

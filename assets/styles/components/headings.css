@@ -7,9 +7,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: var(--space-2);
+  margin-left: calc(var(--space-2) - var(--anchor-pad));
+  padding-inline: var(--anchor-pad);
   vertical-align: middle;
-  font-size: 0.75em;
+  position: relative;
+  top: calc(-1 * var(--icon-lift));
   color: var(--color-text-muted);
   text-decoration: none;
   opacity: 0;
@@ -17,11 +19,21 @@
   transition:
     opacity var(--dur-micro) var(--ease-feedback),
     color var(--dur-micro) var(--ease-feedback);
+  --anchor-pad: 0.25rem;
+}
+
+/* The anchor is as tall as the heading's line box and centres its icon in it,
+   so the icon sits on the first-line centre at every heading size and weight. */
+@supports (height: 1lh) {
+  .heading-anchor {
+    height: 1lh;
+    vertical-align: top;
+  }
 }
 
 .heading-anchor svg {
-  width: 1em;
-  height: 1em;
+  width: clamp(14px, 0.8em, 20px);
+  height: clamp(14px, 0.8em, 20px);
   flex-shrink: 0;
 }
 
