@@ -34,6 +34,9 @@ PDY.MermaidModule = (() => {
     htmlLabels: false,
     look: "classic",
     fontFamily: FONT_FAMILY,
+    // Mermaid copies the top-level fontSize (default 16px, the full body size) into sequence
+    // actor, message and note text. Geist runs larger than Feixen, so match flowchart labels.
+    fontSize: 14,
     flowchart: {
       useMaxWidth: false,
       htmlLabels: false,

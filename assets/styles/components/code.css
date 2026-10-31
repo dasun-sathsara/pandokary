@@ -9,8 +9,7 @@ code {
   letter-spacing: var(--letter-spacing-mono, -0.01em);
   font-size: var(--scale-code-inline, 0.9em);
   font-weight: var(--mono-font-weight, 400);
-  padding: 0.1em 0.35em;
-  margin: 0 0.08em;
+  padding: 0.1em 4px;
   border-radius: var(--radius-sm);
   background-color: var(--color-inline-code-bg);
   color: var(--color-inline-code-text);
