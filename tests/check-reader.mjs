@@ -27,7 +27,7 @@ for (const [family, filename, weight, style] of expectedFaces) {
     `${filename} bundled variable font exists`,
   );
   if (family === "Noto Sans Sinhala") {
-    assert.match(face, /size-adjust: 88%/);
+    assert.match(face, /size-adjust: 90%/);
     assert.match(face, /font-stretch: 62.5% 100%/);
     assert.match(face, /unicode-range: U\+0D80-0DFF/);
   }
@@ -48,26 +48,26 @@ const sinhalaWeightMap = sinhalaFaces
   })
   .sort(([a], [b]) => a - b);
 assert.deepEqual(sinhalaWeightMap, [
+  [380, 380],
   [400, 400],
-  [420, 400],
-  [520, 540],
-  [550, 540],
-  [600, 580],
+  [510, 510],
+  [535, 535],
+  [560, 560],
 ]);
 assert.doesNotMatch(sinhalaFaces.join("\n"), /font-weight:\s*100\s+900/);
 assert.match(baseCss, /--font-body:[\s\S]*?"Studio Feixen Sans", "Noto Sans Sinhala"/);
 assert.match(baseCss, /--font-mono: "Geist Mono", "Noto Sans Sinhala", monospace/);
 assert.match(baseCss, /--font-weight-adjustment: 0/);
-assert.match(baseCss, /--body-font-weight-desktop: 400/);
-assert.match(baseCss, /--body-font-weight-mobile: 430/);
-assert.match(baseCss, /--strong-font-weight-desktop: 550/);
-assert.match(baseCss, /--strong-font-weight-mobile: 580/);
-assert.match(baseCss, /--heading-font-weight-desktop: 600/);
-assert.match(baseCss, /--heading-font-weight-mobile: 630/);
-assert.match(baseCss, /--mono-font-weight-desktop: 420/);
-assert.match(baseCss, /--mono-font-weight-mobile: 450/);
-assert.match(baseCss, /--mono-emphasis-font-weight-desktop: 520/);
-assert.match(baseCss, /--mono-emphasis-font-weight-mobile: 550/);
+assert.match(baseCss, /--body-font-weight-desktop: 380/);
+assert.match(baseCss, /--body-font-weight-mobile: 410/);
+assert.match(baseCss, /--strong-font-weight-desktop: 510/);
+assert.match(baseCss, /--strong-font-weight-mobile: 540/);
+assert.match(baseCss, /--heading-font-weight-desktop: 560/);
+assert.match(baseCss, /--heading-font-weight-mobile: 590/);
+assert.match(baseCss, /--mono-font-weight-desktop: 400/);
+assert.match(baseCss, /--mono-font-weight-mobile: 430/);
+assert.match(baseCss, /--mono-emphasis-font-weight-desktop: 535/);
+assert.match(baseCss, /--mono-emphasis-font-weight-mobile: 565/);
 for (const role of [
   "body-font-weight",
   "strong-font-weight",
@@ -143,7 +143,7 @@ assert.doesNotMatch(phoneRules, /font-family\s*:|font-weight\s*:/);
 const bodyTypography = baseCss.match(/(?:^|\n)body\s*\{([^}]+)\n\}/)?.[1];
 assert.ok(bodyTypography, "global body typography rule exists");
 assert.doesNotMatch(baseCss, /(?:-webkit|-moz)-font-smoothing\s*:/);
-assert.match(baseCss, /--scale-code-inline: 0\.87em;/);
+assert.match(baseCss, /--scale-code-inline: 0\.9em;/);
 assert.match(baseCss, /--scale-code-block: 0\.87em;/);
 assert.match(baseCss, /--letter-spacing-mono: -0\.01em;/);
 const appJs = readReaderSource();
@@ -174,9 +174,9 @@ assert.ok(fontLoader, "document font loader exists");
 assert.match(fontLoader, /'Studio Feixen Sans'/);
 assert.match(fontLoader, /'Geist Mono'/);
 assert.match(fontLoader, /'Noto Sans Sinhala'/);
-assert.match(fontLoader, /\[400, 550, 600\]/);
-assert.match(fontLoader, /\[420, 520\]/);
-assert.match(fontLoader, /\[400, 420, 520, 540, 550, 580, 600\]/);
+assert.match(fontLoader, /\[380, 510, 560\]/);
+assert.match(fontLoader, /\[400, 535\]/);
+assert.match(fontLoader, /\[380, 400, 410, 430, 510, 535, 540, 560, 565, 590\]/);
 assert.doesNotMatch(fontLoader, /window\.matchMedia|Android Trial|Mobile Trial/);
 assert.match(templateHtml, /<html lang="\$if\(lang\)\$\$lang\$\$else\$en\$endif\$"/);
 const inlineFilter = read("filters/inline-assets.lua");
@@ -202,8 +202,8 @@ const readerCss = read("styles/components/reader.css");
 const kbdRule = readerCss.match(/(?:^|\n)kbd\s*\{([\s\S]*?)\n\}/)?.[1];
 assert.ok(kbdRule, "keyboard shortcut rule exists");
 assert.match(kbdRule, /font-family:\s*var\(--font-mono\)/);
-assert.match(kbdRule, /font-size:\s*var\(--scale-code-inline,\s*0\.87em\)/);
-assert.match(kbdRule, /font-weight:\s*var\(--mono-font-weight,\s*420\)/);
+assert.match(kbdRule, /font-size:\s*var\(--scale-code-inline,\s*0\.9em\)/);
+assert.match(kbdRule, /font-weight:\s*var\(--mono-font-weight,\s*400\)/);
 assert.match(kbdRule, /letter-spacing:\s*var\(--letter-spacing-mono,\s*-0\.01em\)/);
 
 const mermaidJs = read("scripts/modules/mermaid.js");
@@ -211,10 +211,10 @@ const renderError = mermaidJs.match(
   /function createRenderError\(error\)\s*\{([\s\S]*?)\n {2}\}/,
 )?.[1];
 assert.ok(renderError, "Mermaid error renderer exists");
-assert.match(renderError, /font-size: var\(--scale-code-inline, 0\.87em\)/);
-assert.match(renderError, /font-weight: var\(--mono-font-weight, 420\)/);
+assert.match(renderError, /font-size: var\(--scale-code-inline, 0\.9em\)/);
+assert.match(renderError, /font-weight: var\(--mono-font-weight, 400\)/);
 assert.match(renderError, /letter-spacing: var\(--letter-spacing-mono, -0\.01em\)/);
-assert.match(renderError, /mono-emphasis-font-weight, 520/);
+assert.match(renderError, /mono-emphasis-font-weight, 535/);
 assert.doesNotMatch(renderError, /font-size: 14px/);
 
 const bootstrap = templateHtml.match(/<script>([\s\S]*?)<\/script>/)[1];
@@ -268,29 +268,29 @@ const invalid = prepaint({
 });
 assert.equal(invalid.properties.get("--font-size-adjust"), "8px");
 assert.equal(invalid.properties.get("--font-weight-adjustment"), "100");
-assert.equal(invalid.properties.get("--body-font-weight"), "500");
-assert.equal(invalid.properties.get("--strong-font-weight"), "650");
-assert.equal(invalid.properties.get("--heading-font-weight"), "700");
-assert.equal(invalid.properties.get("--mono-font-weight"), "520");
-assert.equal(invalid.properties.get("--mono-emphasis-font-weight"), "620");
+assert.equal(invalid.properties.get("--body-font-weight"), "480");
+assert.equal(invalid.properties.get("--strong-font-weight"), "610");
+assert.equal(invalid.properties.get("--heading-font-weight"), "660");
+assert.equal(invalid.properties.get("--mono-font-weight"), "500");
+assert.equal(invalid.properties.get("--mono-emphasis-font-weight"), "635");
 assert.equal(invalid.properties.has("--content-max-width"), false);
 assert.equal(
   prepaint({ "font-weight-adjustment": "-999" }).properties.get("--body-font-weight"),
-  "300",
+  "280",
 );
 const thinnerDesktop = prepaint({ "font-weight-adjustment": "-30" }).properties;
 assert.equal(thinnerDesktop.get("--font-weight-adjustment"), "-30");
-assert.equal(thinnerDesktop.get("--body-font-weight"), "370");
-assert.equal(thinnerDesktop.get("--strong-font-weight"), "520");
-assert.equal(thinnerDesktop.get("--heading-font-weight"), "570");
-assert.equal(thinnerDesktop.get("--mono-font-weight"), "390");
-assert.equal(thinnerDesktop.get("--mono-emphasis-font-weight"), "490");
+assert.equal(thinnerDesktop.get("--body-font-weight"), "350");
+assert.equal(thinnerDesktop.get("--strong-font-weight"), "480");
+assert.equal(thinnerDesktop.get("--heading-font-weight"), "530");
+assert.equal(thinnerDesktop.get("--mono-font-weight"), "370");
+assert.equal(thinnerDesktop.get("--mono-emphasis-font-weight"), "505");
 const thinnerMobile = prepaint({ "font-weight-adjustment": "-30" }, false, 390).properties;
-assert.equal(thinnerMobile.get("--body-font-weight"), "400");
-assert.equal(thinnerMobile.get("--strong-font-weight"), "550");
-assert.equal(thinnerMobile.get("--heading-font-weight"), "600");
-assert.equal(thinnerMobile.get("--mono-font-weight"), "420");
-assert.equal(thinnerMobile.get("--mono-emphasis-font-weight"), "520");
+assert.equal(thinnerMobile.get("--body-font-weight"), "380");
+assert.equal(thinnerMobile.get("--strong-font-weight"), "510");
+assert.equal(thinnerMobile.get("--heading-font-weight"), "560");
+assert.equal(thinnerMobile.get("--mono-font-weight"), "400");
+assert.equal(thinnerMobile.get("--mono-emphasis-font-weight"), "535");
 assert.equal(
   prepaint({ "font-weight-adjustment": "invalid" }).properties.get("--font-weight-adjustment"),
   "0",
@@ -339,18 +339,18 @@ const {
   SettingsModule,
 } = context.modules;
 assert.deepEqual(JSON.parse(JSON.stringify(SettingsModule.getAdjustedFontWeights(-30, false))), {
-  "body-font-weight": 370,
-  "strong-font-weight": 520,
-  "heading-font-weight": 570,
-  "mono-font-weight": 390,
-  "mono-emphasis-font-weight": 490,
+  "body-font-weight": 350,
+  "strong-font-weight": 480,
+  "heading-font-weight": 530,
+  "mono-font-weight": 370,
+  "mono-emphasis-font-weight": 505,
 });
 assert.deepEqual(JSON.parse(JSON.stringify(SettingsModule.getAdjustedFontWeights(-30, true))), {
-  "body-font-weight": 400,
-  "strong-font-weight": 550,
-  "heading-font-weight": 600,
-  "mono-font-weight": 420,
-  "mono-emphasis-font-weight": 520,
+  "body-font-weight": 380,
+  "strong-font-weight": 510,
+  "heading-font-weight": 560,
+  "mono-font-weight": 400,
+  "mono-emphasis-font-weight": 535,
 });
 function fakeControl({ inputType, role, disabled = false, ariaDisabled = false } = {}) {
   const marker = inputType ? `input[type="${inputType}"]` : role ? `[role="${role}"]` : "button";

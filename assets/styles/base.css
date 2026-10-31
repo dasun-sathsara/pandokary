@@ -37,61 +37,72 @@
 @font-face {
   font-family: "Noto Sans Sinhala";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 400;
+  font-weight: 380;
   font-stretch: 62.5% 100%;
   font-style: normal;
-  font-variation-settings: "wght" 400;
+  font-variation-settings: "wght" 380;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 /* Keep the Latin CSS roles while mapping Sinhala runs to their tuned weights. */
 @font-face {
   font-family: "Noto Sans Sinhala";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 550;
+  font-weight: 510;
   font-stretch: 62.5% 100%;
   font-style: normal;
-  font-variation-settings: "wght" 540;
+  font-variation-settings: "wght" 510;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 @font-face {
   font-family: "Noto Sans Sinhala";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 600;
+  font-weight: 560;
   font-stretch: 62.5% 100%;
   font-style: normal;
-  font-variation-settings: "wght" 580;
+  font-variation-settings: "wght" 560;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 
 @font-face {
   font-family: "Noto Sans Sinhala";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 420;
+  font-weight: 400;
   font-stretch: 62.5% 100%;
   font-style: normal;
   font-variation-settings: "wght" 400;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 @font-face {
   font-family: "Noto Sans Sinhala";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 520;
+  font-weight: 535;
   font-stretch: 62.5% 100%;
   font-style: normal;
-  font-variation-settings: "wght" 540;
+  font-variation-settings: "wght" 535;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 
+@font-face {
+  font-family: "Noto Sans Sinhala Mobile";
+  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
+  font-weight: 410;
+  font-stretch: 62.5% 100%;
+  font-style: normal;
+  font-variation-settings: "wght" 410;
+  font-display: swap;
+  size-adjust: 90%;
+  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
+}
 @font-face {
   font-family: "Noto Sans Sinhala Mobile";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
@@ -100,51 +111,40 @@
   font-style: normal;
   font-variation-settings: "wght" 430;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 @font-face {
   font-family: "Noto Sans Sinhala Mobile";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 450;
+  font-weight: 540;
   font-stretch: 62.5% 100%;
   font-style: normal;
-  font-variation-settings: "wght" 430;
+  font-variation-settings: "wght" 540;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 @font-face {
   font-family: "Noto Sans Sinhala Mobile";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 550;
+  font-weight: 565;
   font-stretch: 62.5% 100%;
   font-style: normal;
-  font-variation-settings: "wght" 570;
+  font-variation-settings: "wght" 565;
   font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 @font-face {
   font-family: "Noto Sans Sinhala Mobile";
   src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 580;
+  font-weight: 590;
   font-stretch: 62.5% 100%;
   font-style: normal;
-  font-variation-settings: "wght" 570;
+  font-variation-settings: "wght" 590;
   font-display: swap;
-  size-adjust: 88%;
-  unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
-}
-@font-face {
-  font-family: "Noto Sans Sinhala Mobile";
-  src: url("fonts/NotoSansSinhala-Variable.ttf") format("truetype");
-  font-weight: 630;
-  font-stretch: 62.5% 100%;
-  font-style: normal;
-  font-variation-settings: "wght" 610;
-  font-display: swap;
-  size-adjust: 88%;
+  size-adjust: 90%;
   unicode-range: U+0D80-0DFF, U+200C, U+200D, U+25CC;
 }
 
@@ -183,7 +183,7 @@
   /* Code sits under the body size. The mono carries the same x-height as the
      sans at a given size, but its glyphs read larger, so inline code only needs
      a small step down while a code block wants a clear one. */
-  --scale-code-inline: 0.87em;
+  --scale-code-inline: 0.9em;
   --scale-code-block: 0.87em;
 
   /* Spacing */
@@ -224,24 +224,24 @@
   --body-background: var(--color-bg);
   /* One variable-font weight scale is shared by desktop and mobile. */
   --font-weight-adjustment: 0;
-  --body-font-weight-desktop: 400;
-  --body-font-weight-mobile: 430;
+  --body-font-weight-desktop: 380;
+  --body-font-weight-mobile: 410;
   --body-font-weight: var(--body-font-weight-desktop);
 
-  --strong-font-weight-desktop: 550;
-  --strong-font-weight-mobile: 580;
+  --strong-font-weight-desktop: 510;
+  --strong-font-weight-mobile: 540;
   --strong-font-weight: var(--strong-font-weight-desktop);
 
-  --heading-font-weight-desktop: 600;
-  --heading-font-weight-mobile: 630;
+  --heading-font-weight-desktop: 560;
+  --heading-font-weight-mobile: 590;
   --heading-font-weight: var(--heading-font-weight-desktop);
 
-  --mono-font-weight-desktop: 420;
-  --mono-font-weight-mobile: 450;
+  --mono-font-weight-desktop: 400;
+  --mono-font-weight-mobile: 430;
   --mono-font-weight: var(--mono-font-weight-desktop);
 
-  --mono-emphasis-font-weight-desktop: 520;
-  --mono-emphasis-font-weight-mobile: 550;
+  --mono-emphasis-font-weight-desktop: 535;
+  --mono-emphasis-font-weight-mobile: 565;
   --mono-emphasis-font-weight: var(--mono-emphasis-font-weight-desktop);
   --aside-background: var(--color-surface);
   --aside-border: 1px solid var(--color-border);
@@ -372,7 +372,7 @@ body.scroll-locked {
 
 body {
   font-family: var(--font-body);
-  font-weight: var(--body-font-weight, 400);
+  font-weight: var(--body-font-weight, 380);
   letter-spacing: var(--letter-spacing-body, -0.005em);
   font-variation-settings: var(--font-variation-settings);
   background: var(--body-background);
@@ -452,7 +452,7 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: var(--heading-font-weight, 600);
+  font-weight: var(--heading-font-weight, 560);
   letter-spacing: var(--letter-spacing-heading, -0.015em);
   color: var(--color-heading);
   text-wrap: balance;
@@ -496,7 +496,7 @@ h4 {
 
 h5 {
   font-size: 1.05em;
-  font-weight: var(--heading-font-weight, 600);
+  font-weight: var(--heading-font-weight, 560);
   line-height: 1.4;
   color: var(--color-h5);
   margin-top: 1.15rem;
@@ -562,7 +562,7 @@ strong,
 b {
   font-family: inherit;
   font-size: inherit;
-  font-weight: var(--strong-font-weight, 550);
+  font-weight: var(--strong-font-weight, 510);
   line-height: inherit;
   color: var(--color-strong);
 }
@@ -579,14 +579,14 @@ pre b,
 kbd strong,
 kbd b {
   color: inherit;
-  font-weight: var(--mono-emphasis-font-weight, 520);
+  font-weight: var(--mono-emphasis-font-weight, 535);
 }
 
 /* Code nested inside strong keeps mono emphasis instead of falling back to the
    mono base (the element rule would otherwise beat the inherited strong). */
 strong code,
 b code {
-  font-weight: var(--mono-emphasis-font-weight, 520);
+  font-weight: var(--mono-emphasis-font-weight, 535);
 }
 
 blockquote {
@@ -742,7 +742,7 @@ li:last-child {
 
 li::marker {
   color: var(--color-accent);
-  font-weight: var(--strong-font-weight, 550);
+  font-weight: var(--strong-font-weight, 510);
 }
 
 main li > :where(ul, ol) {
@@ -770,7 +770,7 @@ dl {
 
 dt {
   font-family: var(--font-heading);
-  font-weight: var(--heading-font-weight, 600);
+  font-weight: var(--heading-font-weight, 560);
   font-size: 1em;
   color: var(--color-heading);
   margin-top: 0.75rem;
@@ -1060,7 +1060,7 @@ sub {
 
 .footnote-ref {
   text-decoration: none;
-  font-weight: var(--strong-font-weight, 550);
+  font-weight: var(--strong-font-weight, 510);
   color: var(--color-accent);
   padding: 0 0.1em;
 }

@@ -11,11 +11,11 @@ PDY.SettingsModule = (() => {
   const FONT_WEIGHT_ADJUSTMENT_MIN = -100;
   const FONT_WEIGHT_ADJUSTMENT_MAX = 100;
   const FONT_WEIGHT_ROLE_BASES = Object.freeze({
-    "body-font-weight": Object.freeze({ desktop: 400, mobile: 430 }),
-    "strong-font-weight": Object.freeze({ desktop: 550, mobile: 580 }),
-    "heading-font-weight": Object.freeze({ desktop: 600, mobile: 630 }),
-    "mono-font-weight": Object.freeze({ desktop: 420, mobile: 450 }),
-    "mono-emphasis-font-weight": Object.freeze({ desktop: 520, mobile: 550 }),
+    "body-font-weight": Object.freeze({ desktop: 380, mobile: 410 }),
+    "strong-font-weight": Object.freeze({ desktop: 510, mobile: 540 }),
+    "heading-font-weight": Object.freeze({ desktop: 560, mobile: 590 }),
+    "mono-font-weight": Object.freeze({ desktop: 400, mobile: 430 }),
+    "mono-emphasis-font-weight": Object.freeze({ desktop: 535, mobile: 565 }),
   });
   const DEFAULT_THEMES = Object.freeze([
     { id: "porcelain", name: "Porcelain" },
@@ -35,15 +35,15 @@ PDY.SettingsModule = (() => {
   async function loadDocumentFonts() {
     if (!document.fonts?.load) return;
     const fontLoads = Promise.all([
-      ...[400, 550, 600].flatMap((weight) => [
+      ...[380, 510, 560].flatMap((weight) => [
         document.fonts.load(`${weight} 12px 'Studio Feixen Sans'`),
         document.fonts.load(`italic ${weight} 12px 'Studio Feixen Sans'`),
       ]),
-      ...[420, 520].flatMap((weight) => [
+      ...[400, 535].flatMap((weight) => [
         document.fonts.load(`${weight} 12px 'Geist Mono'`),
         document.fonts.load(`italic ${weight} 12px 'Geist Mono'`),
       ]),
-      ...[400, 420, 520, 540, 550, 580, 600].map((weight) =>
+      ...[380, 400, 410, 430, 510, 535, 540, 560, 565, 590].map((weight) =>
         document.fonts.load(`${weight} 12px 'Noto Sans Sinhala'`, "සිංහල"),
       ),
     ]).catch((error) => {

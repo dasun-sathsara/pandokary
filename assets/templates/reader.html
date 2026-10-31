@@ -18,11 +18,11 @@
         document.documentElement.style.setProperty("--font-size-adjust", size + "px");
         const weight = Math.max(-100, Math.min(100, parseInt(localStorage.getItem("font-weight-adjustment"), 10) || 0));
         const weightRoles = {
-          "--body-font-weight": [400, 430],
-          "--strong-font-weight": [550, 580],
-          "--heading-font-weight": [600, 630],
-          "--mono-font-weight": [420, 450],
-          "--mono-emphasis-font-weight": [520, 550]
+          "--body-font-weight": [380, 410],
+          "--strong-font-weight": [510, 540],
+          "--heading-font-weight": [560, 590],
+          "--mono-font-weight": [400, 430],
+          "--mono-emphasis-font-weight": [535, 565]
         };
         const compactWeights = innerWidth < 1200 ? 1 : 0;
         document.documentElement.style.setProperty("--font-weight-adjustment", String(weight));

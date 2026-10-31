@@ -5,8 +5,8 @@
 code {
   font-family: var(--font-mono);
   letter-spacing: var(--letter-spacing-mono, -0.01em);
-  font-size: var(--scale-code-inline, 0.87em);
-  font-weight: var(--mono-font-weight, 420);
+  font-size: var(--scale-code-inline, 0.9em);
+  font-weight: var(--mono-font-weight, 400);
   padding: var(--inline-code-padding);
   margin: 0 0.08em;
   border: var(--inline-code-border);
@@ -57,7 +57,7 @@ pre:has(.code-gutter) {
   opacity: 0.75;
   min-width: 2.75em;
   font-family: var(--font-mono);
-  font-weight: var(--mono-font-weight, 420);
+  font-weight: var(--mono-font-weight, 400);
   letter-spacing: var(--letter-spacing-mono, -0.01em);
   box-sizing: border-box;
 }
@@ -80,7 +80,7 @@ pre:has(.code-gutter) {
 .code-gutter-line.focused-line,
 .code-gutter-line.highlighted-line {
   color: var(--color-accent) !important;
-  font-weight: var(--mono-emphasis-font-weight, 520);
+  font-weight: var(--mono-emphasis-font-weight, 535);
   opacity: 1;
 }
 
@@ -104,7 +104,7 @@ pre code.hljs {
   line-height: inherit;
   display: block;
   font-family: var(--font-mono);
-  font-weight: var(--mono-font-weight, 420);
+  font-weight: var(--mono-font-weight, 400);
   letter-spacing: var(--letter-spacing-mono, -0.01em);
   overflow-wrap: normal;
   word-break: normal;
@@ -182,7 +182,7 @@ pre:focus-within .copy-btn {
 .hljs-type,
 .hljs-literal {
   color: var(--code-keyword);
-  font-weight: var(--mono-emphasis-font-weight, 520);
+  font-weight: var(--mono-emphasis-font-weight, 535);
 }
 .token.string,
 .hljs-string,
@@ -264,5 +264,5 @@ pre:focus-within .copy-btn {
 }
 
 .hljs-strong {
-  font-weight: var(--mono-emphasis-font-weight, 520);
+  font-weight: var(--mono-emphasis-font-weight, 535);
 }

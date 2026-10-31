@@ -198,7 +198,7 @@ pre,
 .table-wrapper th {
   font-family: var(--font-heading);
   color: var(--color-heading);
-  font-weight: var(--heading-font-weight, 600);
+  font-weight: var(--heading-font-weight, 560);
   background-color: var(--color-surface-alt);
 }
 

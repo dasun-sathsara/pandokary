@@ -223,8 +223,8 @@ PDY.MermaidModule = (() => {
       "color: var(--color-danger)",
       "padding: 1.5rem",
       "font-family: var(--font-mono), monospace",
-      "font-size: var(--scale-code-inline, 0.87em)",
-      "font-weight: var(--mono-font-weight, 420)",
+      "font-size: var(--scale-code-inline, 0.9em)",
+      "font-weight: var(--mono-font-weight, 400)",
       "letter-spacing: var(--letter-spacing-mono, -0.01em)",
       "border-left: 4px solid var(--color-danger)",
       "background: var(--color-code-bg)",
@@ -235,7 +235,7 @@ PDY.MermaidModule = (() => {
 
     const heading = document.createElement("strong");
     heading.textContent = "Mermaid Error:";
-    heading.style.fontWeight = "var(--mono-emphasis-font-weight, 520)";
+    heading.style.fontWeight = "var(--mono-emphasis-font-weight, 535)";
     const details = document.createElement("pre");
     details.style.cssText = [
       "border: none",
@@ -245,7 +245,7 @@ PDY.MermaidModule = (() => {
       "background: transparent",
       "font-family: var(--font-mono), monospace",
       "font-size: 1em",
-      "font-weight: var(--mono-font-weight, 420)",
+      "font-weight: var(--mono-font-weight, 400)",
       "letter-spacing: var(--letter-spacing-mono, -0.01em)",
       "text-align: left",
       "white-space: pre-wrap",

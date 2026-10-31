@@ -12,8 +12,9 @@ without relying on device-installed fonts:
   LICENSE-Geist-Mono-OFL.txt.
 - NotoSansSinhala-Variable.ttf: Noto Sans Sinhala variable source by The Noto
   Project Authors. It supplies Sinhala glyphs in prose and mixed-script code.
-  Sinhala strong and heading CSS weights map to native 540 and 580. See
-  LICENSE-Noto-Sans-Sinhala-OFL.txt.
+  Sinhala role weights map to the native wght matching each Latin CSS role
+  (body 380, strong 510, heading 560, mono 400, mono strong 535), scaled to 90%.
+  See LICENSE-Noto-Sans-Sinhala-OFL.txt.
 
 The original binaries are used directly. Pandokary does not subset them, alter
 their outlines, or generate static weight cuts.
