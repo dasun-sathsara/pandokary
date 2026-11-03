@@ -260,8 +260,8 @@
   /* Accent at reduced strength, for the few quiet touches DESIGN.md allows. */
   --accent-marker: color-mix(in oklab, var(--color-accent) 85%, var(--color-text-muted));
   --accent-rule: color-mix(in oklab, var(--color-accent) 60%, var(--color-border-strong));
-  --accent-hairline: color-mix(in oklab, var(--color-accent) 30%, var(--color-border));
-  --accent-wash: color-mix(in oklab, var(--color-accent) 5%, var(--color-bg));
+  --accent-hairline: color-mix(in oklab, var(--color-accent) 40%, var(--color-border));
+  --accent-wash: color-mix(in oklab, var(--color-accent) 8%, var(--color-bg));
 }
 
 @media (pointer: coarse) {
@@ -565,7 +565,7 @@ blockquote {
   margin: var(--space-6) 0;
   padding: 0 0 0 var(--space-4);
   border-left: 2px solid var(--accent-rule);
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 blockquote p {

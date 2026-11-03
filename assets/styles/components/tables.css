@@ -27,9 +27,9 @@ main td {
 main th {
   font-family: var(--font-heading);
   font-weight: var(--heading-font-weight, 560);
-  color: var(--color-text-muted);
-  background: var(--color-bg);
-  border-bottom-color: var(--color-border-strong);
+  color: var(--color-text);
+  background: color-mix(in oklab, var(--color-accent) 5%, var(--color-surface-alt));
+  border-bottom-color: var(--accent-rule);
 }
 
 main tbody tr:last-child td {

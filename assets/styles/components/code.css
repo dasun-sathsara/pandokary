@@ -28,7 +28,7 @@ pre {
   overflow: hidden;
   overflow-x: auto;
   background: var(--color-code-bg);
-  border: 1px solid var(--color-code-border);
+  border: 1px solid color-mix(in oklab, var(--color-accent) 20%, var(--color-code-border));
   border-radius: var(--radius-lg);
   font-size: var(--scale-code-block, 0.87em);
   line-height: var(--pre-line-height);
@@ -47,6 +47,7 @@ pre:has(.code-gutter) {
   flex-shrink: 0;
   min-width: 2.5em;
   padding: var(--space-3) 0 var(--space-3) var(--space-3);
+  background: var(--color-code-chrome-bg);
   text-align: right;
   color: var(--color-text-muted);
   user-select: none;
